@@ -1,7 +1,7 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input } from "antd";
 import { createUseStyles } from "react-jss";
-
+import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
 
 const useStyles = createUseStyles({
@@ -34,6 +34,16 @@ const useStyles = createUseStyles({
     marginLeft: "auto",
     marginRight: "auto",
     textAlign: "center"
+  },
+  categoryContainer: {
+    width: "50%",
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr 1fr 1fr 1fr",
+  },
+  categoryButton: {
+    "&:hover": {
+      cursor: "pointer"
+    }
   }
 })
 
@@ -44,8 +54,9 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       <div className={styles.firstRow}>
         <div style={{ gridRow: 1, marginLeft: 24 }}>
           <Image
+            preview={false}
             className={styles.profileImage}
-            src="https://images.unsplash.com/photo-1513542789411-b6a5d4f31634?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1974&q=80" />
+            src={logo} />
         </div>
 
         <Input
@@ -60,8 +71,13 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         >Iniciar Sesion</Button>
       </div>
       <div className={styles.secondRow}>
-        <div>Cat! </div>
-        <div>Cat! </div>
+        <div className={styles.categoryContainer}>
+          <Button type="text" style={{ gridColumn: 1 }} >Categoría 1</Button>
+          <Button type="text" style={{ gridColumn: 2 }} >Categoría 2</Button>
+          <Button type="text" style={{ gridColumn: 3 }} >Categoría 3</Button>
+          <Button type="text" style={{ gridColumn: 4 }} >Categoría 4</Button>
+          <Button type="text" style={{ gridColumn: 5 }} >Categoría 5</Button>
+        </div>
       </div>
     </div>
   )

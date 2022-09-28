@@ -8,6 +8,7 @@ import "./main.css"
 import 'antd/dist/antd.css';
 import SignInPage from './pages/SignInPage';
 import MainHeader from './components/MainHeader';
+import HomePage from './pages/Home';
 
 
 const root = ReactDOM.createRoot(
@@ -15,10 +16,9 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
-    <MainHeader />
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<>Todo</>} />
+        <Route path='/' element={<HomePage showHeader={true} />} />
         <Route path="/signin" element={<SignInPage />} />
       </Routes>
     </BrowserRouter>
