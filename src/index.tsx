@@ -9,6 +9,7 @@ import 'antd/dist/antd.css';
 import SignInPage from './pages/SignInPage';
 import MainHeader from './components/MainHeader';
 import HomePage from './pages/Home';
+import UserList from './pages/UserList';
 
 
 const root = ReactDOM.createRoot(
@@ -20,6 +21,7 @@ root.render(
       <Routes>
         <Route path='/' element={<HomePage showHeader={true} />} />
         <Route path="/signin" element={<SignInPage />} />
+        <Route path="/users" element={<UserList />} />
       </Routes>
     </BrowserRouter>
 
