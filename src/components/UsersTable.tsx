@@ -31,14 +31,29 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
           rowKey="ci"
         >
           <Table.Column<User>
+            sorter={(a, b) => {
+              if(a.ci > b.ci) return 1
+              if(a.ci < b.ci) return -1
+              return 0
+            }}
             title="CI"
             render={(_, data) => data.ci}
           />
           <Table.Column<User>
+            sorter={(a, b) => {
+              if(a.name > b.name) return 1
+              if(a.name < b.name) return -1
+              return 0
+            }}
             title="Nombre"
             render={(_, data) => data.name}
           />
           <Table.Column<User>
+            sorter={(a, b) => {
+              if(a.lastName > b.lastName) return 1
+              if(a.lastName < b.lastName) return -1
+              return 0
+            }}
             title="Apellido"
             render={(_, data) => <PopOver data={data} />}
           />
