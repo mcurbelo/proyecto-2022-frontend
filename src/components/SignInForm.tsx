@@ -18,7 +18,7 @@ const useStyles = createUseStyles({
     padding: 12,
   }
 });
-const SignInForm: React.FC<SignInFormProps> = () => {
+const SignInForm: React.FC<SignInFormProps> = (props) => {
   const styles = useStyles();
   const [state, setState] = useState({ username: "", password: "" } as SignInFormData)
   return (
