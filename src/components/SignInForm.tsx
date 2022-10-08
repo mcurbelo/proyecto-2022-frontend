@@ -1,12 +1,14 @@
-import { Button, Form, Input } from "antd"
-import { useState } from "react";
+import { Button, Form, Input, Result } from "antd"
+import FormItem from "antd/es/form/FormItem";
+import React, { useState } from "react";
 import { createUseStyles } from "react-jss"
-
+import { UserService } from "shopit-shared"
 type SignInFormProps = {}
 
 type SignInFormData = {
   username: string;
   password: string;
+  error: boolean
 }
 
 const useStyles = createUseStyles({
@@ -20,22 +22,52 @@ const useStyles = createUseStyles({
 });
 const SignInForm: React.FC<SignInFormProps> = (props) => {
   const styles = useStyles();
-  const [state, setState] = useState({ username: "", password: "" } as SignInFormData)
+  const [state, setState] = useState({ username: "", password: "", error: false } as SignInFormData)
+
   return (
-    <Form className={styles.form}>
-      <Input placeholder="Usuario" style={{ marginBottom: 16 }} onChange={(event) => {
-        setState({
-          ...state,
-          username: event.target.value
-        })
-      }} />
-      <Input.Password placeholder="Contraseña" style={{ marginBottom: 16 }} onChange={(event) => {
-        setState({ ...state, password: event.target.value })
-      }} />
-      <Button type="primary" onClick={(event) => {
-        event.preventDefault();
-        alert(JSON.stringify(state));
-      }}>Iniciar Sesion</Button>
+    <Form className={styles.form} onFinish={async (_) => {
+      UserService.iniciarSesion(state.username, state.password)
+      .then((result) => {
+        if(result?.token) {
+          localStorage.setItem("token", result.token)
+        } else {
+          setState({
+            ...state,
+            error: true
+          })
+        }
+      })
+    }}>
+      <Form.Item
+        name="usuario"
+        rules={[{
+          required: true,
+          type: "email",
+          message: "El nombre de usuario debe ser un email válido"
+        }]}>
+        <Input
+          placeholder="Usuario"
+          style={{ marginBottom: 16 }}
+          onChange={(event) => {
+            setState({
+              ...state,
+              username: event.target.value
+            })
+          }} />
+      </Form.Item>
+      <FormItem
+        name="password"
+        rules={[{
+          required: true,
+          message: "Ingrese su contraseña"
+        }]}>
+
+        <Input.Password placeholder="Contraseña" style={{ marginBottom: 16 }} onChange={(event) => {
+          setState({ ...state, password: event.target.value })
+        }} />
+      </FormItem>
+      <label style={{marginLeft: "auto", marginRight:"auto", visibility: state.error ? "visible" : "hidden"}}>Error!</label>
+      <Button htmlType="submit" type="primary">Iniciar Sesion</Button>
       <label style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>¿No tienes una cuenta?</label>
       <Button type="ghost">Registrate</Button>
       <Button type="link" style={{ marginTop: 16 }}>¿Olvidaste tu contraseña?</Button>
