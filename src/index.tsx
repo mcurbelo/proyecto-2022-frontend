@@ -11,6 +11,7 @@ import MainHeader from './components/MainHeader';
 import HomePage from './pages/Home';
 import UserList from './pages/UserList';
 import NotificacionTest from './test/Notification'
+import SignUpPage from './pages/SignUpPage';
 
 
 const root = ReactDOM.createRoot(
@@ -22,6 +23,7 @@ root.render(
       <Routes>
         <Route path='/' element={<HomePage showHeader={true} />} />
         <Route path="/signin" element={<SignInPage />} />
+        <Route path="/signup" element={<SignUpPage />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/testNotifiacion" element={<NotificacionTest/>} />
       </Routes>

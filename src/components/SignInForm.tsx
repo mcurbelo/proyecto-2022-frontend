@@ -2,6 +2,7 @@ import { Button, Form, Input, Result } from "antd"
 import FormItem from "antd/es/form/FormItem";
 import React, { useState } from "react";
 import { createUseStyles } from "react-jss"
+import { useNavigate } from "react-router";
 import { UserService } from "shopit-shared"
 type SignInFormProps = {}
 
@@ -23,20 +24,20 @@ const useStyles = createUseStyles({
 const SignInForm: React.FC<SignInFormProps> = (props) => {
   const styles = useStyles();
   const [state, setState] = useState({ username: "", password: "", error: false } as SignInFormData)
-
+  const navigate = useNavigate()
   return (
     <Form className={styles.form} onFinish={async (_) => {
       UserService.iniciarSesion(state.username, state.password)
-      .then((result) => {
-        if(result?.token) {
-          localStorage.setItem("token", result.token)
-        } else {
-          setState({
-            ...state,
-            error: true
-          })
-        }
-      })
+        .then((result) => {
+          if (result?.token) {
+            localStorage.setItem("token", result.token)
+          } else {
+            setState({
+              ...state,
+              error: true
+            })
+          }
+        })
     }}>
       <Form.Item
         name="usuario"
@@ -66,10 +67,10 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
           setState({ ...state, password: event.target.value })
         }} />
       </FormItem>
-      <label style={{marginLeft: "auto", marginRight:"auto", visibility: state.error ? "visible" : "hidden"}}>Error!</label>
+      <label style={{ marginLeft: "auto", marginRight: "auto", visibility: state.error ? "visible" : "hidden" }}>Error!</label>
       <Button htmlType="submit" type="primary">Iniciar Sesion</Button>
       <label style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>¿No tienes una cuenta?</label>
-      <Button type="ghost">Registrate</Button>
+      <Button type="ghost" onClick={() => navigate("/signup")}>Registrate</Button>
       <Button type="link" style={{ marginTop: 16 }}>¿Olvidaste tu contraseña?</Button>
     </Form>
   )
