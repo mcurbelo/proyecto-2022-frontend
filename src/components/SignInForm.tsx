@@ -1,4 +1,4 @@
-import { Button, Form, Input, Result } from "antd"
+import { Alert, Button, Form, Input, Result } from "antd"
 import FormItem from "antd/es/form/FormItem";
 import React, { useState } from "react";
 import { createUseStyles } from "react-jss"
@@ -67,10 +67,17 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
           setState({ ...state, password: event.target.value })
         }} />
       </FormItem>
-      <label style={{ marginLeft: "auto", marginRight: "auto", visibility: state.error ? "visible" : "hidden" }}>Error!</label>
-      <Button htmlType="submit" type="primary">Iniciar Sesion</Button>
+
+      {state.error && <Alert type="error" message="Los datos no son correctos" showIcon={true} closable={true}
+          onClose={() => {
+            setState({...state, error: false})
+          }}
+        />
+      }
+      
+      <Button htmlType="submit" type="primary" style={{marginTop: state.error ? 16 : 0}}>Iniciar Sesion</Button>
       <label style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>¿No tienes una cuenta?</label>
-      <Button type="ghost" onClick={() => navigate("/signup")}>Registrate</Button>
+      <Button style={{marginTop: 16}} type="ghost" onClick={() => navigate("/signup")}>Registrate</Button>
       <Button type="link" style={{ marginTop: 16 }}>¿Olvidaste tu contraseña?</Button>
     </Form>
   )
