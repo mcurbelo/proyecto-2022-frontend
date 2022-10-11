@@ -1,4 +1,4 @@
-import { Button, DatePicker, Form, Input } from "antd"
+import { Alert, Button, DatePicker, Form, Input } from "antd"
 import { RuleObject } from "antd/lib/form";
 import { useState } from "react";
 import { differenceInYears, format } from "date-fns";
@@ -109,10 +109,12 @@ const SignUpForm = () => {
         rules={[{
           required: true,
           max: 9,
-          message: "No puede tener mas de 9 caracteres"
-        }]}
+          message: "Solo numeros, con un maximo de 9 caracteres",
+          pattern: new RegExp("^[0-9]{0,9}$")
+        }
+      ]}
       >
-        <Input />
+        <Input placeholder="093254142" />
       </Form.Item>
       <div style={{ display: "flex", flexDirection: "column", justifyContent: "center", alignItems: "center" }}>
         <Form.Item
@@ -126,7 +128,7 @@ const SignUpForm = () => {
         >
           <DatePicker style={{ width: "100%" }} format={"DD/MM/yyyy"} />
         </Form.Item>
-        <label style={{ visibility: error?.error ? "visible" : "hidden" }}>{error.message}</label>
+        {error?.error && <Alert style={{marginTop: 16, marginBottom: 16, width:"100%"}} message={error.message} type="error" showIcon={true} />}
         <Button type="primary" htmlType="submit">Registrarse!</Button>
       </div>
     </Form>
