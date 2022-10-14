@@ -2,6 +2,7 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input } from "antd";
 import { createUseStyles } from "react-jss";
 import logo from "./../images/logo192.png"
+import { Avatar, Dropdown, Menu } from 'antd';
 type MainHeaderProps = {}
 
 const useStyles = createUseStyles({
@@ -47,16 +48,52 @@ const useStyles = createUseStyles({
   }
 })
 
+
+const menu = (
+  <Menu
+    items={[
+      {
+        key: '1',
+        label: (
+          <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+            Ver perfil
+          </a>
+        ),
+      },
+      {
+        key: '2',
+        label: (
+          <a target="_blank" rel="noopener noreferrer" href="https://www.aliyun.com">
+            Configuracion
+          </a>
+        ),
+      },
+      {
+        key: '3',
+        label: (
+          <a target="_blank" rel="noopener noreferrer" href="https://www.luohanacademy.com">
+            Cerrar sesion
+          </a>
+        ),
+      },
+    ]}
+  />
+);
+
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const styles = useStyles()
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
         <div style={{ gridRow: 1, marginLeft: 24 }}>
-          <Image
+        <Dropdown overlay={menu} placement="bottomLeft">
+          <Avatar size="large" src="https://joeschmoe.io/api/v1/random" />
+        </Dropdown>
+          
+          {/* <Image
             preview={false}
             className={styles.profileImage}
-            src={logo} />
+            src={logo} /> */}
         </div>
 
         <Input
