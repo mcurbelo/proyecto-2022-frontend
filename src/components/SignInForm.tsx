@@ -31,6 +31,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
         .then((result) => {
           if (result?.token) {
             localStorage.setItem("token", result.token)
+            navigate("/")
           } else {
             setState({
               ...state,

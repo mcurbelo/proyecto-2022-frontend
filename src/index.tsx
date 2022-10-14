@@ -1,3 +1,4 @@
+
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
@@ -12,8 +13,10 @@ import HomePage from './pages/Home';
 import UserList from './pages/UserList';
 import NotificacionTest from './test/Notification'
 import SignUpPage from './pages/SignUpPage';
+import {Auth} from "shopit-shared";
+require('dotenv').config();
 
-
+Auth.endpoint = process.env.REACT_APP_SERVER_URL ?? "";
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
