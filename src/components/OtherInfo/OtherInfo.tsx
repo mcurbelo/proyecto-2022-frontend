@@ -1,20 +1,16 @@
 import React, { Component } from 'react';
 import { Button, Select, Form, Input } from 'antd';
 import { createUseStyles } from "react-jss"
-
 import './styles.css';
 
-const stylePass = {
-  pass: {"outline": "0", "border-width": "0 0 1px", "border-color": "gainsboro", "background-color": "transparent"}
-}
 const { Option } = Select;
 
 function OtherInfo() {
   return (
 
     <div className='otherinfocolumn'>
-      <div style={{"margin-right": '50px'}}>
-        <h3 style={{"margin-bottom": "5px"}}>Informacion basica</h3>
+      <div style={{marginBottom: "50px"}}>
+        <h3 style={{marginBottom: "5px"}}>Informacion basica</h3>
           <Form
             name="basic"
             labelCol={{ span: 32 }}
@@ -43,7 +39,7 @@ function OtherInfo() {
           </Form>
         </div>
         <div>
-        <h3 style={{"margin-bottom": "5px"}}>Direccion</h3>
+        <h3 style={{marginBottom: "5px"}}>Direccion</h3>
         <Form
           name="basic"
           labelCol={{ span: 32 }}

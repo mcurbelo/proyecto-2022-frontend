@@ -21,7 +21,8 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<HomePage showHeader={true} />} />
+        <Route path='/' element={<HomePage showHeader={true} showProfile={false} />} />
+        <Route path='/profile' element={<HomePage showHeader={true} showProfile={true} />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/users" element={<UserList />} />

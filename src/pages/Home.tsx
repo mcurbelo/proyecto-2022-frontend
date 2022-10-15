@@ -6,16 +6,18 @@ import Footer from "../components/Footer/Footer";
 
 type HomePageProps = {
   showHeader: boolean;
+  showProfile: boolean;
 };
 
 
 const HomePage: React.FC<HomePageProps> = (props) => {
-  const { showHeader } = props;
+  const showHeader = props.showHeader;
+  const showProfile = props.showProfile;
   return (
     <>
     <Layout>
       {showHeader && <MainHeader />}
-      <Principal></Principal>
+      {showProfile ? <Perfil></Perfil> : <Principal></Principal>}
       <Footer></Footer>
     </Layout>
     </>

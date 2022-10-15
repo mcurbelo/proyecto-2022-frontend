@@ -1,8 +1,7 @@
 import React from 'react'
-import BasicInfo from '../BasicInfo'
-import OtherInfo from '../OtherInfo'
+import BasicInfo from '../BasicInfo/BasicInfo'
+import OtherInfo from '../OtherInfo/OtherInfo'
 import "./Style.css"
-
 
 function Perfil() {
   return (

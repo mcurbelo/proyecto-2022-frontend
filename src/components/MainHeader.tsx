@@ -3,7 +3,10 @@ import { Button, Image, Input } from "antd";
 import { createUseStyles } from "react-jss";
 import logo from "./../images/logo192.png"
 import { Avatar, Dropdown, Menu } from 'antd';
+import { useNavigate } from 'react-router-dom';
+
 type MainHeaderProps = {}
+const navigate: any = null;
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -56,7 +59,7 @@ const menu = (
       {
         key: '1',
         label: (
-          <a target="_blank" rel="noopener noreferrer" href="https://www.antgroup.com">
+          <a rel="noopener noreferrer" href="/profile">
             Ver perfil
           </a>
         ),
@@ -81,19 +84,21 @@ const menu = (
   />
 );
 
+
+
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
+  const navigate = useNavigate();
   var sesionIniciada = true;
   const styles = useStyles()
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
         <div style={{ gridRow: 1, marginLeft: 24 }}>
-        
-          
-          {/* <Image
+        <Image
             preview={false}
+            onClick={function(){navigate('/')}}
             className={styles.profileImage}
-            src={logo} /> */}
+            src={logo} />
         </div>
 
         <Input
