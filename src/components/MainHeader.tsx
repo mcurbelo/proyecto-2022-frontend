@@ -49,6 +49,7 @@ const useStyles = createUseStyles({
 })
 
 
+
 const menu = (
   <Menu
     items={[
@@ -81,14 +82,13 @@ const menu = (
 );
 
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
+  var sesionIniciada = true;
   const styles = useStyles()
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
         <div style={{ gridRow: 1, marginLeft: 24 }}>
-        <Dropdown overlay={menu} placement="bottomLeft">
-          <Avatar size="large" src="https://joeschmoe.io/api/v1/random" />
-        </Dropdown>
+        
           
           {/* <Image
             preview={false}
@@ -102,10 +102,18 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           placeholder="Buscar productos"
           suffix={<SearchOutlined />} />
 
-        <Button
-          type="primary"
-          style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}
-        >Iniciar Sesion</Button>
+        {sesionIniciada ? 
+            <Dropdown overlay={menu} placement="bottomLeft" >
+              <Avatar size="large" src="https://joeschmoe.io/api/v1/random"  style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}/>
+            </Dropdown> : 
+
+            <Button
+            type="primary"
+            style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar Sesion</Button>
+        }
+            
+          
+        
       </div>
       <div className={styles.secondRow}>
         <div className={styles.categoryContainer}>

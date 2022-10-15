@@ -11,7 +11,6 @@ function Perfil() {
         <div className="otherinfocenter">
           <OtherInfo />
         </div>
-         
     </div>
   )
 }

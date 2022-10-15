@@ -1,15 +1,7 @@
 import React, { Component } from 'react';
 import {UserService} from 'shopit-shared'
-
 import './styles.css';
-
-
-
-
-
  function BasicInfo() {
-
- 
   return(
     <div className="basicInfo">
       <div className="profilePic">

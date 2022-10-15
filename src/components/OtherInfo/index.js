@@ -10,9 +10,8 @@ const stylePass = {
 const { Option } = Select;
 
 function OtherInfo() {
-
   return (
-    
+
     <div className='otherinfocolumn'>
       <div style={{"margin-right": '50px'}}>
         <h3 style={{"margin-bottom": "5px"}}>Informacion basica</h3>
@@ -23,29 +22,22 @@ function OtherInfo() {
             initialValues={{ remember: true }}
             // onFinish={onFinish}
             // onFinishFailed={onFinishFailed}
-            autoComplete="off"
-          >
+            autoComplete="off">
             <Form.Item
               label="Nombre"
-              name="nombre"
-              
-            >
+              name="nombre">
               <Input />
             </Form.Item>
 
             <Form.Item
               label="Apellido"
-              name="apellido"
-              
-            >
+              name="apellido" >
               <Input />
             </Form.Item>
 
             <Form.Item
               label="Telefono"
-              name="telefono"
-              
-            >
+              name="telefono">
               <Input />
             </Form.Item>
           </Form>
@@ -57,11 +49,7 @@ function OtherInfo() {
           labelCol={{ span: 32 }}
           wrapperCol={{ span: 32 }}
           initialValues={{ remember: true }}
-          //disabled='false'
-          // onFinish={onFinish}
-          // onFinishFailed={onFinishFailed}
-          autoComplete="off"
-        >
+          autoComplete="off">
           <Form.Item
             label="Calle"
             name="calle">
@@ -76,10 +64,7 @@ function OtherInfo() {
 
           <Form.Item name="departamento" label="Departamento" >
             <Select
-              placeholder=""
-              //onChange={onGenderChange}
-              //allowClear
-            >
+              placeholder="">
               <Option value="canelones">Canelones</Option>
               <Option value="montevideo">Montevideo</Option>
               <Option value="florida">Florida</Option>
@@ -92,5 +77,4 @@ function OtherInfo() {
     
   );
 }
-
 export default OtherInfo;
