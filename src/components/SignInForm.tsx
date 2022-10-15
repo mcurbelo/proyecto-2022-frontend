@@ -29,8 +29,9 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
     <Form className={styles.form} onFinish={async (_) => {
       UserService.iniciarSesion(state.username, state.password)
         .then((result) => {
-          if (result?.token) {
+          if (result?.token && result?.uuid) {
             localStorage.setItem("token", result.token)
+            localStorage.setItem("uuid", result.uuid)
             navigate("/")
           } else {
             setState({
