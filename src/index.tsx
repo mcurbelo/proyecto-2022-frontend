@@ -14,6 +14,7 @@ import UserList from './pages/UserList';
 import NotificacionTest from './test/Notification'
 import SignUpPage from './pages/SignUpPage';
 import {Auth} from "shopit-shared";
+import AddCardForm from './components/AddCard';
 require('dotenv').config();
 
 Auth.endpoint = process.env.REACT_APP_SERVER_URL ?? "";
@@ -29,6 +30,7 @@ root.render(
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/testNotifiacion" element={<NotificacionTest/>} />
+        <Route path="/addCard"  element={<AddCardForm />} />
       </Routes>
     </BrowserRouter>
 
