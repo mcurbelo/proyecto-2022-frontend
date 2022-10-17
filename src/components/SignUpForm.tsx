@@ -44,8 +44,9 @@ const SignUpForm = () => {
           telefono: values.telefono,
           fechaNac: formatted
         }).then((response) => {
-          if (response.success) {
+          if (response.success && response.token && response.uuid) {
             localStorage.setItem("token", response.token!)
+            localStorage.setItem("uuid", response.uuid)
             navigate("/")
           } else {
             setError({ error: true, message: response.error! })
