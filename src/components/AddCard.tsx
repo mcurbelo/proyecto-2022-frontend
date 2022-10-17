@@ -1,7 +1,7 @@
 import { Alert, Button, Form, Input, Spin } from "antd";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
-import { UserService } from "shopit-shared";
+import { CardService } from "shopit-shared";
 
 type AddCardState = {
   success: boolean;
@@ -40,12 +40,13 @@ const AddCardForm = () => {
           let token = localStorage.getItem("token");
           let uuid = localStorage.getItem("uuid");
           setState({...state, loading: true})
-          UserService.agregarTarjeta({
+          CardService.agregarTarjeta({
             cardNumber: values.cardNumber,
             cardCvv: values.cardCvv,
             cardExpiration: values.cardExpiration,
-
-          }, uuid!, token!).then((response) => {
+            uuid: uuid!,
+            token: token!
+          }).then((response) => {
             setState({success: true, loading: false, hasLoaded: true})
           }).catch((error) => {
             setState({success: false, loading: false, hasLoaded: true})
@@ -66,11 +67,11 @@ const AddCardForm = () => {
           name="cardCvv"
           rules={[{
             required: true,
-            pattern: new RegExp("(^[0-9]{3})"),
+            pattern: new RegExp("(^[0-9]{3,4})"),
             message: "Se requieren 3 caracteres"
           }]}
         >
-          <Input placeholder="123" maxLength={3} />
+          <Input placeholder="123" maxLength={4} />
         </Form.Item>
 
         <Form.Item name="cardExpiration"
