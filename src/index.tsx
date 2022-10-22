@@ -26,12 +26,13 @@ root.render(
   <React.StrictMode>
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<HomePage showHeader={true} />} />
+        <Route path='/' element={<HomePage showHeader={true} showProfile={false} />} />
         <Route path="/signin" element={<SignInPage />} />
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/testNotifiacion" element={<NotificacionTest/>} />
         <Route path="/addCard"  element={<AddCardForm />} />
+        <Route path="/profile"  element={<HomePage showHeader={true} showProfile={true} />} />
         <Route path="/cards" element={<CardList onSelectCard={(id) => {
           console.log("Selected card: " + id)
         }} />} />

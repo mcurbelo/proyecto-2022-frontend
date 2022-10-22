@@ -6,3 +6,177 @@ body, html {
 #root {
   height: 100%
 }
+
+.basicInfo {
+  flex-direction: column;
+  display: flex;
+  margin-bottom: 40px;
+  width: auto;
+  justify-content: flex-start;
+  padding: 10px;
+  align-items: stretch;
+  margin-top: 40px;
+}
+
+.profilePic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #eee;
+  margin: 1rem auto 2rem auto;
+}
+
+.profilePicDiv {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #eee;
+  margin: 1rem auto 2rem auto;
+}
+.nameWrapper{
+    text-align: center;
+    font-size: 1rem;
+}
+
+.otherInfo{
+  flex: 3;
+}
+
+.lIWrapper, .cIWrapper{
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+
+.contactInfo{
+  margin-top: 2rem;
+  padding-bottom: 1rem;
+}
+.heading{
+  display: flex;
+}
+h3{
+    flex: 1;
+}
+  button{
+    padding: 0 !important;
+    background: transparent;
+    color: grey;
+    border: none;
+    line-height: 1;
+    font-weight: 500;
+    font-size: .9rem;
+    text-transform: uppercase;
+    transition: color .3s;
+    cursor: pointer;
+  }
+.inputWrapper{
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 1rem;
+}
+p.inputData{
+  padding: .5rem 1rem;
+  color: grey;
+  margin: 1rem 0;
+  font-size: .9rem;
+  font-weight: 400;
+  border-bottom: solid 2px transparent;
+  background: #fff;
+}
+.cancelBtn{
+  margin-left: 1rem;
+}
+
+.ant-input {
+  outline: 0;
+  border-width: 0 0 1px;
+  border-color: gainsboro;
+  background-color: transparent;
+}
+
+.otherinfocolumn{
+  display: flex;
+  flex-direction: row;
+}
+
+.infoWrapper{
+  display: flex;
+  min-height: 40vh;
+  flex-direction: row;
+  padding: 1rem 0;
+  margin: auto;
+  width: 40%;
+  padding: 10px;
+}
+
+.otherinfocenter{
+margin: auto;
+width: auto;
+padding: 50px;
+}
+
+.row {
+  display: flex; /* equal height of the children */
+}
+
+.col {
+  flex: 1; /* additionally, equal width */
+  padding: 1em;
+  border: none;
+}
+.noHover{
+  pointer-events: none;
+}
+
+
+.usuarioInput {
+  width: 100%;
+  outline: none;
+  padding: 0.5rem 1rem;
+  border: none;
+  margin: 1rem 0;
+  font-size: .9rem;
+  font-weight: 400;
+  border-bottom: 2px solid rgba(0,0,0,.3);
+  /* //-webkit-transition: color .3s,border-color .3s; */
+  /* transition: color .3s,border-color .3s; */
+  background: #fff;
+}
+
+.wrapper{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.editButton:hover {
+  width: 60px;
+  height: 40px;
+  border-radius: 15px 50px;
+  width: auto;
+  background-color: #ECECEC;
+}
+
+
+
+.leftValues {
+  grid-column: 1;
+  grid-row: auto;
+}
+
+.rigthValues {
+  grid-column: 2;
+  grid-row: auto;
+}
+
+
+
+label {
+  font-size: .9rem;
+    line-height: 1;
+    font-weight: 500;
+    font-family: roboto_mono,helvetica,sans-serif;
+}

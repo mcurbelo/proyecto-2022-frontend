@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Image, Input } from "antd";
+import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
 import { createUseStyles } from "react-jss";
 import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
@@ -47,8 +47,33 @@ const useStyles = createUseStyles({
   }
 })
 
+
+const menu = (
+  <Menu
+    items={[
+      {
+        key: '1',
+        label: (
+          <a rel="noopener noreferrer" href="/profile">
+            Ver perfil
+          </a>
+        ),
+      },
+      {
+        key: '2',
+        label: (
+          <a target="_blank" rel="noopener noreferrer" href="/logout">
+            Cerrar sesion
+          </a>
+        ),
+      }
+    ]}
+  />
+);
+
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const styles = useStyles()
+  const sesionIniciada = true;
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
@@ -58,17 +83,21 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
             className={styles.profileImage}
             src={logo} />
         </div>
-
         <Input
           style={{ gridColumn: 2, textAlign: "center" }}
           className={styles.searchBar}
           placeholder="Buscar productos"
           suffix={<SearchOutlined />} />
 
-        <Button
-          type="primary"
-          style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}
-        >Iniciar Sesion</Button>
+          {sesionIniciada ? 
+            <Dropdown overlay={menu} placement="bottomLeft" >
+              <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male"  style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}/>
+            </Dropdown> : 
+
+            <Button
+            type="primary"
+            style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar Sesion</Button>
+        }
       </div>
       <div className={styles.secondRow}>
         <div className={styles.categoryContainer}>

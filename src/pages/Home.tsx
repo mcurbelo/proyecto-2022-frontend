@@ -1,14 +1,18 @@
 import MainHeader from "../components/MainHeader";
+import Perfil from "../components/Perfil";
+import Publicactions from "../components/Publications"
 
 type HomePageProps = {
   showHeader: boolean;
+  showProfile: boolean;
 };
 
 const HomePage: React.FC<HomePageProps> = (props) => {
-  const { showHeader } = props;
+  const { showHeader, showProfile } = props;
   return (
     <>
       {showHeader && <MainHeader />}
+      {showProfile ? <Perfil></Perfil> : <Publicactions></Publicactions> }
     </>
   )
 }
