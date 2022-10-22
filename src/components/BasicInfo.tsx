@@ -9,8 +9,8 @@ type basicinfo = {
 
 export const BasicInfo: FC<basicinfo> = (props) => 
     <div className="basicInfo">
-      <div className="profilePic">
-        <img alt='' src={props.imagenPerfil}></img>
+      <div >
+        <img className = "profilePic" alt='Avatar' src="https://xsgames.co/randomusers/avatar.php?g=male"></img>
       </div>
       <div className="nameWrapper">
         <h3 className="normal">{props.nombre}</h3>

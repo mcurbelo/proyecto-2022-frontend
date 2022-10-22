@@ -8,14 +8,25 @@ body, html {
 }
 
 .basicInfo {
-  flex: 1;
+  flex-direction: column;
+  display: flex;
   margin-bottom: 40px;
-  margin: auto;
   width: auto;
+  justify-content: flex-start;
   padding: 10px;
+  align-items: stretch;
+  margin-top: 40px;
 }
 
-.profilePic{
+.profilePic {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  background: #eee;
+  margin: 1rem auto 2rem auto;
+}
+
+.profilePicDiv {
   width: 120px;
   height: 120px;
   border-radius: 50%;
@@ -96,14 +107,14 @@ p.inputData{
   flex-direction: row;
   padding: 1rem 0;
   margin: auto;
-  width: 50%;
+  width: 40%;
   padding: 10px;
 }
 
 .otherinfocenter{
 margin: auto;
 width: auto;
-padding: 10px;
+padding: 50px;
 }
 
 .row {
@@ -117,4 +128,55 @@ padding: 10px;
 }
 .noHover{
   pointer-events: none;
+}
+
+
+.usuarioInput {
+  width: 100%;
+  outline: none;
+  padding: 0.5rem 1rem;
+  border: none;
+  margin: 1rem 0;
+  font-size: .9rem;
+  font-weight: 400;
+  border-bottom: 2px solid rgba(0,0,0,.3);
+  /* //-webkit-transition: color .3s,border-color .3s; */
+  /* transition: color .3s,border-color .3s; */
+  background: #fff;
+}
+
+.wrapper{
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.editButton:hover {
+  width: 60px;
+  height: 40px;
+  border-radius: 15px 50px;
+  width: auto;
+  background-color: #ECECEC;
+}
+
+
+
+.leftValues {
+  grid-column: 1;
+  grid-row: auto;
+}
+
+.rigthValues {
+  grid-column: 2;
+  grid-row: auto;
+}
+
+
+
+label {
+  font-size: .9rem;
+    line-height: 1;
+    font-weight: 500;
+    font-family: roboto_mono,helvetica,sans-serif;
 }
