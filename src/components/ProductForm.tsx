@@ -34,6 +34,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
 
   const handleFormSubmition = (values: any) => {
     if(esSolicitud) {
+      // Falta: Selector de categorías (No hay GET hecho)
+      // Falta: Selector de direcciones (Misma razón)
       let token = localStorage.getItem("token")
       let datosEmpresa = {}
       if(esEmpresa) datosEmpresa = {
