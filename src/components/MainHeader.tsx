@@ -2,9 +2,10 @@ import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
 import React from "react";
 import { createUseStyles } from "react-jss";
-import eventBus from "../EventBus";
+import { useMitt } from "react-mitt";
 import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
+
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -73,13 +74,17 @@ const menu = (
   />
 );
 
-const buscarProducto = (event: React.MouseEvent<HTMLButtonElement>) => {
-  eventBus.dispatch("buscarProducto", { message: "coupone applied" });
-};
+
 
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
+  const { emitter } = useMitt()
   const styles = useStyles()
   const sesionIniciada = true;
+
+  const buscarProducto = (event: React.MouseEvent<HTMLButtonElement>) => {
+    emitter.emit('busquedaCategoria', {data: "ESAAAAAA"})
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
@@ -108,7 +113,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       </div>
       <div className={styles.secondRow}>
         <div className={styles.categoryContainer}>
-          <Button type="text" style={{ gridColumn: 1 }} >Categoría 1</Button>
+          <Button type="text" style={{ gridColumn: 1 }} onClick={buscarProducto}>Categoría 1</Button>
           <Button type="text" style={{ gridColumn: 2 }} >Categoría 2</Button>
           <Button type="text" style={{ gridColumn: 3 }} >Categoría 3</Button>
           <Button type="text" style={{ gridColumn: 4 }} >Categoría 4</Button>

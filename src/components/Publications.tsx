@@ -4,8 +4,9 @@ import { Button, Pagination, PaginationProps, Row, Select, Space } from 'antd';
 import { ItemPublication } from './ItemPublication';
 import { DtFiltros } from 'shopit-shared/dist/user/ProductoService';
 import { ProductoService } from 'shopit-shared';
-import { DtProductoSlim, listados } from 'shopit-shared/dist/user/VendedorService';
+import { DtProductoSlim } from 'shopit-shared/dist/user/VendedorService';
 import { SearchOutlined } from '@ant-design/icons';
+import { useMitt } from 'react-mitt';
 
 
 // @ts-check
@@ -35,6 +36,7 @@ function Publicactions() {
     dirOrdenamiento: "",
     cantidadItems: ""
   })
+  const { emitter } = useMitt()
 
   const busqueda = () => {
     ProductoService.listarProductos(paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, valoresFiltros).then((result) => {
@@ -47,6 +49,8 @@ function Publicactions() {
   }
 
   useEffect(() => {
+    emitter.on('busquedaProducto', event => alert(event.data))
+    emitter.on('busquedaCategoria', event => alert(event.data))
     busqueda();
   }, [])
 
@@ -63,44 +67,55 @@ function Publicactions() {
 
   return (
     <React.Fragment>
-      <div style={{display:'flex', justifyContent:'center', marginTop:'30px'}}>
-        <Space size={30}>
-        <Select defaultValue="nombre" style={{ width: 120 }} onChange={(value) => handleChange(value, "ordenamiento")}>
-          <Option value="nombre">Nombre</Option>
-          <Option value="fecha_inicio">Más nuevos</Option>
-          <Option value="precio">Precio</Option>
-          <Option value="permite_envio">Permiten envio</Option>
-        </Select>
-
-        <Select defaultValue="asc" style={{ width: 120 }} onChange={(value, id) => handleChange(value, "dirOrdenamiento")}>
-          <Option value="asc">Ascendente</Option>
-          <Option value="dsc">Descendente</Option>
-        </Select>
-
-        <Select defaultValue="20" style={{ width: 120 }} onChange={(value, id) => handleChange(value, "cantidadItems")}>
-          <Option value="20">20</Option>
-          <Option value="30">30</Option>
-        </Select>
-
-        <Button type="primary" icon={<SearchOutlined />} onClick={busqueda} style={{marginLeft:8}}>
-          Actualizar resultados
-        </Button>
-        </Space>
-      </div>
-      <div className="row">
-        <div className="col">
-          <Row justify="center" gutter={[50, { xs: 8, sm: 16, md: 24, lg: 32 }]}>
-            {
-              productos.map((producto, index) => {
-                return (
-                  <ItemPublication producto={producto} key={index}></ItemPublication>
-                )
-              })
-            }
-          </Row>
+      <div style={{ display: 'flex', marginTop: '30px', marginLeft: "5%" }}>
+        <div style={{ width: '20%', display: 'flex' }}>
+          <div>
+            <h1>Filtros</h1>
+            <Space align="baseline" direction="vertical" size={30}>
+              <div>
+                <label htmlFor="orden">Ordenar por:</label>
+                <Select defaultValue="nombre" id="orden" style={{ width: 120 }} onChange={(value) => handleChange(value, "ordenamiento")}>
+                  <Option value="nombre">Nombre</Option>
+                  <Option value="fecha_inicio">Más nuevos</Option>
+                  <Option value="precio">Precio</Option>
+                  <Option value="permite_envio">Permiten envio</Option>
+                </Select>
+              </div>
+              <div>
+                <label htmlFor="direccion">Dirección:</label>
+                <Select defaultValue="asc" id="direccion" style={{ width: 120 }} onChange={(value, id) => handleChange(value, "dirOrdenamiento")}>
+                  <Option value="asc">Ascendente</Option>
+                  <Option value="dsc">Descendente</Option>
+                </Select>
+              </div>
+              <div>
+                <label htmlFor="cantidad">Cantidad:</label>
+                <Select defaultValue="20" id="cantidad" style={{ width: 120 }} onChange={(value, id) => handleChange(value, "cantidadItems")}>
+                  <Option value="20">20</Option>
+                  <Option value="30">30</Option>
+                </Select>
+              </div>
+              <Button type="primary" icon={<SearchOutlined />} onClick={busqueda} style={{ marginLeft: 8 }}>
+                Actualizar resultados
+              </Button>
+            </Space>
+          </div>
+        </div>
+        <div className="row" style={{ flex: 1 }}>
+          <div className="col">
+            <Row justify="center" gutter={[50, { xs: 8, sm: 16, md: 24, lg: 32 }]}>
+              {
+                productos.map((producto, index) => {
+                  return (
+                    <ItemPublication producto={producto} key={index}></ItemPublication>
+                  )
+                })
+              }
+            </Row>
+          </div>
         </div>
       </div>
-      <Pagination style={{display:'flex', justifyContent:'center'}} defaultCurrent={paginaActual} total={paginasTotales} current={paginaActual} onChange={onChange} />
+      <Pagination style={{ display: 'flex', justifyContent: 'center' }} defaultCurrent={paginaActual} total={paginasTotales} current={paginaActual} onChange={onChange} />
     </React.Fragment>
   );
 }

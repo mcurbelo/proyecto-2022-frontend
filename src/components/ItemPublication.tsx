@@ -14,7 +14,7 @@ export const ItemPublication = ({ producto }: Props) => {
         key={producto.idProducto}
         hoverable
         style={{ width: '100%'}}
-        cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" shape="round" style={{width:'90%'}} icon={<InfoCircleFilled />} >
+        cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" style={{width:'90%'}} icon={<InfoCircleFilled />} >
           Ver detalles
         </Button>]}>
         <Meta title={producto.nombre} description={"Precio: $" + producto.precio} />
