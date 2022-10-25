@@ -1,6 +1,8 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
+import React from "react";
 import { createUseStyles } from "react-jss";
+import eventBus from "../EventBus";
 import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
 
@@ -71,6 +73,10 @@ const menu = (
   />
 );
 
+const buscarProducto = (event: React.MouseEvent<HTMLButtonElement>) => {
+  eventBus.dispatch("buscarProducto", { message: "coupone applied" });
+};
+
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const styles = useStyles()
   const sesionIniciada = true;
@@ -87,14 +93,15 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           style={{ gridColumn: 2, textAlign: "center" }}
           className={styles.searchBar}
           placeholder="Buscar productos"
-          suffix={<SearchOutlined />} />
+          suffix={<SearchOutlined />}
+        />
 
-          {sesionIniciada ? 
-            <Dropdown overlay={menu} placement="bottomLeft" >
-              <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male"  style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}/>
-            </Dropdown> : 
+        {sesionIniciada ?
+          <Dropdown overlay={menu} placement="bottomLeft" >
+            <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male" style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
+          </Dropdown> :
 
-            <Button
+          <Button
             type="primary"
             style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar Sesion</Button>
         }
