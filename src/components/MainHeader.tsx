@@ -1,5 +1,6 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
+import Search from "antd/lib/input/Search";
 import React from "react";
 import { createUseStyles } from "react-jss";
 import { useMitt } from "react-mitt";
@@ -81,8 +82,9 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const styles = useStyles()
   const sesionIniciada = true;
 
-  const buscarProducto = (event: React.MouseEvent<HTMLButtonElement>) => {
-    emitter.emit('busquedaCategoria', {data: "ESAAAAAA"})
+  const buscarProducto = (value: string) => {
+    // emitter.emit('busquedaCategoria', {data: event.target.})
+    emitter.emit('busquedaProducto', {data: value});
   };
 
   return (
@@ -94,11 +96,10 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
             className={styles.profileImage}
             src={logo} />
         </div>
-        <Input
-          style={{ gridColumn: 2, textAlign: "center" }}
-          className={styles.searchBar}
+        <Search
+     
           placeholder="Buscar productos"
-          suffix={<SearchOutlined />}
+          onSearch={buscarProducto}
         />
 
         {sesionIniciada ?
@@ -113,7 +114,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       </div>
       <div className={styles.secondRow}>
         <div className={styles.categoryContainer}>
-          <Button type="text" style={{ gridColumn: 1 }} onClick={buscarProducto}>Categoría 1</Button>
+          <Button type="text" style={{ gridColumn: 1 }} >Categoría 1</Button>
           <Button type="text" style={{ gridColumn: 2 }} >Categoría 2</Button>
           <Button type="text" style={{ gridColumn: 3 }} >Categoría 3</Button>
           <Button type="text" style={{ gridColumn: 4 }} >Categoría 4</Button>
