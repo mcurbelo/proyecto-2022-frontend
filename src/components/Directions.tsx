@@ -18,20 +18,35 @@ let direccionesSinFormatear: Array<any> = [];
 export const Directions: React.FC<DirectionsProps> = (props) => {
  
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [value, setValue] = useState("");
+  const [value, setValue] = useState();
   const [idDireccion, setIdDireccion] = useState("");
   const [direccionEditar, setDireccionEditar] = useState({id: "", calle:"", numero: 0, departamento:"", localidad: "", aclaracion:"", esLocal: false});
   const [addDirection, setAddDirection] = useState(false);
-  const [direcciones, setDirecciones] = useState([{title:"", description: "", key: ""}]);
-  
+  //const [direcciones, setDirecciones] = useState([{title:"", description: "", key: ""}]);
 
-  const [direccionesLocales, setDireccioneLocales] = useState([{title:"", description: "", key: ""}]);
+  const [direcciones, setDirecciones] = useState([{
+    id: "", 
+    calle: "", 
+    numero: 0, 
+    departamento: "", 
+    localidad: "", 
+    notas: "",
+    esLocal: false}]);
+
+    const [direccionesLocales, setDireccioneLocales] = useState([{
+      id: "", 
+      calle: "", 
+      numero: 0, 
+      departamento: "", 
+      localidad: "", 
+      notas: "",
+      esLocal: false}]);
   
 
   const editarDireccion = (event:any, key:string) => {
     //Tengo que arreglar esto
     let direccion = {id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: ""};
-    direccionesSinFormatear.forEach(e => { if(e.id === key){
+    direcciones.forEach(e => { debugger; if(e.id === key){
       setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
     }})
     
@@ -76,30 +91,19 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
     let data: any = [];
     let locales: any = [];
     CompradorService.obtenerDirecciones(token).then(res => {
-      let i = 1;
       direccionesSinFormatear = res;
       res.forEach(direccion => {
-        let val = {
-          title: direccion.calle + " " + direccion.numero,
-          description:
-            direccion.localidad + " ," + direccion.departamento + " | " + direccion.notas,
-          key: direccion.id
-        }
-        data.push(val);
+        // let val = {
+        //   title: direccion.calle + " " + direccion.numero,
+        //   description:
+        //     direccion.localidad + " ," + direccion.departamento + " | " + direccion.notas,
+        //   key: direccion.id
+        data.push(direccion);
         //Datos de los locales
         if(direccion.locales != null){
-          direccion.locales.forEach(local => {
-            let val = {
-              title: local.calle + " " + local.numero,
-              description:
-              local.localidad + " ," + local.departamento + " | " + local.notas,
-              key: direccion.id
-            }
-            locales.push(val);
-          })
+          locales = direccion.locales.map(local => {return local});
           setDireccioneLocales(locales);
         }
-        i++;
       });
       setDirecciones(data);
       //setDirecciones(data);
@@ -115,28 +119,28 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
           itemLayout="horizontal"
           dataSource={direcciones}
           renderItem={(item) => (
-            <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.key)} key={item.key}></EditOutlined>]}> 
-              {props.permiteSeleccion && <Checkbox checked={item.key == value} onChange={e => onSelectDirection(e, item.key)} style={{margin:'20px'}}></Checkbox> } 
+            <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
+              {props.permiteSeleccion && <Checkbox checked={item.id === value} onChange={e => onSelectDirection(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
               <List.Item.Meta
                 avatar={<EnvironmentOutlined />}
-                title={<a>{item.title}</a>}
-                description={item.description}
+                title={<a>{item.calle + " " + item.numero}</a>}
+                description={item.localidad + " ," + item.departamento + " | " + item.notas}
               />
             </List.Item>
           )}
         />
-        {direccionesLocales[0].title != "" && <div style={{marginTop:"20px"}}>
+        {direccionesLocales[0].calle != "" && <div style={{marginTop:"20px"}}>
           <h3>Direcciones de locales</h3>
           <List
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
-              <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.key)} key={item.key}></EditOutlined>]}> 
-                {props.permiteSeleccion && <Checkbox checked={item.key == value} onChange={e => onSelectDirection(e, item.key)} style={{margin:'20px'}}></Checkbox> } 
+              <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
+                {props.permiteSeleccion && <Checkbox checked={item.id == value} onChange={e => onSelectDirection(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined />}
-                  title={<a>{item.title}</a>}
-                  description={item.description}
+                  title={<a>{item.calle + " " + item.numero}</a>}
+                  description={item.localidad + " ," + item.departamento + " | " + item.notas}
                 />
               </List.Item>
             )}

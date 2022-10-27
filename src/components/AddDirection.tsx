@@ -91,7 +91,7 @@ const AddDirection: React.FC<{esVendedor:boolean, callBack: any, editar: boolean
       }
     }
     
-  }, []);
+  }, [datosActuales]);
 
 
   return (
