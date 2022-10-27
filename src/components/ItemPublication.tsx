@@ -1,6 +1,7 @@
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleFilled } from '@ant-design/icons';
 import { Card, Button, Typography } from 'antd';
 import { DtProductoSlim } from 'shopit-shared/dist/user/VendedorService';
+import { useNavigate } from "react-router-dom";
 
 interface Props {
   producto: DtProductoSlim
@@ -9,12 +10,13 @@ const { Meta } = Card;
 const { Text } = Typography;
 
 export const ItemPublication = ({ producto }: Props) => {
+  const navigate = useNavigate();
   return (
     <Card
       key={producto.idProducto}
       hoverable
       bodyStyle={{ padding: "5%" }}
-      cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" id={producto.idProducto} style={{ width: '90%' }} icon={<InfoCircleFilled />} >
+      cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" id={producto.idProducto} style={{ width: '90%' }} onClick={()=> navigate("/productos/"+producto.idProducto)} icon={<InfoCircleFilled />} >
         Ver detalles
       </Button>]}>
       <Meta title={producto.nombre} style={{ whiteSpace: "pre-line" }} />
