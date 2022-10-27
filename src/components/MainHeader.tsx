@@ -1,8 +1,14 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
+import Search from "antd/lib/input/Search";
+import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
+import { useMitt } from "react-mitt";
+import { CategoriaService } from "shopit-shared";
+import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
 import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
+
 
 const useStyles = createUseStyles({
   wrapper: {
@@ -71,9 +77,35 @@ const menu = (
   />
 );
 
+
+
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
+  const { emitter } = useMitt()
   const styles = useStyles()
   const sesionIniciada = true;
+  const [categorias, setCategorias] = useState<DtCategoria[]>([])
+
+  const buscarProducto = (value: string) => {
+    emitter.emit('busquedaProducto', { data: value });
+  };
+
+  const buscarCategoria = (event: React.MouseEvent<HTMLButtonElement>) => {
+    emitter.emit('busquedaCategoria', { data: event.currentTarget.value.toString() });
+  };
+
+  const obtenerCategorias = () => {
+    CategoriaService.listarCategorias().then((result) => {
+      if (result) {
+        setCategorias(result);
+      }
+    })
+  }
+
+  useEffect(() => {
+    obtenerCategorias();
+
+  }, [])
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
@@ -83,29 +115,31 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
             className={styles.profileImage}
             src={logo} />
         </div>
-        <Input
-          style={{ gridColumn: 2, textAlign: "center" }}
-          className={styles.searchBar}
+        <Search
+
           placeholder="Buscar productos"
-          suffix={<SearchOutlined />} />
+          onSearch={buscarProducto}
+        />
 
-          {sesionIniciada ? 
-            <Dropdown overlay={menu} placement="bottomLeft" >
-              <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male"  style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}/>
-            </Dropdown> : 
+        {sesionIniciada ?
+          <Dropdown overlay={menu} placement="bottomLeft" >
+            <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male" style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
+          </Dropdown> :
 
-            <Button
+          <Button
             type="primary"
             style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar Sesion</Button>
         }
       </div>
       <div className={styles.secondRow}>
         <div className={styles.categoryContainer}>
-          <Button type="text" style={{ gridColumn: 1 }} >Categoría 1</Button>
-          <Button type="text" style={{ gridColumn: 2 }} >Categoría 2</Button>
-          <Button type="text" style={{ gridColumn: 3 }} >Categoría 3</Button>
-          <Button type="text" style={{ gridColumn: 4 }} >Categoría 4</Button>
-          <Button type="text" style={{ gridColumn: 5 }} >Categoría 5</Button>
+          {
+            categorias.map((categoria, index) => {
+              return (
+                <Button type="text" style={{ gridColumn: index + 1 }} key={index} value={categoria.toString()} onClick={buscarCategoria}>{categoria.toString()}</Button>
+              )
+            })
+          }
         </div>
       </div>
     </div>

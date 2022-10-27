@@ -1,23 +1,28 @@
-import { Col, Card } from 'antd';
+import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleFilled } from '@ant-design/icons';
+import { Card, Button, Typography } from 'antd';
+import { DtProductoSlim } from 'shopit-shared/dist/user/VendedorService';
 
+interface Props {
+  producto: DtProductoSlim
+}
+const { Meta } = Card;
+const { Text } = Typography;
 
-type itemPublicationProps = {
-    titulo: string;
-    descripcion: string;
-    precio: number;
-    imagen: string;
-  };
-
-export const ItemPublication = (itemProps: itemPublicationProps) => {
-    const { Meta } = Card;
-    return (
-        <Col span={5}>
-          <Card
-          hoverable
-          style={{ width: '100%', height: '450px'}}
-          cover={<img alt='' src={itemProps.imagen} />}>
-            <Meta style={{position: "absolute", bottom: 20,left: 20}} title={itemProps.titulo} description={itemProps.descripcion} />
-          </Card>
-      </Col>
-    )
+export const ItemPublication = ({ producto }: Props) => {
+  return (
+    <Card
+      key={producto.idProducto}
+      hoverable
+      bodyStyle={{ padding: "5%" }}
+      cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" id={producto.idProducto} style={{ width: '90%' }} icon={<InfoCircleFilled />} >
+        Ver detalles
+      </Button>]}>
+      <Meta title={producto.nombre} style={{ whiteSpace: "pre-line" }} />
+      <div className="additional" style={{ marginTop: "10%" }}>
+        <Text >{"$" + producto.precio}</Text>
+        <br></br>
+        <Text>Permite envío {(producto.permiteEnvio) ? <CheckCircleOutlined style={{ color: '#52c41a' }} /> : <CloseCircleOutlined style={{ color: '#ff4d4f' }} />}</Text>
+      </div>
+    </Card>
+  )
 };

@@ -12,7 +12,7 @@ const HomePage: React.FC<HomePageProps> = (props) => {
   return (
     <>
       {showHeader && <MainHeader />}
-      {showProfile ? <Perfil></Perfil> : <Publicactions></Publicactions> }
+      {showProfile ? <Perfil></Perfil> : <Publicactions/>}
     </>
   )
 }
