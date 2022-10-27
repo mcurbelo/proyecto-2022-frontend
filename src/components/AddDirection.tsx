@@ -1,39 +1,65 @@
-import React, {useState} from "react";
-import {Form, Input, Checkbox, Button, Select, } from 'antd';
+import React, {useEffect, useState} from "react";
+import {Form, Input, Checkbox, Button, Select, message } from 'antd';
 import { CompradorService } from "shopit-shared";
+import { type } from "@testing-library/user-event/dist/type";
 
- 
-const AddDirection: React.FC<{esVendedor:any, callBack: any}> = (props) => {
+
+const AddDirection: React.FC<{esVendedor:boolean, callBack: any, editar: boolean, idDireccion?: string, datosActuales?: editDireccion }> = (props) => {
+  const token : string =  localStorage.getItem("token") as string;
   const doc: any = document;
+  const {datosActuales} = props;
   let [esEnvio, setEsEnvio] = useState(false);
   let [local, setEsLocal] = useState(false);
-  let [departamento, setDepartamento] = useState("");
   const { Option } = Select;
   const { TextArea } = Input;
-  let valores = []; 
   let {callBack} = props;
+  const [form] = Form.useForm();
 
   const onFinish = (values: any) => {
     let requestBody = {
       calle: values.calle,
       numero: values.numero,
       departamento: values.departamento,
+      localidad: values.localidad,
       notas: values.aclaracion,
-      esLocal: local 
+      esLocal: local,
+      id: ""
     }
 
-    CompradorService.agregarDireccion(requestBody).then(res => {
+    if(props.editar){
+      requestBody.id = props.idDireccion != undefined? props.idDireccion : "";
+      CompradorService.editarDireccion(token, requestBody).then(res => {
+          if(res.status === 200){
+            message.success('Direccion editada con exito');
+            callBack();
+          }
+      }).catch(e => {
+        console.log(e);
+      })
+    }else{
+      CompradorService.agregarDireccion(token, requestBody).then(res => {
   
-      doc.getElementById("aclaracion").value = "";
-      doc.getElementById("calle").value = "";
-      doc.getElementById("numero").value = "";
-      setEsEnvio(false);
-      setEsLocal(false);
+        doc.getElementById("aclaracion").value = "";
+        doc.getElementById("calle").value = "";
+        doc.getElementById("numero").value = "";
+        setEsEnvio(false);
+        setEsLocal(false);
+        message.success('Direccion agregada con exito');
 
-      callBack();
-    }).catch(e => {
-      console.log(e);
-    })
+        form.setFieldsValue({
+          calle: "",
+          numero: "",
+          localidad: "",
+          departamento: "",
+          aclaracion: ""
+        });
+      
+        callBack();
+      }).catch(e => {
+        console.log(e);
+      })
+    }
+    
 
     
     
@@ -50,7 +76,28 @@ const AddDirection: React.FC<{esVendedor:any, callBack: any}> = (props) => {
   }
 
 
+  
+  React.useEffect(() => {
+    if(datosActuales != null){
+      form.setFieldsValue({
+        calle: datosActuales.calle,
+        numero: datosActuales.numero,
+        localidad: datosActuales.localidad,
+        departamento: datosActuales.departamento,
+        aclaracion: datosActuales.aclaracion
+      });
+      if(datosActuales.esLocal){
+        setEsLocal(true);
+      }
+    }
+    
+  }, []);
+
+
   return (
+
+
+    
     <Form
       name="basic"
       labelCol={{ span: 8 }}
@@ -58,27 +105,32 @@ const AddDirection: React.FC<{esVendedor:any, callBack: any}> = (props) => {
       initialValues={{ remember: true }}
       onFinish={onFinish}
       autoComplete="off"
+      form={form}
     >
       <Form.Item
         label="Calle"
-        name="calle"
-        rules={[{ required: true }]}>
-        <Input id="calle" />
+        name="calle">
+        <Input id="calle"/>
       </Form.Item>
 
       <Form.Item
         label="Numero"
         name="numero"
-        rules={[{ required: true }]}
       >
         <Input type="Number" id="numero" />
+      </Form.Item>
+
+      <Form.Item
+        label="Localidad"
+        name="localidad"
+        >
+        <Input id="localidad" />
       </Form.Item>
       
       <Form.Item
         name="departamento"
         label="Departamento">
         <Select id="departamentos" >
-            <Option value="vacia">Eliga un departamento</Option>
             <Option value="Lavalleja">Lavalleja</Option>
             <Option value="Florida">Florida</Option>
             <Option value="Flores">Flores</Option>
@@ -102,7 +154,7 @@ const AddDirection: React.FC<{esVendedor:any, callBack: any}> = (props) => {
       </Form.Item>
 
       <Form.Item label="Aclaracion" name="aclaracion">
-          <TextArea rows={2} id="aclaracion"/>
+          <TextArea rows={2} id="aclaracion" />
         </Form.Item>
 
       <Form.Item style={props.esVendedor ? {display:"block"} : {display:"none"}} name="tipoDireccion" wrapperCol={{ offset: 8, span: 16 }}>
@@ -112,8 +164,8 @@ const AddDirection: React.FC<{esVendedor:any, callBack: any}> = (props) => {
 
       <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
         <Button type="primary" htmlType="submit">
-          Agregar nueva direccion
-        </Button>
+          { props.editar ? "Editar direccion" : 'Agregar nueva direccion'}
+        </Button> 
       </Form.Item>
     </Form>
   );
@@ -122,3 +174,4 @@ const AddDirection: React.FC<{esVendedor:any, callBack: any}> = (props) => {
 
 export default AddDirection;
  
+type editDireccion =  {calle:string, numero: number, departamento:string, localidad: string, aclaracion:string, esLocal: boolean}
