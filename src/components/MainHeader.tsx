@@ -1,9 +1,11 @@
 import { SearchOutlined } from "@ant-design/icons";
 import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
 import Search from "antd/lib/input/Search";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMitt } from "react-mitt";
+import { CategoriaService } from "shopit-shared";
+import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
 import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
 
@@ -81,11 +83,28 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const { emitter } = useMitt()
   const styles = useStyles()
   const sesionIniciada = true;
+  const [categorias, setCategorias] = useState<DtCategoria[]>([])
 
   const buscarProducto = (value: string) => {
-    // emitter.emit('busquedaCategoria', {data: event.target.})
-    emitter.emit('busquedaProducto', {data: value});
+    emitter.emit('busquedaProducto', { data: value });
   };
+
+  const buscarCategoria = (event: React.MouseEvent<HTMLButtonElement>) => {
+    emitter.emit('busquedaCategoria', { data: event.currentTarget.value.toString() });
+  };
+
+  const obtenerCategorias = () => {
+    CategoriaService.listarCategorias().then((result) => {
+      if (result) {
+        setCategorias(result);
+      }
+    })
+  }
+
+  useEffect(() => {
+    obtenerCategorias();
+
+  }, [])
 
   return (
     <div className={styles.wrapper}>
@@ -97,7 +116,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
             src={logo} />
         </div>
         <Search
-     
+
           placeholder="Buscar productos"
           onSearch={buscarProducto}
         />
@@ -114,11 +133,13 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       </div>
       <div className={styles.secondRow}>
         <div className={styles.categoryContainer}>
-          <Button type="text" style={{ gridColumn: 1 }} >Categoría 1</Button>
-          <Button type="text" style={{ gridColumn: 2 }} >Categoría 2</Button>
-          <Button type="text" style={{ gridColumn: 3 }} >Categoría 3</Button>
-          <Button type="text" style={{ gridColumn: 4 }} >Categoría 4</Button>
-          <Button type="text" style={{ gridColumn: 5 }} >Categoría 5</Button>
+          {
+            categorias.map((categoria, index) => {
+              return (
+                <Button type="text" style={{ gridColumn: index + 1 }} key={index} value={categoria.toString()} onClick={buscarCategoria}>{categoria.toString()}</Button>
+              )
+            })
+          }
         </div>
       </div>
     </div>
