@@ -80,7 +80,7 @@ export const InfoProducto = () => {
           setImagen(result.imagenes.at(0))
         } else {
           Modal.error({
-            content: result,
+            content: result+".",
           });
           navigate("/");
         }
