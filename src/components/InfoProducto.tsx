@@ -1,9 +1,12 @@
-import { Col, Row, Image, List, Typography, Rate } from "antd";
+import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Popover, Space, Alert, Modal } from "antd";
 import React, { useEffect, useState } from "react";
-import src, { createUseStyles } from "react-jss";
+import { createUseStyles } from "react-jss";
 import { useParams } from "react-router-dom";
 import { ProductoService } from "shopit-shared";
 import { DtProducto } from "shopit-shared/dist/user/ProductoService";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoneyBill1, faShop, faTruckFast, faWallet } from "@fortawesome/free-solid-svg-icons";
+import tarjetas from '../images/tarjetas.jpg';
 
 interface AppState {
   producto: DtProducto
@@ -11,32 +14,53 @@ interface AppState {
 }
 
 const useStyles = createUseStyles({
-  "@global": {
-    "ant-list-item:hover": {
-      boxShadow: '0 0 4px #eee'
-    }
+  listaImagenes: {
+    '& li:first-child': {
+      paddingTop: '0'
+    },
+    width: "min-content"
+  },
+  container: {
+    display: "inline-flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
   },
 
+  container2: {
+    display: "inline-flex",
+    flexWrap: "wrap",
+    flexDirection: "row",
+  },
+  infoProducto: {
+    width: "25%"
+  },
+  compra: {
+    width: "25%",
+  },
+  '@media screen and (max-width: 1000px)': {
+    container: {
+      flexDirection: "column"
+    },
+    infoProducto: {
+      width: "100%"
+    },
+    compra: {
+      width: "100%",
+    },
+
+  },
+
+  '@media screen and (max-width: 576px)': {
+    listaImagenes: {
+      width: "auto"
+    },
+    container2: {
+      flexDirection: "column"
+    }
+  }
 })
 
-const data = [
-  {
-    title: 'Ant Design Title 1',
-  },
-  {
-    title: 'Ant Design Title 2',
-  },
-  {
-    title: 'Ant Design Title 3',
-  },
-  {
-    title: 'Ant Design Title 4',
-  },
-  {
-    title: 'Ant Design Title 4',
-  },
-];
-const { Text, Link, Paragraph } = Typography;
+const { Text, Paragraph } = Typography;
 
 export const InfoProducto = () => {
   let { id } = useParams();
@@ -44,11 +68,15 @@ export const InfoProducto = () => {
   const [producto, setProducto] = useState<AppState["producto"]>();
   const [imangeSeleccionada, setImagen] = useState<AppState["imagen"]>();
   const [ellipsis, setEllipsis] = useState(true);
+  const [counter, setCounter] = useState(0);
+  const [cantidadProducto, setCantidad] = useState(1);
+
   useEffect(() => {
     if (id) {
       ProductoService.infoProducto(id).then((result) => {
         if (result != undefined) {
           setProducto(result);
+          setImagen(result.imagenes.at(0))
         }
       })
     }
@@ -59,68 +87,149 @@ export const InfoProducto = () => {
   }
   const estadoStock = () => {
     if (producto != undefined && producto?.stock >= 30)
-      return <Text type="success">En stock</Text>
+      return <Text type="success">En stock<FontAwesomeIcon icon={faBoxesStacked} /></Text>
 
     if (producto != undefined && producto?.stock < 30 && producto?.stock > 10)
-      return <Text type="warning">Stock medio</Text>
+      return <Text type="warning">Stock medio <FontAwesomeIcon icon={faBoxesStacked} /></Text>
 
     if (producto != undefined && producto?.stock <= 10 && producto?.stock > 0)
-      return <Text type="danger">Últimas unidades</Text>
+      return <Text type="danger">Últimas unidades  <FontAwesomeIcon icon={faBox} /></Text>
     else
-      return <Text mark>Sin stock</Text>
+      return <Text mark>Sin stock <FontAwesomeIcon icon={faCircleXmark} /></Text>
 
   }
-  //TOOD Mostrar garantia
+
+  const onChange = (value: number | null) => {
+    if (value != null)
+      setCantidad(value)
+  };
+
+  const expansion = () => {
+    setEllipsis(!ellipsis);
+    setCounter(ellipsis ? counter + 0 : counter + 1)
+  };
+
+  const renderDescripcion = () => {
+    return (
+      <Paragraph key={counter} ellipsis={ellipsis ? { rows: 3, expandable: true, symbol: 'Ver más', onExpand: expansion } : false}>
+        {producto?.descripcion}
+      </Paragraph>
+    )
+  }
+
+  const content = (
+    <div>
+      <Text>Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.</Text>
+    </div>
+  );
+
+  const realizarCompra = () => {
+    if (cantidadProducto === null) {
+      Modal.warning({
+        content: "Cantidad de unidades invalida",
+      });
+    }
+
+    if (producto?.stock && cantidadProducto > producto?.stock) {
+      Modal.warning({
+        content: "La cantidad de unidades solicitadas es superior al stock actual",
+      });
+    }
+  }
+
   return (
-    <Row style={{ gap: "3%" }}>
-      <Col>
-        <h1> Imagenes</h1>
-        <div style={{ display: 'flex' }}>
-          <List
-            itemLayout="horizontal"
-            style={{ display: "flex" }}
-            dataSource={data}
-            renderItem={item => (
-              <List.Item>
-                <Image
-                  width={50}
-                  id="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                  preview={false}
-                  onClick={seleccionarImagen}
-                  src="https://zos.alipayobjects.com/rmsportal/jkjgkEfvpUPVyRjUImniVslZfWPnJuuZ.png"
-                />
-              </List.Item>
-            )}
-          />
-          <div style={{ marginLeft: "5%" }}>
+    <Row className={styles.container} style={{ gap: "3%", justifyContent: "center" }}>
+      <Col style={{ display: "flex", justifyContent: "center" }}>
+        <Row gutter={16} className={styles.container2} >
+          <Col className={styles.listaImagenes} style={{ display: "flex" }}>
+            <List
+              style={{ display: "flex" }}
+              className={styles.listaImagenes}
+              dataSource={producto?.imagenes}
+              grid={{
+                xs: 5,
+                sm: 1,
+                md: 1,
+                lg: 1,
+                xl: 1,
+                xxl: 1,
+              }}
+              renderItem={item => (
+                <List.Item style={{ cursor: "pointer" }}>
+                  <Image
+                    width={60}
+                    id={item}
+                    preview={false}
+                    onClick={seleccionarImagen}
+                    src={item}
+                  />
+                </List.Item>
+
+              )}
+            />
+          </Col>
+          <Col >
             <Image
-              width={200}
+              width={350}
+              height={300}
               src={imangeSeleccionada}
             />
+          </Col>
+        </Row>
+      </Col>
+      <Col className={styles.infoProducto}>
+        <Card>
+          <h2> {producto?.nombre}</h2>
+          <hr />
+          <Text><Avatar size="large" src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
+          <hr />
+          <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
+          <hr />
+          <Space>
+            <Text>Garantía: {producto?.garantia}</Text> <Popover content={content} trigger="click">
+              <Button type="primary" style={{ width: "20px" }} >?</Button>
+            </Popover>
+          </Space>
+          <hr />
+          <Text>Diponibilidad: <b>{estadoStock()}</b></Text>
+          <hr />
+          <Text>Forma de entrega: {(producto?.permiteEnvio) ? <Text><b>Envío</b> <FontAwesomeIcon icon={faTruckFast} /> | <b>Retiro</b>  <FontAwesomeIcon icon={faShop} /></Text> : <Text><b>Solo retiro</b> <FontAwesomeIcon icon={faShop} /></Text>}</Text>
+          <hr />
+          <Text>Más información del producto: </Text>
+          {renderDescripcion()}
+          {!ellipsis && <a onClick={expansion}>Ver menos</a>}
+        </Card>
+      </Col>
+      <Col className={styles.compra}>
+        <Card>
+          <div>
+            <h4>$ {producto?.precio}  (Pesos uruguayos)</h4>
+            <Divider />
+            <Text> <FontAwesomeIcon icon={faCirclePlus} color='#52c41a' /> <b>Agrega productos</b> al carrito para pagar varios productos en una sola transacción.</Text>
+            <Divider>O</Divider>
+            <Text> <FontAwesomeIcon icon={faMoneyBill1} color='#459E19' /> <b>Compra directamente</b> el producto con ingresando la cantidad deseada.</Text>
           </div>
-        </div>
-      </Col>
-      <Col>
-        <h1>Informacion</h1>
-        <Text> {producto?.nombre}</Text>
-        <hr />
-        <Text>$ {producto?.precio}</Text>
-        <hr />
-        <Text>Vendedor: {producto?.nombreVendedor}</Text>  <Rate disabled defaultValue={producto?.calificacion} /> <Text>{producto?.calificacion}/5</Text>
-        <hr />
-        <Text>Garantía:</Text>
-        <hr />
-        <Text>Diponibilidad: <b>{estadoStock()}</b></Text>
-        <hr />
-        <Text>Forma de entrega: {(producto?.permiteEnvio) ? <Text>envío o retiro</Text> : <Text>Solo retiro</Text>}</Text>
-        <hr />
-        <Text>Mas información del producto: </Text>
-      </Col>
-      <Col>
-        <h1> Cartel de compra</h1>
+          <Divider />
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+            <div>
+              <Text>Cantidad:</Text>
+              <InputNumber id="cantidad" min={1} defaultValue={1} onChange={onChange} />
+            </div>
+            <Image
+              width={170}
+              preview={false}
+              src={tarjetas} />
+          </div>
+          <Divider />
+          <div>
+            <Button type="primary" block style={{ marginBottom: "3%" }}>
+              Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} onClick={realizarCompra} /></Button>
+            <Button block>
+              Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
+          </div>
+        </Card>
       </Col>
     </Row>
   )
-
 }
 export default InfoProducto;
