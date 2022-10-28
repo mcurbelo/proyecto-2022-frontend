@@ -13,9 +13,10 @@ import HomePage from './pages/Home';
 import UserList from './pages/UserList';
 import NotificacionTest from './test/Notification'
 import SignUpPage from './pages/SignUpPage';
-import {Auth} from "shopit-shared";
+import { Auth } from "shopit-shared";
 import AddCardForm from './components/AddCard';
 import CardList from './components/CardList';
+import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
 require('dotenv').config();
 
@@ -38,6 +39,7 @@ root.render(
         <Route path="/cards" element={<CardList onSelectCard={(id) => {
           console.log("Selected card: " + id)
         }} />} />
+        <Route path="/productos/:id" element={<InfoProducto />} />
       </Routes>
     </BrowserRouter>
 
