@@ -1,7 +1,7 @@
 import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Popover, Space, Alert, Modal } from "antd";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { ProductoService } from "shopit-shared";
 import { DtProducto } from "shopit-shared/dist/user/ProductoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -63,6 +63,7 @@ const useStyles = createUseStyles({
 const { Text, Paragraph } = Typography;
 
 export const InfoProducto = () => {
+  const navigate = useNavigate();
   let { id } = useParams();
   const styles = useStyles();
   const [producto, setProducto] = useState<AppState["producto"]>();
@@ -74,9 +75,14 @@ export const InfoProducto = () => {
   useEffect(() => {
     if (id) {
       ProductoService.infoProducto(id).then((result) => {
-        if (result != undefined) {
+        if (typeof result !== 'string') {
           setProducto(result);
           setImagen(result.imagenes.at(0))
+        } else {
+          Modal.error({
+            content: result,
+          });
+          navigate("/");
         }
       })
     }
@@ -102,6 +108,8 @@ export const InfoProducto = () => {
   const onChange = (value: number | null) => {
     if (value != null)
       setCantidad(value)
+    else
+      setCantidad(0)
   };
 
   const expansion = () => {
@@ -124,15 +132,15 @@ export const InfoProducto = () => {
   );
 
   const realizarCompra = () => {
-    if (cantidadProducto === null) {
+    if (cantidadProducto === 0) {
       Modal.warning({
-        content: "Cantidad de unidades invalida",
+        content: "Cantidad de unidades invalida.",
       });
     }
 
     if (producto?.stock && cantidadProducto > producto?.stock) {
       Modal.warning({
-        content: "La cantidad de unidades solicitadas es superior al stock actual",
+        content: "La cantidad de unidades solicitadas es superior al stock actual.",
       });
     }
   }
@@ -164,11 +172,10 @@ export const InfoProducto = () => {
                     src={item}
                   />
                 </List.Item>
-
               )}
             />
           </Col>
-          <Col >
+          <Col>
             <Image
               width={350}
               height={300}
@@ -222,8 +229,8 @@ export const InfoProducto = () => {
           </div>
           <Divider />
           <div>
-            <Button type="primary" block style={{ marginBottom: "3%" }}>
-              Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} onClick={realizarCompra} /></Button>
+            <Button type="primary" block style={{ marginBottom: "3%" }} onClick={realizarCompra}>
+              Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
             <Button block>
               Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
           </div>
