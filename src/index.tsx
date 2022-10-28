@@ -18,6 +18,7 @@ import AddCardForm from './components/AddCard';
 import CardList from './components/CardList';
 import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
+import RealizarCompra from './components/RealizarCompra';
 require('dotenv').config();
 
 Auth.endpoint = process.env.REACT_APP_SERVER_URL ?? "";
@@ -33,13 +34,14 @@ root.render(
         <Route path="/signup" element={<SignUpPage />} />
         <Route path="/users" element={<UserList />} />
         <Route path="/directions" element={<Directions />} />
-        <Route path="/testNotifiacion" element={<NotificacionTest/>} />
-        <Route path="/addCard"  element={<AddCardForm />} />
-        <Route path="/profile"  element={<HomePage showHeader={true} showProfile={true} />} />
+        <Route path="/testNotifiacion" element={<NotificacionTest />} />
+        <Route path="/addCard" element={<AddCardForm />} />
+        <Route path="/profile" element={<HomePage showHeader={true} showProfile={true} />} />
         <Route path="/cards" element={<CardList onSelectCard={(id) => {
           console.log("Selected card: " + id)
         }} />} />
         <Route path="/productos/:id" element={<InfoProducto />} />
+        <Route path="/compra" element={<RealizarCompra />} />
       </Routes>
     </BrowserRouter>
 

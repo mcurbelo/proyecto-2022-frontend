@@ -7,6 +7,7 @@ import { DtProducto } from "shopit-shared/dist/user/ProductoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoneyBill1, faShop, faTruckFast, faWallet } from "@fortawesome/free-solid-svg-icons";
 import tarjetas from '../images/tarjetas.jpg';
+import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 
 interface AppState {
   producto: DtProducto
@@ -174,11 +175,20 @@ export const InfoProducto = () => {
         content: "Cantidad de unidades invalida.",
       });
     }
-
-    if (producto?.stock && cantidadProducto > producto?.stock) {
+    else if (producto?.stock && cantidadProducto > producto?.stock) {
       Modal.warning({
         content: "La cantidad de unidades solicitadas es superior al stock actual.",
       });
+    } else {
+      const infoCompra: DtCompra = {
+        idVendedor: producto?.idVendedor || "",
+        idProducto: producto?.idProducto || "",
+        cantidad: cantidadProducto || 0,
+        esParaEnvio: producto?.permiteEnvio || false,
+        idTarjeta: ""
+      }
+      localStorage.setItem("infoCompra", JSON.stringify(infoCompra))
+      navigate("/compra")
     }
   }
 
@@ -276,21 +286,21 @@ export const InfoProducto = () => {
         </Card>
       </Col>
       <div>
-      <List
-        className="comment-list"
-        header={`${data.length} replies`}
-        itemLayout="horizontal"
-        dataSource={data}
-        renderItem={item => (
-          <li>
-            <Comment actions={item.actions}
-              author={item.author}
-              avatar={item.avatar}
-              content={item.content}
-              datetime={item.datetime} />
-          </li>
-        )}
-      />
+        <List
+          className="comment-list"
+          header={`${data.length} replies`}
+          itemLayout="horizontal"
+          dataSource={data}
+          renderItem={item => (
+            <li>
+              <Comment actions={item.actions}
+                author={item.author}
+                avatar={item.avatar}
+                content={item.content}
+                datetime={item.datetime} />
+            </li>
+          )}
+        />
       </div>
     </Row>
   )
