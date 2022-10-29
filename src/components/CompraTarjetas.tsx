@@ -4,6 +4,7 @@ import { render } from "@testing-library/react";
 import { Button, Row } from "antd";
 import React, { MouseEventHandler, useState } from "react";
 import AddCard from "./AddCard";
+import AddDirection from "./AddDirection";
 import CardList from "./CardList";
 import CreditCard from "./CreditCard";
 

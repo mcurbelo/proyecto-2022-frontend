@@ -1,11 +1,12 @@
 import { Button, message, Steps } from 'antd';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
-import { useNavigate } from 'react-router';
+import { useLocation, useNavigate } from 'react-router';
+import { CompradorService } from 'shopit-shared';
 import { DtCompra } from 'shopit-shared/dist/user/CompradorService';
-import CardList from './CardList';
+import CompraDireccion from './CompraDireccion';
 import CompraTarjeta from './CompraTarjetas';
-import { Directions } from './Directions';
+import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
 
 const { Step } = Steps;
 
@@ -32,8 +33,11 @@ interface AppState {
 
 
 export const RealizarCompra = () => {
+    const { state } = useLocation();
+    const { permiteEnvio, direccionesVendedor } = state;
     const navigate = useNavigate();
     const [current, setCurrent] = useState(0);
+    const [direccionesComprador, setDireccion] = useState([] as DtDireccion[])
     const [datosCompra, setDatosCompra] = useState<AppState["datosCompra"]>({
         idVendedor: "",
         idProducto: "",
@@ -50,13 +54,16 @@ export const RealizarCompra = () => {
     };
 
     useEffect(() => {
-        const value = JSON.parse(localStorage.getItem("infoCompra") || "")
-        //TODO ver que onda
-        if (value == null) {
+        if (localStorage.getItem("infoCompra") === null)
             navigate("/");
-        }
+        const value = JSON.parse(localStorage.getItem("infoCompra") || "")
         setDatosCompra(value)
-
+        if (permiteEnvio) {
+            let token = localStorage.getItem("token");
+            CompradorService.obtenerDirecciones(token!).then((result) => {
+                setDireccion(result)
+            })
+        }
     }, [])
 
     const onChangeDatos = (id: string, campo: string) => {
@@ -65,10 +72,15 @@ export const RealizarCompra = () => {
         }
     }
 
+    const onChangeEnvio = (opc: boolean) => {
+        setDatosCompra({ ...datosCompra, "esParaEnvio": opc })
+
+    }
+
     const steps = [
         {
             title: 'Elegir ubicación de retiro/entrega',
-            content: <Directions />,
+            content: <CompraDireccion permiteEnvio={permiteEnvio} direcciones={(datosCompra.esParaEnvio) ? direccionesComprador : direccionesVendedor} onSelectEsEnvio={(opc) => { onChangeEnvio(opc) }} onSelectDireccion={(id) => { onChangeDatos(id, (datosCompra.esParaEnvio) ? "idDireccionEnvio" : "idDireccionRetiro") }} />
         },
         {
             title: 'Seleccionar forma de pago',
@@ -76,7 +88,7 @@ export const RealizarCompra = () => {
         },
         {
             title: 'Realizar compra',
-            content: ""
+            content: <h1>{datosCompra.idTarjeta+" "+datosCompra.idDireccionEnvio}</h1>
         },
     ];
 
