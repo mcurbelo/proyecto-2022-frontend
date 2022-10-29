@@ -1,8 +1,10 @@
 import React, {useState,useEffect} from "react";
-import { List, Avatar, Button, Checkbox, message, Modal } from "antd";
+import { List, Avatar, Button, Checkbox, message, Modal,  } from "antd";
 import { EnvironmentOutlined, EditOutlined } from "@ant-design/icons";
 import AddDirection from "./AddDirection";
 import { CompradorService } from "shopit-shared";
+import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
+
 
 
 
@@ -11,36 +13,20 @@ const token : string =  localStorage.getItem("token") as string;
 interface DirectionsProps {
   permiteSeleccion ?: boolean;
   esVendedor?:boolean;
+  onSelectDirection?: (id: string) => void;
 }
 
-let direccionesSinFormatear: Array<any> = [];
-
 export const Directions: React.FC<DirectionsProps> = (props) => {
- 
+  let { onSelectDirection } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [value, setValue] = useState();
   const [idDireccion, setIdDireccion] = useState("");
+  const [siguienteVisible, setSiguienteVisible] = useState(true);
   const [direccionEditar, setDireccionEditar] = useState({id: "", calle:"", numero: 0, departamento:"", localidad: "", aclaracion:"", esLocal: false});
   const [addDirection, setAddDirection] = useState(false);
   //const [direcciones, setDirecciones] = useState([{title:"", description: "", key: ""}]);
 
-  const [direcciones, setDirecciones] = useState([{
-    id: "", 
-    calle: "", 
-    numero: 0, 
-    departamento: "", 
-    localidad: "", 
-    notas: "",
-    esLocal: false}]);
-
-    const [direccionesLocales, setDireccioneLocales] = useState([{
-      id: "", 
-      calle: "", 
-      numero: 0, 
-      departamento: "", 
-      localidad: "", 
-      notas: "",
-      esLocal: false}]);
+  const [direcciones, setDirecciones] = useState([] as DtDireccion[]);
+  const [direccionesLocales, setDireccioneLocales] = useState([] as DtDireccion[]);
   
 
   const editarDireccion = (event:any, key:string) => {
@@ -68,15 +54,17 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
     getDirecciones();
   }, []);
 
-  function onSelectDirection(event:any, key:any) {
-    setValue(key);
+  function onChangeDireccion(event:any, key:any) {
+    setIdDireccion(key);
   }
 
   function onAddDirection() {
     if(addDirection){
       setAddDirection(false);
+      setSiguienteVisible(true);
     }else{
       setAddDirection(true);
+      setSiguienteVisible(false);
     }
     
   }
@@ -87,26 +75,22 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
   }
 
 
+  function onSeleccionarDireccion (){
+    if(onSelectDirection != undefined) onSelectDirection(idDireccion);
+  }
+
+
   function getDirecciones(){
     let data: any = [];
     let locales: any = [];
     CompradorService.obtenerDirecciones(token).then(res => {
-      direccionesSinFormatear = res;
       res.forEach(direccion => {
-        // let val = {
-        //   title: direccion.calle + " " + direccion.numero,
-        //   description:
-        //     direccion.localidad + " ," + direccion.departamento + " | " + direccion.notas,
-        //   key: direccion.id
-        data.push(direccion);
-        //Datos de los locales
-        if(direccion.locales != null){
-          locales = direccion.locales.map(local => {return local});
-          setDireccioneLocales(locales);
+        if(direccion.esLocal){
+          locales.push(direccion);
         }
       });
-      setDirecciones(data);
-      //setDirecciones(data);
+      setDirecciones(res);
+      setDireccioneLocales(locales);
     })
   }
 
@@ -120,25 +104,25 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
           dataSource={direcciones}
           renderItem={(item) => (
             <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
-              {props.permiteSeleccion && <Checkbox checked={item.id === value} onChange={e => onSelectDirection(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
+              {props.permiteSeleccion && <Checkbox checked={item.id === idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
               <List.Item.Meta
-                avatar={<EnvironmentOutlined />}
+                avatar={<EnvironmentOutlined /> }
                 title={<a>{item.calle + " " + item.numero}</a>}
                 description={item.localidad + " ," + item.departamento + " | " + item.notas}
               />
             </List.Item>
           )}
         />
-        {direccionesLocales[0].calle != "" && <div style={{marginTop:"20px"}}>
+        {direccionesLocales.length != 0 && <div style={{marginTop:"20px"}}>
           <h3>Direcciones de locales</h3>
           <List
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
               <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
-                {props.permiteSeleccion && <Checkbox checked={item.id == value} onChange={e => onSelectDirection(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
+                {props.permiteSeleccion && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
                 <List.Item.Meta
-                  avatar={<EnvironmentOutlined />}
+                  avatar={<EnvironmentOutlined /> }
                   title={<a>{item.calle + " " + item.numero}</a>}
                   description={item.localidad + " ," + item.departamento + " | " + item.notas}
                 />
@@ -148,6 +132,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
         </div>}
         
         <Button style={{marginTop:"10px"}} type="ghost" onClick={onAddDirection}>Agregar Direccion</Button>
+        {props.permiteSeleccion && <Button style={{marginTop:"10px", display: siguienteVisible ? "block": "none"}} type="ghost" onClick={onSeleccionarDireccion}>Siguiente</Button>}
 
         <div style={{ margin: "20px"}}>
           {addDirection && <AddDirection editar={false} esVendedor={true} callBack={updateDirecciones}></AddDirection>}

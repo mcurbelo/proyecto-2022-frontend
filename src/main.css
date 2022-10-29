@@ -124,9 +124,9 @@ p.inputData{
 }
 
 .otherinfocenter{
-margin: auto;
-width: auto;
-padding: 50px;
+  margin: auto;
+  width: auto;
+  padding: 50px;
 }
 
 .row {
@@ -191,4 +191,29 @@ label {
     line-height: 1;
     font-weight: 500;
     font-family: roboto_mono,helvetica,sans-serif;
+}
+
+
+/*Estilos mis compras*/
+
+.misCompras-principal-div{
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-gap: 10px;
+  grid-auto-rows: minmax(100px, auto);
+}
+
+.misCompras-principal-div .one {
+  grid-column: 1 / 1;
+  grid-row: 1;
+}
+
+.misCompras-principal-div .two {
+  grid-column: 2 / 2;
+  grid-row: 1;
+}
+
+.misCompras-principal-div .three {
+  grid-column: 3 / 3;
+  grid-row: 1;
 }
