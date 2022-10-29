@@ -1,8 +1,10 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Button, Carousel, Checkbox, DatePicker, Form, Image, Input, InputNumber, Typography } from "antd";
-import { FC, useState } from "react";
+import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { CompradorService } from "shopit-shared";
+import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
+import PickerCategoria from "./PickerCategoria";
 
 
 const useStyles = createUseStyles({
@@ -30,11 +32,20 @@ const AddProductForm = ({ esSolicitud = false }) => {
   const [selectedImages, setImage] = useState([] as File[])
   const [permiteEnvios, setPermiteEnvios] = useState(false)
   const [esEmpresa, setEsEmpresa] = useState(false)
+  const [categorias, setCategorias] = useState([] as string[])
+  const [direcciones, setDirecciones] = useState([] as DtDireccion[])
   const styles = useStyles()
+
+  useEffect(() => {
+    let token = localStorage.getItem("token")
+    CompradorService.obtenerDirecciones(token!).then((response) => {
+      console.log(response)
+      setDirecciones(response)
+    })
+  }, [])
 
   const handleFormSubmition = (values: any) => {
     if(esSolicitud) {
-      // Falta: Selector de categorías (No hay GET hecho)
       // Falta: Selector de direcciones (Misma razón)
       let token = localStorage.getItem("token")
       let datosEmpresa = {}
@@ -53,7 +64,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
           precio: values.precioProducto,
           diasGarantia: values.garantiaProducto,
           permiteEnvio: permiteEnvios,
-          categorias: ["Tecnologia"],
+          categorias: categorias.map(item => { return { nombre: item } }),
           esSolicitud: true
         }
       }, selectedImages, token!)
@@ -160,6 +171,15 @@ const AddProductForm = ({ esSolicitud = false }) => {
         >
           <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} />
         </Form.Item>
+        
+        <Typography.Text>Categorias</Typography.Text>
+
+        <PickerCategoria onSelect={categorias => {
+          setCategorias(categorias)
+          console.log(categorias)
+        }}/>
+
+        <div style={{height: 15}} />
 
         <Form.Item name="permiteEnvio">
           <Checkbox checked={permiteEnvios} onChange={() => setPermiteEnvios(!permiteEnvios)}>Permite envio</Checkbox>
@@ -202,9 +222,9 @@ const AddProductForm = ({ esSolicitud = false }) => {
           label="Numero de teléfono">
           <Input placeholder="1234567891012162" />
         </Form.Item>}
-
+          <>{JSON.stringify(direcciones)}</>
         <Form.Item>
-          <Button disabled={selectedImages.length == 0} style={{ width: "100%" }} type="primary" htmlType="submit">Agregar Producto</Button>
+          <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }} type="primary" htmlType="submit">Agregar Producto</Button>
         </Form.Item>
       </Form>
     </div>
