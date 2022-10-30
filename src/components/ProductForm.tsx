@@ -1,9 +1,11 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Carousel, Checkbox, DatePicker, Form, Image, Input, InputNumber, Typography } from "antd";
-import { useEffect, useState } from "react";
+import { Button, Carousel, Checkbox, DatePicker, Form, Image, Input, InputNumber, Modal, Typography } from "antd";
+import { format } from "date-fns";
+import { useState } from "react";
 import { createUseStyles } from "react-jss";
+import { Navigate, useNavigate } from "react-router";
 import { CompradorService } from "shopit-shared";
-import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
+import { Directions } from "./Directions";
 import PickerCategoria from "./PickerCategoria";
 
 
@@ -33,23 +35,22 @@ const AddProductForm = ({ esSolicitud = false }) => {
   const [permiteEnvios, setPermiteEnvios] = useState(false)
   const [esEmpresa, setEsEmpresa] = useState(false)
   const [categorias, setCategorias] = useState([] as string[])
-  const [direcciones, setDirecciones] = useState([] as DtDireccion[])
+  const [idDireccion, setIdDireccion] = useState("")
   const styles = useStyles()
+  const navigate = useNavigate()
 
-  useEffect(() => {
-    let token = localStorage.getItem("token")
-    CompradorService.obtenerDirecciones(token!).then((response) => {
-      console.log(response)
-      setDirecciones(response)
-    })
-  }, [])
+  const successModal = () => { Modal.success({
+    title: "Producto agregado exitosamente!"
+  })}
 
   const handleFormSubmition = (values: any) => {
-    if(esSolicitud) {
-      // Falta: Selector de direcciones (Misma razón)
+    if (esSolicitud) {
       let token = localStorage.getItem("token")
+      let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
+      let formatted = format(dateFechaNac, "dd/MM/yyyy")
+      console.log(formatted)
       let datosEmpresa = {}
-      if(esEmpresa) datosEmpresa = {
+      if (esEmpresa) datosEmpresa = {
         nombreEmpresa: values.nombreEmpresa,
         rut: values.rutEmpresa,
         telefonoEmpresa: values.telefonoEmpresa
@@ -60,19 +61,30 @@ const AddProductForm = ({ esSolicitud = false }) => {
           nombreProducto: values.nombreProducto,
           stock: values.stockProducto,
           descripcion: values.descripcionProducto,
-          fechaFin: values.fechaFinProducto,
+          fechaFin: formatted,
           precio: values.precioProducto,
           diasGarantia: values.garantiaProducto,
           permiteEnvio: permiteEnvios,
-          categorias: categorias.map(item => { return { nombre: item } }),
+          categorias: categorias.map(item => item),
           esSolicitud: true
-        }
-      }, selectedImages, token!)
+        },
+        idDireccion: idDireccion
+      }, selectedImages, token!).then((response) => {
+        successModal()
+        setTimeout(() => {
+          navigate("/")
+        }, 2000)
+      })
     }
   }
 
   return (
     <div className={styles.wrapper}>
+
+      {idDireccion.length == 0 && <Directions permiteSeleccion={true} onSelectDirection={(id) => {
+        setIdDireccion(id)
+      }} />}
+
       {(selectedImages.length > 0) && (
         <Carousel autoplay style={{ background: "#f9f9f9" }}>
           {selectedImages.map((image) => {
@@ -93,7 +105,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
           })}
         </Carousel>
       )}
-      <Button
+      {idDireccion.length != 0 && (<><Button
         disabled={selectedImages.length == 5}
         icon={<UploadOutlined />}
         type="primary"
@@ -108,125 +120,125 @@ const AddProductForm = ({ esSolicitud = false }) => {
           onChange={(event) => { setImage(selectedImages.concat(event.target.files![0])); }}
         />
       </Button>
-      <Form
-        layout="vertical"
-        style={{ marginTop: 15 }}
-        onFinish={(values) => {handleFormSubmition(values)}}
-      >
-        <Form.Item
-          rules={[{
-            required: true,
-            message: "El nombre del producto es obligatorio"
-          }]}
-          name="nombreProducto"
-          label="Nombre del producto"
+        <Form
+          layout="vertical"
+          style={{ marginTop: 15 }}
+          onFinish={(values) => { handleFormSubmition(values) }}
         >
-          <Input placeholder="Bicicleta" />
-        </Form.Item>
+          <Form.Item
+            rules={[{
+              required: true,
+              message: "El nombre del producto es obligatorio"
+            }]}
+            name="nombreProducto"
+            label="Nombre del producto"
+          >
+            <Input placeholder="Bicicleta" />
+          </Form.Item>
 
-        <Form.Item
-          rules={[{
-            required: true,
-            message: "El stock del producto es obligatorio"
-          }]}
-          name="stockProducto"
-          label="Stock del producto"
-        >
-          <Input placeholder="100" />
-        </Form.Item>
+          <Form.Item
+            rules={[{
+              required: true,
+              message: "El stock del producto es obligatorio"
+            }]}
+            name="stockProducto"
+            label="Stock del producto"
+          >
+            <Input placeholder="100" />
+          </Form.Item>
 
-        <Form.Item
-          rules={[{
-            required: true,
-            message: "La descripción del producto es obligatoria"
-          }]}
-          name="descripcionProducto"
-          label="Descripcion del producto"
-        >
-          <Input.TextArea placeholder="Bicicleta rodado 20" size="large" />
-        </Form.Item>
+          <Form.Item
+            rules={[{
+              required: true,
+              message: "La descripción del producto es obligatoria"
+            }]}
+            name="descripcionProducto"
+            label="Descripcion del producto"
+          >
+            <Input.TextArea placeholder="Bicicleta rodado 20" size="large" />
+          </Form.Item>
 
-        <Form.Item
-          label="Precio del producto"
-          rules={[{
-            required: true,
-            message: "El precio del producto es obligatorio"
-          }]}
-          name="precioProducto"
-          initialValue={1000}
-        >
-          <InputNumber formatter={(value) => `$${value}`} style={{ width: "100%" }} />
-        </Form.Item>
+          <Form.Item
+            label="Precio del producto"
+            rules={[{
+              required: true,
+              message: "El precio del producto es obligatorio"
+            }]}
+            name="precioProducto"
+            initialValue={1000}
+          >
+            <InputNumber formatter={(value) => `$${value}`} style={{ width: "100%" }} />
+          </Form.Item>
 
-        <Form.Item
-          name="garantiaProducto"
-          label="Días de garantía"
-        >
-          <InputNumber placeholder="180" style={{ width: "100%" }} />
-        </Form.Item>
+          <Form.Item
+            name="garantiaProducto"
+            label="Días de garantía"
+          >
+            <InputNumber placeholder="180" style={{ width: "100%" }} />
+          </Form.Item>
 
-        <Form.Item
-          name="fechaFinProducto"
-          label="Fecha fin de la publicación"
-        >
-          <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} />
-        </Form.Item>
-        
-        <Typography.Text>Categorias</Typography.Text>
+          <Form.Item
+            name="fechaFinProducto"
+            label="Fecha fin de la publicación"
+          >
+            <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} />
+          </Form.Item>
 
-        <PickerCategoria onSelect={categorias => {
-          setCategorias(categorias)
-          console.log(categorias)
-        }}/>
+          <Typography.Text>Categorias</Typography.Text>
 
-        <div style={{height: 15}} />
+          <PickerCategoria onSelect={categorias => {
+            setCategorias(categorias)
+            console.log(categorias)
+          }} />
 
-        <Form.Item name="permiteEnvio">
-          <Checkbox checked={permiteEnvios} onChange={() => setPermiteEnvios(!permiteEnvios)}>Permite envio</Checkbox>
-        </Form.Item>
+          <div style={{ height: 15 }} />
 
-        <Checkbox
-          style={{ visibility: esSolicitud ? "visible" : "hidden" }}
-          checked={esEmpresa}
-          onChange={() => setEsEmpresa(!esEmpresa)}
-        >Tengo una empresa</Checkbox>
+          <Form.Item name="permiteEnvio">
+            <Checkbox checked={permiteEnvios} onChange={() => setPermiteEnvios(!permiteEnvios)}>Permite envio</Checkbox>
+          </Form.Item>
 
-        {esEmpresa && <Typography.Title level={5}>Información de vendedor</Typography.Title>}
+          <Checkbox
+            style={{ visibility: esSolicitud ? "visible" : "hidden" }}
+            checked={esEmpresa}
+            onChange={() => setEsEmpresa(!esEmpresa)}
+          >Tengo una empresa</Checkbox>
 
-        {esEmpresa && <Form.Item
-          rules={[{
-            required: true,
-            message: "El nombre de la empresa es obligatorio"
-          }]}
-          name="nombreEmpresa"
-          label="Nombre empresa">
-          <Input placeholder="Colchones Dormilones SA" />
-        </Form.Item>}
+          {esEmpresa && <Typography.Title level={5}>Información de vendedor</Typography.Title>}
 
-        {esEmpresa && <Form.Item
-          rules={[{
-            required: true,
-            message: "El RUT de la empresa es obligatorio"
-          }]}
-          name="rutEmpresa"
-          label="RUT">
-          <Input placeholder="1234567891012162" />
-        </Form.Item>}
+          {esEmpresa && <Form.Item
+            rules={[{
+              required: true,
+              message: "El nombre de la empresa es obligatorio"
+            }]}
+            name="nombreEmpresa"
+            label="Nombre empresa">
+            <Input placeholder="Colchones Dormilones SA" />
+          </Form.Item>}
 
-        {esEmpresa && <Form.Item
-          rules={[{
-            required: true,
-            message: "El numero de telefono de la empresa es obligatorio"
-          }]}
-          name="telefonoEmpresa"
-          label="Numero de teléfono">
-          <Input placeholder="1234567891012162" />
-        </Form.Item>}
-          <>{JSON.stringify(direcciones)}</>
-        <Form.Item>
-          <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }} type="primary" htmlType="submit">Agregar Producto</Button>
-        </Form.Item>
-      </Form>
+          {esEmpresa && <Form.Item
+            rules={[{
+              required: true,
+              message: "El RUT de la empresa es obligatorio"
+            }]}
+            name="rutEmpresa"
+            label="RUT">
+            <Input placeholder="1234567891012162" />
+          </Form.Item>}
+
+          {esEmpresa && <Form.Item
+            rules={[{
+              required: true,
+              message: "El numero de telefono de la empresa es obligatorio"
+            }]}
+            name="telefonoEmpresa"
+            label="Numero de teléfono">
+            <Input placeholder="1234567891012162" />
+          </Form.Item>}
+
+          <Form.Item>
+            <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }} type="primary" htmlType="submit">Agregar Producto</Button>
+          </Form.Item>
+        </Form></>)}
     </div>
   );
 }
