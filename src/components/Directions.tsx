@@ -84,7 +84,6 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
   function getDirecciones(){
     let data: any = [];
     let locales: any = [];
-    debugger
     CompradorService.obtenerDirecciones(token).then(res => {
       res.forEach(direccion => {
         if(direccion.esLocal){

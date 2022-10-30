@@ -4,7 +4,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
 import { Navigate, useNavigate } from "react-router";
-import { CompradorService } from "shopit-shared";
+import { CompradorService, VendedorService } from "shopit-shared";
 import { Directions } from "./Directions";
 import PickerCategoria from "./PickerCategoria";
 
@@ -39,16 +39,28 @@ const AddProductForm = ({ esSolicitud = false }) => {
   const styles = useStyles()
   const navigate = useNavigate()
 
-  const successModal = () => { Modal.success({
-    title: "Producto agregado exitosamente!"
-  })}
+  const successModal = () => {
+    Modal.success({
+      title: "Producto agregado exitosamente!"
+    })
+  }
 
   const handleFormSubmition = (values: any) => {
+    let token = localStorage.getItem("token")
+    let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
+    let formatted = format(dateFechaNac, "dd/MM/yyyy")
+    let datosProducto = {
+      nombreProducto: values.nombreProducto,
+      stock: values.stockProducto,
+      descripcion: values.descripcionProducto,
+      fechaFin: formatted,
+      precio: values.precioProducto,
+      diasGarantia: values.garantiaProducto,
+      permiteEnvio: permiteEnvios,
+      categorias: categorias.map(item => item),
+      esSolicitud: true
+    }
     if (esSolicitud) {
-      let token = localStorage.getItem("token")
-      let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
-      let formatted = format(dateFechaNac, "dd/MM/yyyy")
-      console.log(formatted)
       let datosEmpresa = {}
       if (esEmpresa) datosEmpresa = {
         nombreEmpresa: values.nombreEmpresa,
@@ -57,19 +69,16 @@ const AddProductForm = ({ esSolicitud = false }) => {
       }
       CompradorService.enviarSolicitudVendedor({
         ...datosEmpresa,
-        producto: {
-          nombreProducto: values.nombreProducto,
-          stock: values.stockProducto,
-          descripcion: values.descripcionProducto,
-          fechaFin: formatted,
-          precio: values.precioProducto,
-          diasGarantia: values.garantiaProducto,
-          permiteEnvio: permiteEnvios,
-          categorias: categorias.map(item => item),
-          esSolicitud: true
-        },
+        producto: datosProducto,
         idDireccion: idDireccion
       }, selectedImages, token!).then((response) => {
+        successModal()
+        setTimeout(() => {
+          navigate("/")
+        }, 2000)
+      })
+    } else {
+      VendedorService.altaProducto(datosProducto, selectedImages, token!).then((response) => {
         successModal()
         setTimeout(() => {
           navigate("/")
