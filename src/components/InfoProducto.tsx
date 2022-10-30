@@ -184,11 +184,13 @@ export const InfoProducto = () => {
         idVendedor: producto?.idVendedor || "",
         idProducto: producto?.idProducto || "",
         cantidad: cantidadProducto || 0,
-        esParaEnvio: producto?.permiteEnvio || false,
-        idTarjeta: ""
+        esParaEnvio: false,
+        idTarjeta: "",
+        idDireccionEnvio: -1,
+        idDireccionLocal: -1
       }
       localStorage.setItem("infoCompra", JSON.stringify(infoCompra))
-      navigate("/compra", { state: { permiteEnvio: producto?.permiteEnvio, direccionesVendedor: producto?.localesParaRetiro } })
+      navigate("/compra", { state: { producto: producto } })
     }
   }
 
