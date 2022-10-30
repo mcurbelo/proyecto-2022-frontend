@@ -160,6 +160,7 @@ export const RealizarCompra = () => {
                         Modal.success({
                             content: 'Compra finalizada con éxito!!! Recuerde que tiene que esperar la confirmación del vendedor. Puede ser hasta 48 hrs.',
                         });
+                        localStorage.removeItem("infoCompra");
                     } else {
                         Modal.error({
                             title: 'Error en el pago',
