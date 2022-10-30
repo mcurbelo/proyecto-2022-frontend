@@ -1,4 +1,4 @@
-import { message, Space, Steps } from 'antd';
+import { message, Modal, Space, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useLocation, useNavigate } from 'react-router';
@@ -15,6 +15,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CompraFinal from './CompraFin';
 import { DtProducto } from 'shopit-shared/dist/user/ProductoService';
 import { CreditCardData } from './CardList';
+import { ExclamationCircleOutlined } from '@ant-design/icons';
 
 const { Step } = Steps;
 
@@ -38,6 +39,18 @@ const useStyles = createUseStyles({
     container: {
         width: "80%"
     },
+
+    "@global": {
+        ".ant-modal-confirm-btns": {
+          display:"flex",
+          justifyContent:"center"
+        },
+       ".ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn": {
+            marginLeft: "30px",
+            background:"#28a745",
+            borderColor:"#28a745"
+        }
+      },
 
     '@media screen and (max-width: 800px)': {
         container: {
@@ -123,22 +136,42 @@ export const RealizarCompra = () => {
         },
         {
             title: 'Seleccionar forma de pago',
-            content: <CompraTarjeta onSelectCard={(id) => { onChangeDatos(id, "idTarjeta") }} idSeleccionPrevia={datosCompra.idTarjeta} infoCard={(info) => { setInfoTarjeta(info); console.log(info) }} />
+            content: <CompraTarjeta onSelectCard={(id) => { onChangeDatos(id, "idTarjeta") }} idSeleccionPrevia={datosCompra.idTarjeta} infoCard={(info) => { setInfoTarjeta(info);}} />
         },
         {
             title: 'Realizar compra',
             content: <CompraFinal producto={productoInfo} compra={datosCompra} infoTarjeta={infoTarjeta!} direccion={datosDireccion} />
         },
     ];
+    const { confirm } = Modal;
 
-
-    const realizarPago =() => {
+    const realizarPago = () => {
         let token = localStorage.getItem("token");
         let idUsuarios = localStorage.getItem("uuid");
-        CompradorService.nuevaCompra(idUsuarios!,token!, datosCompra).then((result) => {
-            if(result==)
-          })
-    }
+        confirm({
+            title: 'Está seguro de confirmar el pago?',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Este proceso de pago puede tomar unos segundos.',
+            okText: 'Confirmar',
+            cancelText: "Cancelar",
+            onOk() {
+                return CompradorService.nuevaCompra(idUsuarios!, token!, datosCompra).then((result) => {
+                    if (result === "200") {
+                        Modal.success({
+                            content: 'Compra finalizada con éxito!!! Recuerde que tiene que esperar la confirmación del vendedor. Puede ser hasta 48 hrs.',
+                        });
+                    } else {
+                        Modal.error({
+                            title: 'Error en el pago',
+                            content: 'Ha sucedido un problema al realizar el pago, intentelo de nuevo más tarde.',
+                        });
+                    }
+                })
+            },
+            onCancel() { },
+        });
+    };
+
 
     return (
         <div style={{ justifyContent: "center", display: "flex" }}>
@@ -172,8 +205,8 @@ export const RealizarCompra = () => {
                             </Button>
                         )}
                         {current === steps.length - 1 && (
-                            <Button type="success" size='large' onClick={() => message.success('Processing complete!')} style={{ width: "170px" }}>
-                                Confirmar pago <FontAwesomeIcon style={{ display: "inline-block", marginLeft: "10px" }} icon={faSackDollar} />
+                            <Button type="success" size='large' onClick={realizarPago} style={{ width: "170px" }}>
+                                Realizar pago <FontAwesomeIcon style={{ display: "inline-block", marginLeft: "10px" }} icon={faSackDollar} />
                             </Button>
                         )}
                     </Space>
