@@ -42,15 +42,15 @@ const useStyles = createUseStyles({
 
     "@global": {
         ".ant-modal-confirm-btns": {
-          display:"flex",
-          justifyContent:"center"
+            display: "flex",
+            justifyContent: "center"
         },
-       ".ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn": {
+        ".ant-modal-confirm .ant-modal-confirm-btns .ant-btn + .ant-btn": {
             marginLeft: "30px",
-            background:"#28a745",
-            borderColor:"#28a745"
+            background: "#28a745",
+            borderColor: "#28a745"
         }
-      },
+    },
 
     '@media screen and (max-width: 800px)': {
         container: {
@@ -136,7 +136,7 @@ export const RealizarCompra = () => {
         },
         {
             title: 'Seleccionar forma de pago',
-            content: <CompraTarjeta onSelectCard={(id) => { onChangeDatos(id, "idTarjeta") }} idSeleccionPrevia={datosCompra.idTarjeta} infoCard={(info) => { setInfoTarjeta(info);}} />
+            content: <CompraTarjeta onSelectCard={(id) => { onChangeDatos(id, "idTarjeta") }} idSeleccionPrevia={datosCompra.idTarjeta} infoCard={(info) => { setInfoTarjeta(info); }} />
         },
         {
             title: 'Realizar compra',

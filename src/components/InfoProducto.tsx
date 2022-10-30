@@ -131,15 +131,15 @@ export const InfoProducto = () => {
   }
   const estadoStock = () => {
     if (producto != undefined && producto?.stock >= 30)
-      return <Text type="success">En stock<FontAwesomeIcon icon={faBoxesStacked} /></Text>
+      return <Text type="success">En stock<FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
     if (producto != undefined && producto?.stock < 30 && producto?.stock > 10)
-      return <Text type="warning">Stock medio <FontAwesomeIcon icon={faBoxesStacked} /></Text>
+      return <Text type="warning">Stock medio <FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
     if (producto != undefined && producto?.stock <= 10 && producto?.stock > 0)
-      return <Text type="danger">Últimas unidades  <FontAwesomeIcon icon={faBox} /></Text>
+      return <Text type="danger">Últimas unidades  <FontAwesomeIcon icon={faBox} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
     else
-      return <Text mark>Sin stock <FontAwesomeIcon icon={faCircleXmark} /></Text>
+      return <Text mark>Sin stock <FontAwesomeIcon icon={faCircleXmark} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
   }
 
