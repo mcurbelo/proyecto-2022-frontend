@@ -57,8 +57,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
       precio: values.precioProducto,
       diasGarantia: values.garantiaProducto,
       permiteEnvio: permiteEnvios,
-      categorias: categorias.map(item => item),
-      esSolicitud: true
+      categorias: categorias.map(item => item)
     }
     if (esSolicitud) {
       let datosEmpresa = {}
