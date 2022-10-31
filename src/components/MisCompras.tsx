@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Menu, List, message, Input, Dropdown, Space, Button, Layout, Image, Steps } from 'antd';
+import { Card, Menu, List, message, Input, Dropdown, Space, Button, Layout, Image, Steps, Descriptions, Select } from 'antd';
 import { SearchOutlined, SlidersOutlined, DownOutlined } from '@ant-design/icons';
 import { CompradorService } from "shopit-shared";
 import { DtCompraSlimComprador, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
@@ -44,6 +44,8 @@ interface AppState {
     filtros: DtFiltrosCompras
 }
 
+const { Option } = Select;
+
 export const MisCompras: React.FC<{}> = (props) => {
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
@@ -85,34 +87,77 @@ export const MisCompras: React.FC<{}> = (props) => {
 
     const iniciarChat = () => { }
 
+    const handleChange = (value: string, id: string) => {
+        setValoresOrdenamiento({ ...valoresOrdenamiento, [id]: value })
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
+        setFiltros({ ...filtros, [id]: e.target.value })
+    }
+
+
+    function stepCompra(estado: EstadoCompra) {
+        console.log(estado)
+        if (estado === EstadoCompra.EsperandoConfirmacion)
+            return 0
+        if (estado === EstadoCompra.Confirmada || estado === EstadoCompra.Cancelada)
+            return 1
+        return 2
+
+
+    }
 
     return (
         <div style={{ margin: "auto", width: "80%", padding: "50px" }}>
-            <div style={{ display: "flex", flexDirection: "row", justifyContent: "flex-start" }}>
-                <div style={{ marginBottom: "20px" }}>
-                    <Input size="large" placeholder="Buscar" prefix={<SearchOutlined />} />
-                </div>
-                <div style={{ marginLeft: "30px", marginBottom: "auto", fontSize: "12px", display: "flex" }}>
-                    <div style={{ float: "left" }}>
-                        <Dropdown overlay={menu} trigger={['click']} >
-                            <a onClick={e => e.preventDefault()}>
-                                <Button style={{ border: "0px" }}>
-                                    <Space>
-                                        {filtroActual}
-                                        <DownOutlined />
-                                    </Space>
-                                </Button>
-                            </a>
-                        </Dropdown>
-
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
+                <Space size={30}>
+                    <div >
+                        <label htmlFor="nProd" style={{ display: "block" }}>Producto:</label>
+                        <Input id="nProd" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreProducto")} prefix={<SearchOutlined />} />
                     </div>
-                    <div style={{ marginLeft: "30px", marginTop: "7px" }}>
-                        <p>Cantidad: 19</p>
+                    <div >
+                        <label htmlFor="nVen" style={{ display: "block" }}>Vendedor:</label>
+                        <Input id="nVen" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreVendedor")} prefix={<SearchOutlined />} />
                     </div>
 
-                </div>
+                    <div style={{ marginBottom: "auto", }}>
+                        <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
+                        <Select id="orden" value={valoresOrdenamiento.ordenamiento} style={{ width: '100%' }} onChange={(value) => handleChange(value, "ordenamiento")}>
+                            <Option value="fecha">Fecha</Option>
+                            <Option value="estado">Estado</Option>
 
+                        </Select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="direccion" style={{ display: "block" }}>Dirección:</label>
+                        <Select id="direccion" value={valoresOrdenamiento.dirOrdenamiento} style={{ width: '100%' }} onChange={(value) => handleChange(value, "dirOrdenamiento")}>
+                            <Option value="dsc">Descendente</Option>
+                            <Option value="asc">Ascendente</Option>
+
+                        </Select>
+                    </div>
+
+                    <div>
+                        <label htmlFor="Estado" style={{ display: "block" }}>Dirección:</label>
+                        <Select id="Estado" value={valoresOrdenamiento.dirOrdenamiento} style={{ width: '100%' }} onChange={(value) => handleChange(value, "dirOrdenamiento")}>
+                            <Option value="dsc">Descendente</Option>
+                            <Option value="asc">Ascendente</Option>
+
+                        </Select>
+                    </div>
+                    <div>
+                        <Button type="primary" size="large" icon={<SearchOutlined />}>Buscar</Button>
+                    </div>
+
+                    <div style={{ marginLeft: "30px", marginBottom: "auto", fontSize: "12px", display: "flex" }}>
+                        <div style={{ marginLeft: "30px", marginTop: "7px" }}>
+                            <p>Cantidad: {infoPaginacion.totalItems}</p>
+                        </div>
+                    </div>
+                </Space>
             </div>
+
             <List
                 grid={{
                     gutter: 16,
@@ -126,21 +171,21 @@ export const MisCompras: React.FC<{}> = (props) => {
                 dataSource={compras}
                 renderItem={item => (
                     <List.Item>
-                        <Card title={item.fecha.toString()}>
+                        <Card title={"Realizada el " + item.fecha.toString()}>
                             <Layout>
                                 <Sider style={{ backgroundColor: "transparent" }}>
                                     <div style={{ margin: "10px" }}>
                                         <Image
                                             width={150}
-                                            src={""}
+                                            src={item.imagenURL}
                                         />
                                     </div>
                                 </Sider>
                                 <Layout>
                                     <Header style={{ backgroundColor: "transparent" }}>
-                                        <Steps style={{ marginTop: "10px" }} size="small" current={item.estadoCompra}>
-                                            <Step title="Esperando aceptacion" />
-                                            <Step title="Aceptada" />
+                                        <Steps style={{ marginTop: "10px" }} size="small" current={stepCompra(item.estadoCompra)}>
+                                            <Step title="Esperando confirmación" />
+                                            <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} />
                                             <Step title="Completada" />
                                         </Steps>
                                     </Header>
@@ -151,23 +196,26 @@ export const MisCompras: React.FC<{}> = (props) => {
                                             </div>
                                             <div className="two" style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                                 <p style={{ font: "revert-layer", color: "grey" }}>{item.nombreVendedor}</p>
-                                                <a onClick={iniciarChat}>Iniciar Chat</a>
+                                                <a onClick={iniciarChat}>Iniciar chat</a>
                                             </div>
                                             <div className="three" style={{ width: "90%", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
-                                                <Button style={{ width: "50%" }}>Realizar Reclamo</Button>
-                                                <Button style={{ width: "50%" }}>Calificar</Button>
-                                                <Button disabled={item.estadoCompra != EstadoCompra.Completada} style={{ width: "50%" }} type="primary">Completar compra</Button>
+                                                <Button style={{ width: "150px" }}>Realizar reclamo</Button>
+                                                <Button style={{ width: "150px" }} disabled={item.estadoCompra !== EstadoCompra.Completada}>Calificar</Button>
+                                                <Button disabled={item.estadoCompra != EstadoCompra.Completada || !item.esEnvio} style={{ width: "150px" }} type="primary">Completar compra</Button>
                                             </div>
                                         </div>
                                     </Content>
-                                    <Footer>Llegó el {item.fecha.toString()}</Footer>
+                                    <Footer>
+                                        {"Cantidad: " + item.cantidad + " Precio: $ " + item.montoUnitario + " Total:" + item.montoTotal}
+
+                                    </Footer>
                                 </Layout>
                             </Layout>
                         </Card>
                     </List.Item>
                 )}
             />
-        </div>
+        </div >
 
     );
 }
