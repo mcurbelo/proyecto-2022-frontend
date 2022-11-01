@@ -1,4 +1,4 @@
-import { Button, Form, FormInstance, Input, Modal, Result, Select } from "antd"
+import { Button, Form, FormInstance, Input, Modal, Result, Select, Space } from "antd"
 import React, { useState } from "react";
 import { CompradorService } from "shopit-shared";
 import { DtAltaReclamo } from "shopit-shared/dist/user/CompradorService";
@@ -29,45 +29,54 @@ export const RealizarReclamo = (props: reclamoProps) => {
             descripcion: datosReclamos.descripcion,
             tipo: datosReclamos.tipo
         }
-        return (
-            <Result
-                status="success"
-                title="Reclamo enviado correctamente"
-                subTitle="Se ha notificado al comprador que tiene un nuevo reclamo. Se te avisará cuando haya una respuesta."
-                extra={[
-                    <Button type="primary" key="console">
-                        Entendido
-                    </Button>,
-                ]}
-            />
-        )
+        CompradorService.nuevoReclamo(id!, token!, idCompra, datos).then((result) => {
+            if (result == "200") {
+                Modal.success({
+                    title: "Reclamo enviado correctamente",
+                    content: "Se ha notificado al comprador que tiene un nuevo reclamo. Se te avisará cuando haya una respuesta.",
+                });
+                hideModal()
+            } else {
+                const mensaje = result;
+                Modal.error({
+                    title: 'Ha ocurrido un error inesperado',
+                    content: mensaje
+                });
+            }
+        })
+
+
+
+
     }
 
 
     const formRef = React.createRef<FormInstance>();
 
     return (
-        <Modal title="Iniciar reclamo a vendedor" open={open} onCancel={hideModal}>
-            <Form ref={formRef} name="control-ref" onFinish={hacerReclamo}>
-                <Form.Item name="note" label="Tipo:" rules={[{ required: true }]}>
+        <Modal title="Iniciar reclamo a vendedor" open={open} onCancel={hideModal} footer={null}>
+            <Form ref={formRef} name="control-ref" layout="vertical" onFinish={hacerReclamo}>
+                <Form.Item name="tipo" label="Tipo:" rules={[{ required: true, message: "El tipo es obligatorio." }]} >
                     <Select placeholder="Seleccione el tipo de reclamo" value={TipoReclamo.DesperfectoProducto} onChange={(value) => setDatosReclamos({ ...datosReclamos, "tipo": value })}>
-                        <Option value={TipoReclamo.DesperfectoProducto}>Desperfecto en el prroducto</Option>
+                        <Option value={TipoReclamo.DesperfectoProducto}>Desperfecto en el producto</Option>
                         <Option value={TipoReclamo.ProductoNoRecibido}>Producto no recibido</Option>
                         <Option value={TipoReclamo.ProducoErroneo}>Producto erroneo</Option>
                         <Option value={TipoReclamo.Otro}>Otro</Option>
                     </Select>
-                </Form.Item>
-                <Form.Item name="note" label="Descripcion:" rules={[{ required: true }]}>
+                </Form.Item >
+                <Form.Item name="desc" label="Descripción:" rules={[{ required: true, message: "La descripcion es obligatoria." }]}>
                     <Input.TextArea showCount maxLength={255} onChange={(e) => setDatosReclamos({ ...datosReclamos, "descripcion": e.target.value })} />
                 </Form.Item>
 
-                <Form.Item>
-                    <Button type="primary" htmlType="submit">
-                        Enviar reclamo
-                    </Button>
-                    <Button htmlType="button" onClick={hideModal}>
-                        Cancelar
-                    </Button>
+                <Form.Item style={{ display: "flex", justifyContent: "center", marginTop: "10%" }}>
+                    <Space size={50}>
+                        <Button htmlType="button" onClick={hideModal} style={{ width: "100px" }}>
+                            Cancelar
+                        </Button>
+                        <Button type="primary" htmlType="submit" style={{ width: "100px" }}>
+                            Enviar reclamo
+                        </Button>
+                    </Space>
                 </Form.Item>
             </Form>
         </Modal>
