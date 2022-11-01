@@ -29,8 +29,8 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
   const [direccionesLocales, setDireccioneLocales] = useState([] as DtDireccion[]);
   
 
-  const editarDireccion = (event:any, key:string) => {
-    //Tengo que arreglar esto
+  const editarDireccion = (event:any, key?:string) => {
+    if(!key) return;
     let direccion = {id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: ""};
     direcciones.forEach(e => { debugger; if(e.id === key){
       setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
@@ -72,6 +72,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
   function updateDirecciones (values: any){
     handleClose();
     getDirecciones();
+    onAddDirection()
   }
 
 
@@ -113,7 +114,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
             </List.Item>
           )}
         />
-        {direccionesLocales.length != 0 && <div style={{marginTop:"20px"}}>
+        {(direccionesLocales.length != 0) && <div style={{marginTop:"20px"}}>
           <h3>Direcciones de locales</h3>
           <List
             itemLayout="horizontal"

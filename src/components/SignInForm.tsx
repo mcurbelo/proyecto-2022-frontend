@@ -30,6 +30,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
       UserService.iniciarSesion(state.username, state.password)
         .then((result) => {
           if (result?.token && result?.uuid) {
+            console.log(result)
             localStorage.setItem("token", result.token)
             localStorage.setItem("uuid", result.uuid)
             navigate("/")
