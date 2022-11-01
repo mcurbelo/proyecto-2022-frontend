@@ -130,7 +130,7 @@ export const RealizarCompra = () => {
             content: <CompraDireccion permiteEnvio={productoInfo.permiteEnvio} direcciones={(datosCompra.esParaEnvio) ? direccionesComprador : direccionesVendedor}
                 onSelectEsEnvio={(opc) => { onChangeEnvio(opc) }}
                 onSelectDireccion={(direccion) => {
-                    onChangeDatos(direccion.id.toString(), (datosCompra.esParaEnvio) ? "idDireccionEnvio" : "idDireccionLocal");
+                    onChangeDatos(direccion.id!.toString(), (datosCompra.esParaEnvio) ? "idDireccionEnvio" : "idDireccionLocal");
                     setDatosDireccion(direccion.calle + " " + direccion.numero + ". " + direccion.localidad + ", " + direccion.departamento)
                 }} selecionPrevia={datosCompra} />
         },

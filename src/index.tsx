@@ -20,6 +20,7 @@ import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
 import RealizarCompra from './components/RealizarCompra';
 import AddProductForm from './components/ProductForm';
+import { MisCompras } from './components/MisCompras';
 
 require('dotenv').config();
 

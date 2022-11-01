@@ -39,15 +39,15 @@ const useStyles = createUseStyles({
         flexDirection: "column",
         marginLeft: 12,
     },
-    container:{
-        width:"40%"
+    container: {
+        width: "40%"
     },
 
     '@media screen and (max-width: 700px)': {
         container: {
-          width: "auto"
+            width: "auto"
         },
-      }
+    }
 })
 
 export const CompraDireccion = (props: CompraDireccionProps) => {
@@ -64,7 +64,7 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
     const onClick = () => {
         setMostrar(!mostrarLista)
     };
-    const { Text, Paragraph } = Typography;
+    const { Text } = Typography;
 
     const onChange = (e: RadioChangeEvent) => {
         onSelectEsEnvio(e.target.value)
@@ -74,7 +74,7 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
 
     const clickDiv = (direccion: Direccion | DtDireccion) => {
         onSelectDireccion(direccion)
-        setValueDireccion(direccion.id.toString())
+        setValueDireccion(direccion.id!.toString())
     }
 
     const onChangeDireccion = (e: RadioChangeEvent) => {
@@ -130,7 +130,7 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
                             {
                                 direcciones.map(direccion => (
                                     <div className={styles.wrapper} key={direccion.id} onClick={() => { clickDiv(direccion) }} >
-                                        <Radio value={direccion.id.toString()} onClick={() => onSelectDireccion(direccion)} >
+                                        <Radio value={direccion.id!.toString()} onClick={() => onSelectDireccion(direccion)} >
                                             <div className={styles.cardData}>
                                                 <Typography>
                                                     {(esEnvio) ? <FontAwesomeIcon icon={faLocationDot} /> : <FontAwesomeIcon icon={faShop} />}  {direccion.calle + " " + direccion.numero + ". " + direccion.localidad + ", " + direccion.departamento}
@@ -176,7 +176,7 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
                     <div style={{ display: "flex", cursor: "pointer" }} onClick={onClick}>
                         <Text> <FontAwesomeIcon icon={faLeftLong} /> Volver a la lista</Text>
                     </div>
-                    <AddDirection esVendedor={false} callBack={undefined} editar={false} />
+                    <AddDirection esVendedor={false} callBack={onClick} editar={false} />
                 </>
             )
         }
