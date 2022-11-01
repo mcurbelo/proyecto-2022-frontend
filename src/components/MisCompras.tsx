@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, Menu, List, message, Input, Dropdown, Space, Button, Layout, Image, Steps, Descriptions, Select } from 'antd';
+import { Card, Menu, List, message, Input, Dropdown, Space, Button, Layout, Image, Steps, Descriptions, Select, DatePicker, DatePickerProps } from 'antd';
 import { SearchOutlined, SlidersOutlined, DownOutlined } from '@ant-design/icons';
 import { CompradorService } from "shopit-shared";
 import { DtCompraSlimComprador, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
@@ -44,6 +44,7 @@ interface AppState {
     filtros: DtFiltrosCompras
 }
 
+
 const { Option } = Select;
 
 export const MisCompras: React.FC<{}> = (props) => {
@@ -79,7 +80,6 @@ export const MisCompras: React.FC<{}> = (props) => {
             if (result.compras !== undefined) {
                 setCompras(result.compras);
                 setInfoPaginacion({ paginaActual: result.currentPage, paginasTotales: result.totalPages, totalItems: result.totalItems })
-                console.log(result)
             }
         })
     }
@@ -87,17 +87,27 @@ export const MisCompras: React.FC<{}> = (props) => {
 
     const iniciarChat = () => { }
 
-    const handleChange = (value: string, id: string) => {
-        setValoresOrdenamiento({ ...valoresOrdenamiento, [id]: value })
+    const handleChange = (value: string) => {
+        if (value === "fechaAsc")
+            setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "asc", "ordenamiento": "fecha" })
+        else
+            setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "dsc", "ordenamiento": "fecha" })
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
         setFiltros({ ...filtros, [id]: e.target.value })
     }
 
+    const onChangeDatePicker: DatePickerProps['onChange'] = (date, dateString) => {
+        setFiltros({ ...filtros, "fecha": dateString })
+    };
+
+    const onChangeEstado = (value: EstadoCompra | string) => {
+       
+
+    };
 
     function stepCompra(estado: EstadoCompra) {
-        console.log(estado)
         if (estado === EstadoCompra.EsperandoConfirmacion)
             return 0
         if (estado === EstadoCompra.Confirmada || estado === EstadoCompra.Cancelada)
@@ -122,32 +132,27 @@ export const MisCompras: React.FC<{}> = (props) => {
 
                     <div style={{ marginBottom: "auto", }}>
                         <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
-                        <Select id="orden" value={valoresOrdenamiento.ordenamiento} style={{ width: '100%' }} onChange={(value) => handleChange(value, "ordenamiento")}>
-                            <Option value="fecha">Fecha</Option>
-                            <Option value="estado">Estado</Option>
-
-                        </Select>
-                    </div>
-
-                    <div>
-                        <label htmlFor="direccion" style={{ display: "block" }}>Dirección:</label>
-                        <Select id="direccion" value={valoresOrdenamiento.dirOrdenamiento} style={{ width: '100%' }} onChange={(value) => handleChange(value, "dirOrdenamiento")}>
-                            <Option value="dsc">Descendente</Option>
-                            <Option value="asc">Ascendente</Option>
-
-                        </Select>
-                    </div>
-
-                    <div>
-                        <label htmlFor="Estado" style={{ display: "block" }}>Dirección:</label>
-                        <Select id="Estado" value={valoresOrdenamiento.dirOrdenamiento} style={{ width: '100%' }} onChange={(value) => handleChange(value, "dirOrdenamiento")}>
-                            <Option value="dsc">Descendente</Option>
-                            <Option value="asc">Ascendente</Option>
-
+                        <Select id="orden" defaultValue={"fechaDsc"} style={{ width: '100%' }} onChange={handleChange}>
+                            <Option value="fechaDsc">Últimas compras</Option>
+                            <Option value="fechaAsc">Compras más antiguas</Option>
                         </Select>
                     </div>
                     <div>
-                        <Button type="primary" size="large" icon={<SearchOutlined />}>Buscar</Button>
+                        <label htmlFor="fecha" style={{ display: "block" }}>Fecha:</label>
+                        <DatePicker placeholder="Eliga una fecha" id="fecha" format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
+                    </div>
+                    <div>
+                        <label htmlFor="Estado" style={{ display: "block" }}>Estado:</label>
+                        <Select id="Estado" defaultValue="" style={{ width: '100%' }} onChange={(value) => onChangeEstado(value)}>
+                            <Option value="">Todos</Option>
+                            <Option value={EstadoCompra.EsperandoConfirmacion}>Esperando Confirmación</Option>
+                            <Option value={EstadoCompra.Confirmada}>Confirmada</Option>
+                            <Option value={EstadoCompra.Cancelada}>Cancelada</Option>
+                            <Option value={EstadoCompra.Completada}>Completada</Option>
+                        </Select>
+                    </div>
+                    <div>
+                        <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda}>Buscar</Button>
                     </div>
 
                     <div style={{ marginLeft: "30px", marginBottom: "auto", fontSize: "12px", display: "flex" }}>
