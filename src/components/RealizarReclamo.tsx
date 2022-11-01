@@ -11,11 +11,11 @@ type reclamoProps = {
 
 }
 
-export const realizarReclamo = (props: reclamoProps) => {
+export const RealizarReclamo = (props: reclamoProps) => {
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
     const { idCompra } = props
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
     const [datosReclamos, setDatosReclamos] = useState<DtAltaReclamo>({
         descripcion: "",
         tipo: TipoReclamo.Otro
@@ -29,53 +29,49 @@ export const realizarReclamo = (props: reclamoProps) => {
             descripcion: datosReclamos.descripcion,
             tipo: datosReclamos.tipo
         }
-        CompradorService.nuevoReclamo(id!, token!, idCompra, datos).then((result) => {
-            if (result == "200") {
-                <Result
-                    status="success"
-                    title="Reclamo enviado correctamente"
-                    subTitle="Se ha notificado al comprador que tiene un nuevo reclamo. Se te avisará cuando haya una respuesta."
-                    extra={[
-                        <Button type="primary" key="console">
-                            Entendido
-                        </Button>,
-                    ]}
-                />
-            } else {
-                Modal.error({
-                    title: 'This is an error message',
-                    content: 'some messages...some messages...',
-                });
-            }
-        })
+        return (
+            <Result
+                status="success"
+                title="Reclamo enviado correctamente"
+                subTitle="Se ha notificado al comprador que tiene un nuevo reclamo. Se te avisará cuando haya una respuesta."
+                extra={[
+                    <Button type="primary" key="console">
+                        Entendido
+                    </Button>,
+                ]}
+            />
+        )
     }
 
 
     const formRef = React.createRef<FormInstance>();
-    <Modal title="Iniciar reclamo a vendedor" open={open} onCancel={hideModal}>
-        <Form ref={formRef} name="control-ref" onFinish={hacerReclamo}>
-            <Form.Item name="note" label="Tipo:" rules={[{ required: true }]}>
-                <Select placeholder="Seleccione el tipo de reclamo" value={TipoReclamo.DesperfectoProducto} onChange={(value) => setDatosReclamos({ ...datosReclamos, "tipo": value })}>
-                    <Option value={TipoReclamo.DesperfectoProducto}>Desperfecto en el prroducto</Option>
-                    <Option value={TipoReclamo.ProductoNoRecibido}>Producto no recibido</Option>
-                    <Option value={TipoReclamo.ProducoErroneo}>Producto erroneo</Option>
-                    <Option value={TipoReclamo.Otro}>Otro</Option>
-                </Select>
-            </Form.Item>
-            <Form.Item name="note" label="Descripcion:" rules={[{ required: true }]}>
-                <Input.TextArea showCount maxLength={255} onChange={(e) => setDatosReclamos({ ...datosReclamos, "descripcion": e.target.value })} />
-            </Form.Item>
 
-            <Form.Item>
-                <Button type="primary" htmlType="submit">
-                    Enviar reclamo.
-                </Button>
-                <Button htmlType="button" onClick={hideModal}>
-                    Cancelar
-                </Button>
-            </Form.Item>
-        </Form>
-    </Modal>
+    return (
+        <Modal title="Iniciar reclamo a vendedor" open={open} onCancel={hideModal}>
+            <Form ref={formRef} name="control-ref" onFinish={hacerReclamo}>
+                <Form.Item name="note" label="Tipo:" rules={[{ required: true }]}>
+                    <Select placeholder="Seleccione el tipo de reclamo" value={TipoReclamo.DesperfectoProducto} onChange={(value) => setDatosReclamos({ ...datosReclamos, "tipo": value })}>
+                        <Option value={TipoReclamo.DesperfectoProducto}>Desperfecto en el prroducto</Option>
+                        <Option value={TipoReclamo.ProductoNoRecibido}>Producto no recibido</Option>
+                        <Option value={TipoReclamo.ProducoErroneo}>Producto erroneo</Option>
+                        <Option value={TipoReclamo.Otro}>Otro</Option>
+                    </Select>
+                </Form.Item>
+                <Form.Item name="note" label="Descripcion:" rules={[{ required: true }]}>
+                    <Input.TextArea showCount maxLength={255} onChange={(e) => setDatosReclamos({ ...datosReclamos, "descripcion": e.target.value })} />
+                </Form.Item>
+
+                <Form.Item>
+                    <Button type="primary" htmlType="submit">
+                        Enviar reclamo
+                    </Button>
+                    <Button htmlType="button" onClick={hideModal}>
+                        Cancelar
+                    </Button>
+                </Form.Item>
+            </Form>
+        </Modal>
+    )
 }
 
-export default realizarReclamo;
+export default RealizarReclamo;

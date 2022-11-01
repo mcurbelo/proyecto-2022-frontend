@@ -19,6 +19,7 @@ import CardList from './components/CardList';
 import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
 import { MisCompras } from './components/MisCompras';
+import { RealizarReclamo } from './components/RealizarReclamo';
 require('dotenv').config();
 
 Auth.endpoint = process.env.REACT_APP_SERVER_URL ?? "";
@@ -42,6 +43,7 @@ root.render(
           console.log("Selected card: " + id)
         }} />} />
         <Route path="/productos/:id" element={<InfoProducto />} />
+        <Route path="/realizarReclamo" element= {<RealizarReclamo idCompra='80'/>} />
       </Routes>
     </BrowserRouter>
 
