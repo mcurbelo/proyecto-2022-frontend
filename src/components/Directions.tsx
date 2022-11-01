@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { List, Avatar, Button, Checkbox, message, Modal, } from "antd";
+import React, {useState,useEffect} from "react";
+import { List, Avatar, Button, Checkbox, message, Modal,  } from "antd";
 import { EnvironmentOutlined, EditOutlined } from "@ant-design/icons";
 import AddDirection from "./AddDirection";
 import { CompradorService } from "shopit-shared";
@@ -8,86 +8,85 @@ import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
 
 
 
-const token: string = localStorage.getItem("token") as string;
+const token : string =  localStorage.getItem("token") as string;
 
 interface DirectionsProps {
-  permiteSeleccion?: boolean;
-  esVendedor?: boolean;
-  onSelectDirection?: (id: string) => void
+  permiteSeleccion ?: boolean;
+  esVendedor?:boolean;
+  onSelectDirection?: (id: string) => void;
 }
 
-export const Directions = ({ permiteSeleccion = false, esVendedor = false, onSelectDirection = undefined }: DirectionsProps) => {
-  console.log(permiteSeleccion)
+export const Directions: React.FC<DirectionsProps> = (props) => {
+  let { onSelectDirection } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idDireccion, setIdDireccion] = useState("");
   const [siguienteVisible, setSiguienteVisible] = useState(true);
-  const [direccionEditar, setDireccionEditar] = useState({ id: "", calle: "", numero: 0, departamento: "", localidad: "", aclaracion: "", esLocal: false });
+  const [direccionEditar, setDireccionEditar] = useState({id: "", calle:"", numero: 0, departamento:"", localidad: "", aclaracion:"", esLocal: false});
   const [addDirection, setAddDirection] = useState(false);
   //const [direcciones, setDirecciones] = useState([{title:"", description: "", key: ""}]);
 
   const [direcciones, setDirecciones] = useState([] as DtDireccion[]);
   const [direccionesLocales, setDireccioneLocales] = useState([] as DtDireccion[]);
+  
 
-
-  const editarDireccion = (event: any, key: string) => {
-    //Tengo que arreglar esto
-    let direccion = { id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: "" };
-    direcciones.forEach(e => {
-      debugger; if (e.id === key) {
-        setDireccionEditar({ id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal });
-      }
-    })
-
+  const editarDireccion = (event:any, key?:string) => {
+    if(!key) return;
+    let direccion = {id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: ""};
+    direcciones.forEach(e => { debugger; if(e.id === key){
+      setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
+    }})
+    
     setIdDireccion(key);
     setIsModalOpen(true);
   };
 
   const handleClose = () => {
     setIsModalOpen(false);
-    setDireccionEditar({ id: "", calle: "", numero: 0, departamento: "", localidad: "", aclaracion: "", esLocal: false });
+    setDireccionEditar({id: "", calle:"", numero: 0, departamento:"", localidad: "", aclaracion:"", esLocal: false});
   };
 
   const handleCancel = () => {
     setIsModalOpen(false);
-    setDireccionEditar({ id: "", calle: "", numero: 0, departamento: "", localidad: "", aclaracion: "", esLocal: false });
+    setDireccionEditar({id: "", calle:"", numero: 0, departamento:"", localidad: "", aclaracion:"", esLocal: false});
   };
 
   useEffect(() => {
     getDirecciones();
   }, []);
 
-  function onChangeDireccion(event: any, key: any) {
+  function onChangeDireccion(event:any, key:any) {
     setIdDireccion(key);
   }
 
   function onAddDirection() {
-    if (addDirection) {
+    if(addDirection){
       setAddDirection(false);
       setSiguienteVisible(true);
-    } else {
+    }else{
       setAddDirection(true);
       setSiguienteVisible(false);
     }
-
+    
   }
 
-  function updateDirecciones(values: any) {
+  function updateDirecciones (values: any){
     handleClose();
     getDirecciones();
+    onAddDirection()
   }
 
 
-  function onSeleccionarDireccion() {
-    if (onSelectDirection != undefined) onSelectDirection(idDireccion);
+  function onSeleccionarDireccion (){
+    if(onSelectDirection != undefined) onSelectDirection(idDireccion);
   }
 
 
-  function getDirecciones() {
+  function getDirecciones(){
     let data: any = [];
     let locales: any = [];
     CompradorService.obtenerDirecciones(token).then(res => {
       res.forEach(direccion => {
-        if (direccion.esLocal) {
+        if(direccion.esLocal){
           locales.push(direccion);
         }
       });
@@ -105,26 +104,26 @@ export const Directions = ({ permiteSeleccion = false, esVendedor = false, onSel
           itemLayout="horizontal"
           dataSource={direcciones}
           renderItem={(item) => (
-            <List.Item actions={[<EditOutlined style={{ fontSize: "20px" }} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}>
-              {permiteSeleccion !== false && <Checkbox checked={item.id === idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{ margin: '20px' }}></Checkbox>}
+            <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
+              {props.permiteSeleccion && <Checkbox checked={item.id === idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
               <List.Item.Meta
-                avatar={<EnvironmentOutlined />}
+                avatar={<EnvironmentOutlined /> }
                 title={<a>{item.calle + " " + item.numero}</a>}
                 description={item.localidad + " ," + item.departamento + " | " + item.notas}
               />
             </List.Item>
           )}
         />
-        {direccionesLocales.length != 0 && <div style={{ marginTop: "20px" }}>
+        {(direccionesLocales.length != 0) && <div style={{marginTop:"20px"}}>
           <h3>Direcciones de locales</h3>
           <List
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
-              <List.Item actions={[<EditOutlined style={{ fontSize: "20px" }} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}>
-                {permiteSeleccion !== false && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{ margin: '20px' }}></Checkbox>}
+              <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
+                {props.permiteSeleccion && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
                 <List.Item.Meta
-                  avatar={<EnvironmentOutlined />}
+                  avatar={<EnvironmentOutlined /> }
                   title={<a>{item.calle + " " + item.numero}</a>}
                   description={item.localidad + " ," + item.departamento + " | " + item.notas}
                 />
@@ -132,26 +131,26 @@ export const Directions = ({ permiteSeleccion = false, esVendedor = false, onSel
             )}
           />
         </div>}
+        
+        <Button style={{marginTop:"10px"}} type="ghost" onClick={onAddDirection}>Agregar Direccion</Button>
+        {props.permiteSeleccion && <Button style={{marginTop:"10px", display: siguienteVisible ? "block": "none"}} type="ghost" onClick={onSeleccionarDireccion}>Siguiente</Button>}
 
-        <Button style={{ marginTop: "10px" }} type="ghost" onClick={onAddDirection}>Agregar Direccion</Button>
-        {permiteSeleccion !== false && <Button style={{ marginTop: "10px", display: siguienteVisible ? "block" : "none" }} type="ghost" onClick={onSeleccionarDireccion}>Siguiente</Button>}
-
-        <div style={{ margin: "20px" }}>
+        <div style={{ margin: "20px"}}>
           {addDirection && <AddDirection editar={false} esVendedor={true} callBack={updateDirecciones}></AddDirection>}
-        </div>
+        </div>  
       </div>
 
-      <Modal title="Editar direccion" open={isModalOpen} onCancel={handleCancel}
+      <Modal title="Editar direccion" open={isModalOpen} onCancel={handleCancel} 
         footer={[
           <Button key="back" onClick={handleCancel}>
             Cancelar
-          </Button>
+          </Button>      
         ]}>
         <AddDirection datosActuales={direccionEditar} editar={true} idDireccion={idDireccion} esVendedor={true} callBack={updateDirecciones}></AddDirection>
       </Modal>
     </div>
 
 
-
+    
   );
 };
