@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Card, List, Input, Space, Button, Layout, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip } from 'antd';
-import { SearchOutlined } from '@ant-design/icons';
+import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { CompradorService } from "shopit-shared";
 import { DtCompraSlimComprador, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
 import { DtFiltrosCompras } from "shopit-shared/dist/user/CompradorService";
@@ -8,6 +8,7 @@ import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faSquareCheck, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import Calificar from "./RealizarCalificacion";
 
 
 interface AppState {
@@ -58,7 +59,6 @@ export const MisCompras: React.FC<{}> = () => {
 
     const busqueda = () => {
         CompradorService.listarCompras(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
-            console.log(paginaAbuscar.toString())
             if (result.compras !== undefined) {
                 setCompras(result.compras);
                 setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -106,7 +106,15 @@ export const MisCompras: React.FC<{}> = () => {
         )
     }
 
-
+    const tootlipRender = (cantidad: number, precioUni: number) => {
+        return (
+            <>
+                <span>{"Unidades: " + cantidad + ""}</span>
+                <br />
+                <span>{"Precio unitario: $" + precioUni + ""}</span>
+            </>
+        )
+    }
 
     return (
         <div style={{ margin: "auto", width: "80%", padding: "50px" }}>
@@ -198,29 +206,18 @@ export const MisCompras: React.FC<{}> = () => {
                                                 <a onClick={iniciarChat}>Iniciar chat</a>
                                             </div>
                                             <div style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                                                <Space>
-                                                    <div>
-                                                        <label htmlFor="cantidad" style={{ display: "block" }}>Unidades</label>
-                                                        <Input bordered={false} id="cantidad" value={item.cantidad} style={{ width: "97px" }} />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="unidad" style={{ display: "block" }}>Precio unitario</label>
-                                                        <Input bordered={false} id="unidad" value={"$ " + item.montoUnitario} style={{ width: "97px" }} />
-                                                    </div>
-                                                    <div>
-                                                        <label htmlFor="total" style={{ display: "block" }}>Precio total</label>
-                                                        <Input bordered={false} id="total" value={"$ " + item.montoTotal} style={{ width: "97px" }} />
-                                                    </div>
-                                                </Space>
+                                                <span id="Total">{"Total: $" + item.montoTotal}</span>
+                                                <Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
+                                                    <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
+                                                </Tooltip>
                                             </div>
-
 
 
                                             <div style={{ width: "90%", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
                                                 <Space direction="vertical" size={15}>
                                                     <div style={{ display: "flex", alignItems: "center" }}>
                                                         <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                        <Button style={{ width: "150px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                        <Button style={{ width: "150px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }}/></Button>
                                                     </div>
                                                     <div style={{ display: "flex", alignItems: "center" }}>
                                                         <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
