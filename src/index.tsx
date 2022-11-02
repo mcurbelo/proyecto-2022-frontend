@@ -30,6 +30,7 @@ const root = ReactDOM.createRoot(
 );
 root.render(
   <React.StrictMode>
+    <MainHeader />
     <BrowserRouter>
       <Routes>
         <Route path='/' element={<HomePage showHeader={true} showProfile={false} />} />

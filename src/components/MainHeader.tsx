@@ -4,6 +4,7 @@ import Search from "antd/lib/input/Search";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMitt } from "react-mitt";
+import { useNavigate } from "react-router";
 import { CategoriaService } from "shopit-shared";
 import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
 import logo from "./../images/logo192.png"
@@ -68,9 +69,17 @@ const menu = (
       {
         key: '2',
         label: (
-          <a target="_blank" rel="noopener noreferrer" href="/logout">
+          <Button type="text"
+            onClick={(_) => {
+              localStorage.removeItem("token")
+              localStorage.removeItem("uuid")
+              window.location.reload()
+            }}
+          >
+          {/* <a target="_blank" rel="noopener noreferrer" href="/logout"> */}
             Cerrar sesion
-          </a>
+          {/* </a> */}
+          </Button>
         ),
       }
     ]}
@@ -82,8 +91,8 @@ const menu = (
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const { emitter } = useMitt()
   const styles = useStyles()
-  const sesionIniciada = true;
   const [categorias, setCategorias] = useState<DtCategoria[]>([])
+  const [sesionIniciada, setSesionIniciada] = useState(false)
 
   const buscarProducto = (value: string) => {
     emitter.emit('busquedaProducto', { data: value });
@@ -103,8 +112,9 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
   useEffect(() => {
     obtenerCategorias();
-
-  }, [])
+    let token = localStorage.getItem("token")
+    if(token) setSesionIniciada(true)
+  })
 
   return (
     <div className={styles.wrapper}>
@@ -127,6 +137,9 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           </Dropdown> :
 
           <Button
+            onClick={(_) => {
+              window.location.href = "/signin"
+            }}
             type="primary"
             style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar Sesion</Button>
         }
