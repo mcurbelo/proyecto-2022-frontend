@@ -16,7 +16,7 @@ export const ItemPublication = ({ producto }: Props) => {
       key={producto.idProducto}
       hoverable
       bodyStyle={{ padding: "5%" }}
-      cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" id={producto.idProducto} style={{ width: '90%' }} onClick={()=> navigate("/productos/"+producto.idProducto)} icon={<InfoCircleFilled />} >
+      cover={<img alt='' src={producto.imagen} />} actions={[<Button type="primary" id={producto.idProducto} style={{ width: '90%' }} onClick={() => navigate("/productos/" + producto.idProducto)} icon={<InfoCircleFilled />} >
         Ver detalles
       </Button>]}>
       <Meta title={producto.nombre} style={{ whiteSpace: "pre-line" }} />

@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { CardService } from "shopit-shared";
 import CreditCard from "./CreditCard";
 
-type CreditCardData = {
+export type CreditCardData = {
   id: string;
   last4: string;
   expiration: string;
@@ -16,12 +16,15 @@ type CardListState = {
 
 type CardListProps = {
   onSelectCard: (id: string) => void
+  selectedCard?: string
+  onSelectedCardInfo?: (card: CreditCardData) => void,
 }
 
 const CardList: React.FC<CardListProps> = (props) => {
   const { onSelectCard } = props;
   const [state, setState] = useState({ cards: [] } as CardListState)
-
+  const { selectedCard } = props
+  const { onSelectedCardInfo } = props
   useEffect(() => {
     let uuid = localStorage.getItem("uuid");
     let token = localStorage.getItem("token");
@@ -36,16 +39,18 @@ const CardList: React.FC<CardListProps> = (props) => {
 
     state.cards.forEach(card => card.selected = false)
     let card = state.cards.find(card => card.id == id)
+    if (onSelectedCardInfo) onSelectedCardInfo(card!)
     if (card) card.selected = true
     setState({ cards: state.cards })
     onSelectCard(id)
+
   }
 
   return (
     <div style={{ padding: 15 }}>
       {state.cards.map(card => <CreditCard
         onCardSelected={selectCard}
-        checked={card.selected}
+        checked={(card.id === selectedCard) ? true : card.selected}
         key={card.id}
         id={card.id}
         last4={card.last4}

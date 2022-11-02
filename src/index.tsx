@@ -18,8 +18,9 @@ import AddCardForm from './components/AddCard';
 import CardList from './components/CardList';
 import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
-import { MisCompras } from './components/MisCompras';
+import RealizarCompra from './components/RealizarCompra';
 import AddProductForm from './components/ProductForm';
+import { MisCompras } from './components/MisCompras';
 
 require('dotenv').config();
 
@@ -44,6 +45,7 @@ root.render(
           console.log("Selected card: " + id)
         }} />} />
         <Route path="/productos/:id" element={<InfoProducto />} />
+        <Route path="/compra" element={<RealizarCompra />} />
         <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
       </Routes>
     </BrowserRouter>

@@ -7,6 +7,7 @@ import { DtProducto } from "shopit-shared/dist/user/ProductoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoneyBill1, faShop, faTruckFast, faWallet } from "@fortawesome/free-solid-svg-icons";
 import tarjetas from '../images/tarjetas.jpg';
+import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 
 interface AppState {
   producto: DtProducto
@@ -130,15 +131,15 @@ export const InfoProducto = () => {
   }
   const estadoStock = () => {
     if (producto != undefined && producto?.stock >= 30)
-      return <Text type="success">En stock<FontAwesomeIcon icon={faBoxesStacked} /></Text>
+      return <Text type="success">En stock<FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
     if (producto != undefined && producto?.stock < 30 && producto?.stock > 10)
-      return <Text type="warning">Stock medio <FontAwesomeIcon icon={faBoxesStacked} /></Text>
+      return <Text type="warning">Stock medio <FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
     if (producto != undefined && producto?.stock <= 10 && producto?.stock > 0)
-      return <Text type="danger">Últimas unidades  <FontAwesomeIcon icon={faBox} /></Text>
+      return <Text type="danger">Últimas unidades  <FontAwesomeIcon icon={faBox} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
     else
-      return <Text mark>Sin stock <FontAwesomeIcon icon={faCircleXmark} /></Text>
+      return <Text mark>Sin stock <FontAwesomeIcon icon={faCircleXmark} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
   }
 
@@ -174,11 +175,22 @@ export const InfoProducto = () => {
         content: "Cantidad de unidades invalida.",
       });
     }
-
-    if (producto?.stock && cantidadProducto > producto?.stock) {
+    else if (producto?.stock && cantidadProducto > producto?.stock) {
       Modal.warning({
         content: "La cantidad de unidades solicitadas es superior al stock actual.",
       });
+    } else {
+      const infoCompra: DtCompra = {
+        idVendedor: producto?.idVendedor || "",
+        idProducto: producto?.idProducto || "",
+        cantidad: cantidadProducto || 0,
+        esParaEnvio: false,
+        idTarjeta: "",
+        idDireccionEnvio: -1,
+        idDireccionLocal: -1
+      }
+      localStorage.setItem("infoCompra", JSON.stringify(infoCompra))
+      navigate("/compra", { state: { producto: producto } })
     }
   }
 
@@ -276,21 +288,21 @@ export const InfoProducto = () => {
         </Card>
       </Col>
       <div>
-      <List
-        className="comment-list"
-        header={`${data.length} replies`}
-        itemLayout="horizontal"
-        dataSource={data}
-        renderItem={item => (
-          <li>
-            <Comment actions={item.actions}
-              author={item.author}
-              avatar={item.avatar}
-              content={item.content}
-              datetime={item.datetime} />
-          </li>
-        )}
-      />
+        <List
+          className="comment-list"
+          header={`${data.length} replies`}
+          itemLayout="horizontal"
+          dataSource={data}
+          renderItem={item => (
+            <li>
+              <Comment actions={item.actions}
+                author={item.author}
+                avatar={item.avatar}
+                content={item.content}
+                datetime={item.datetime} />
+            </li>
+          )}
+        />
       </div>
     </Row>
   )

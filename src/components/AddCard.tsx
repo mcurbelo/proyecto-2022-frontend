@@ -9,6 +9,10 @@ type AddCardState = {
   hasLoaded: boolean;
 }
 
+interface AddCardProp {
+  onCardAdd?: () => void
+}
+
 const useStyles = createUseStyles({
   "@global": {
     ".ant-spin-dot-item": {
@@ -26,9 +30,9 @@ const useStyles = createUseStyles({
     marginBottom: 15
   }
 })
-const AddCardForm = () => {
+const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
   const styles = useStyles();
-  const [state, setState] = useState({success: false, loading: false} as AddCardState)
+  const [state, setState] = useState({ success: false, loading: false } as AddCardState)
   return (
     <div className={styles.wrapper}>
       <p>Agregar Tarjeta</p>
@@ -39,7 +43,7 @@ const AddCardForm = () => {
           // TODO Esto capaz debería pasarse a la librería compartida cuando se inicia sesión/carga la web
           let token = localStorage.getItem("token");
           let uuid = localStorage.getItem("uuid");
-          setState({...state, loading: true})
+          setState({ ...state, loading: true })
           CardService.agregarTarjeta({
             cardNumber: values.cardNumber,
             cardCvv: values.cardCvv,
@@ -47,9 +51,11 @@ const AddCardForm = () => {
             uuid: uuid!,
             token: token!
           }).then((response) => {
-            setState({success: true, loading: false, hasLoaded: true})
+            setState({ success: true, loading: false, hasLoaded: true })
+            if (onCardAdd !== undefined)
+              onCardAdd()
           }).catch((error) => {
-            setState({success: false, loading: false, hasLoaded: true})
+            setState({ success: false, loading: false, hasLoaded: true })
           })
         }}
       >
