@@ -198,8 +198,8 @@ label {
 
 .misCompras-principal-div{
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  grid-gap: 10px;
+  grid-template-columns: repeat(4, 1fr);
+  grid-gap: 15px;
   grid-auto-rows: minmax(100px, auto);
 }
 
@@ -215,5 +215,10 @@ label {
 
 .misCompras-principal-div .three {
   grid-column: 3 / 3;
+  grid-row: 1;
+}
+
+.misCompras-principal-div .fourth {
+  grid-column: 4 / 4;
   grid-row: 1;
 }
