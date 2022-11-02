@@ -73,7 +73,6 @@ export const RealizarCompra = () => {
     const navigate = useNavigate();
     const [current, setCurrent] = useState(0);
     const [infoTarjeta, setInfoTarjeta] = useState<AppState["datosTarjeta"]>();
-    const [direccionesComprador, setDireccion] = useState([] as DtDireccion[])
     const [direccionesVendedor] = useState(productoInfo.localesParaRetiro)
     const [datosDireccion, setDatosDireccion] = useState("");
     const [datosCompra, setDatosCompra] = useState<AppState["datosCompra"]>({
@@ -98,12 +97,7 @@ export const RealizarCompra = () => {
             navigate("/");
         let value = JSON.parse(localStorage.getItem("infoCompra") || "")
         setDatosCompra(value)
-        if (productoInfo.permiteEnvio) {
-            let token = localStorage.getItem("token");
-            CompradorService.obtenerDirecciones(token!).then((result) => {
-                setDireccion(result)
-            })
-        }
+
     }, [])
 
     const onChangeDatos = (id: string, campo: string) => {
@@ -127,7 +121,7 @@ export const RealizarCompra = () => {
     const steps = [
         {
             title: titulo,
-            content: <CompraDireccion permiteEnvio={productoInfo.permiteEnvio} direcciones={(datosCompra.esParaEnvio) ? direccionesComprador : direccionesVendedor}
+            content: <CompraDireccion permiteEnvio={productoInfo.permiteEnvio} direccionesVendedor={direccionesVendedor}
                 onSelectEsEnvio={(opc) => { onChangeEnvio(opc) }}
                 onSelectDireccion={(direccion) => {
                     onChangeDatos(direccion.id!.toString(), (datosCompra.esParaEnvio) ? "idDireccionEnvio" : "idDireccionLocal");

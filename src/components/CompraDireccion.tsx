@@ -9,12 +9,13 @@ import AddDirection from "./AddDirection";
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import Button from "antd-button-color";
+import { CompradorService } from "shopit-shared";
 
 type CompraDireccionProps = {
     onSelectDireccion: (infoDireccion: Direccion | DtDireccion) => void,
     permiteEnvio: boolean
     onSelectEsEnvio: (opc: boolean) => void,
-    direcciones: Direccion[] | DtDireccion[]
+    direccionesVendedor: Direccion[]
     selecionPrevia: DtCompra
 }
 
@@ -56,13 +57,16 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
     const { onSelectEsEnvio } = props;
     const { selecionPrevia } = props;
 
-    const { direcciones } = props;
+    const { direccionesVendedor } = props;
     const { permiteEnvio } = props
     const [mostrarLista, setMostrar] = useState(true);
-    const [esEnvio, SetEsEnvio] = useState(false);
+    const [esEnvio, SetEsEnvio] = useState(selecionPrevia.esParaEnvio);
     const [valueDireccion, setValueDireccion] = useState("");
+    const [direccionesComprador, setDireccionComprador] = useState([] as DtDireccion[])
+    const [actualizar, setActualizar] = useState(false);
     const onClick = () => {
         setMostrar(!mostrarLista)
+        setActualizar(!actualizar)
     };
     const { Text } = Typography;
 
@@ -84,14 +88,21 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
 
 
     useEffect(() => {
-
-        if (selecionPrevia.esParaEnvio && selecionPrevia.idDireccionEnvio !== -1) {
-            setValueDireccion(selecionPrevia.idDireccionEnvio!.toString())
+        if (esEnvio) {
+            let token = localStorage.getItem("token");
+            CompradorService.obtenerDirecciones(token!).then((result) => {
+                setDireccionComprador(result)
+            })
+            if (selecionPrevia.idDireccionEnvio !== -1) {
+                setValueDireccion(selecionPrevia.idDireccionEnvio!.toString())
+            }
         }
+
+
         if (!selecionPrevia.esParaEnvio && selecionPrevia.idDireccionLocal !== -1) {
             setValueDireccion(selecionPrevia.idDireccionLocal!.toString())
         }
-    }, [])
+    }, [esEnvio == true, actualizar])
 
     const renderOpciones = () => {
         if (permiteEnvio) {
@@ -113,15 +124,21 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
     }
 
     const subtitulo = () => {
-        if (esEnvio && direcciones.length === 0)
+        if (esEnvio && direccionesComprador.length === 0)
             return ("No hay direcciones disponibles")
-        else if (esEnvio && direcciones.length !== 0)
+        else if (esEnvio && direccionesComprador.length !== 0)
             return ("Mis direcciones:")
         else
             return ("Locales:")
     }
 
     const renderDirecciones = () => {
+        let direcciones;
+        if (esEnvio)
+            direcciones = direccionesComprador;
+        else
+            direcciones = direccionesVendedor
+
         if (direcciones.length > 0) {
             return (
                 <>
@@ -150,7 +167,7 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
     const botonAdd = () => {
         if (esEnvio) {
             return (
-                <div style={{ paddingLeft: "15px", display: "flex", justifyContent: (direcciones.length === 0) ? "center" : "normal" }}>
+                <div style={{ paddingLeft: "15px", display: "flex", justifyContent: (direccionesComprador.length === 0) ? "center" : "normal" }}>
                     <Button with="link" type="success" onClick={onClick}><b>Agregar dirección <FontAwesomeIcon icon={faSquarePlus} /></b></Button>
                 </div>
             )
