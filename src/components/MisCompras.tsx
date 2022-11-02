@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { Card, List, Input, Space, Button, Layout, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip } from 'antd';
+import { Card, List, Input, Space, Button, Layout, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Col, Divider, Modal, Result } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { CompradorService } from "shopit-shared";
+import { CompartidoUsuario, CompradorService } from "shopit-shared";
 import { DtCompraSlimComprador, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
 import { DtFiltrosCompras } from "shopit-shared/dist/user/CompradorService";
 import { createUseStyles } from "react-jss";
@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faSquareCheck, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import Calificar from "./RealizarCalificacion";
+import Meta from "antd/lib/card/Meta";
+import RealizarReclamo from "./RealizarReclamo";
+import RealizarCalificacion from "./RealizarCalificacion";
 
 
 interface AppState {
@@ -17,6 +20,7 @@ interface AppState {
 }
 
 const { Option } = Select;
+const { confirm } = Modal;
 
 const useStyles = createUseStyles({
     "@global": {
@@ -25,14 +29,57 @@ const useStyles = createUseStyles({
             alignItems: "center",
             justifyContent: "center"
         }
+    },
+
+    divTitulo: {
+        width: "15%"
+    },
+
+    divPequeño: {},
+
+    container: {
+        width: "80%",
+        margin: "auto"
+    },
+    comprasContainer: {
+        gap: "10%",
+        width: "100%",
+        justifyContent: "center"
+    },
+    filtros: {
+
+    },
+
+    '@media screen and (max-width: 500px)': {
+        divTitulo: {
+            width: "100%"
+        },
+        divPequeño: {
+            width: "100%"
+        },
+        container: {
+            width: "100%"
+        },
+
+        comprasContainer: {
+            gap: "10%"
+        },
+
+
+
+    },
+    '@media screen and (max-width: 589px)': {
+        filtros: {
+            width: "100%"
+        }
     }
+
 })
 
 export const MisCompras: React.FC<{}> = () => {
     const styles = useStyles();
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
-    const { Header, Footer, Sider, Content } = Layout;
     const { Step } = Steps;
     const [compras, setCompras] = useState<AppState["compras"]>()
     const [filtros, setFiltros] = useState<AppState["filtros"]>({
@@ -52,6 +99,17 @@ export const MisCompras: React.FC<{}> = () => {
         totalItems: 0
     })
     const [paginaAbuscar, setPaginaAbuscar] = useState(0)
+    const [mostrarReclamo, setMostrarReclamo] = useState({
+        mostrar: false,
+        id: "",
+        nombreUsuario: ""
+    })
+    const [mostrarCalificar, setMostrarCalificar] = useState({
+        mostrar: false,
+        id: "",
+        nombreUsuario: "",
+        idBoton: ""
+    })
 
     useEffect(() => {
         busqueda()
@@ -116,35 +174,66 @@ export const MisCompras: React.FC<{}> = () => {
         )
     }
 
-    return (
-        <div style={{ margin: "auto", width: "80%", padding: "50px" }}>
+    const changeButtonAttribute = (id: string) => {
+        var botonCalificar = document.getElementById(id);
+        botonCalificar?.setAttribute("disabled", "true");
+    }
 
+    const completarCompra = (id: string) => {
+
+        confirm({
+            title: 'Estás seguro que desea completar esta compra?',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Al confirmar ',
+            onOk() {
+                return CompartidoUsuario.completarEnvio(id, token!).then((result) => {
+                    if (result == "200") {
+                        Modal.success({
+                            title: "Acción exitosa",
+                            content: 'Estado de la compra actualizado exitosamente',
+                        });
+                    } else {
+                        Modal.error({
+                            title: 'Error',
+                            content: 'Ha ocurrido un error inesperado',
+                        });
+                    }
+
+                })
+            },
+            onCancel() { },
+        });
+    }
+
+
+    return (
+        <div className={styles.container} >
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
                 <Card>
-                    <Space size={30}>
-                        <div >
+                    <Row style={{ gap: "20px" }}>
+                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
                             <label htmlFor="nProd" style={{ display: "block" }}>Producto:</label>
                             <Input id="nProd" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreProducto")} prefix={<SearchOutlined />} />
                         </div>
-                        <div >
+                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
                             <label htmlFor="nVen" style={{ display: "block" }}>Vendedor:</label>
                             <Input id="nVen" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreVendedor")} prefix={<SearchOutlined />} />
                         </div>
 
-                        <div style={{ marginBottom: "auto", }}>
+                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
                             <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
-                            <Select id="orden" defaultValue={"fechaDsc"} style={{ width: '180px' }} onChange={handleChange}>
+                            <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "180px" }} onChange={handleChange}>
                                 <Option value="fechaDsc">Últimas compras</Option>
                                 <Option value="fechaAsc">Compras más antiguas</Option>
                             </Select>
                         </div>
-                        <div>
+                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
                             <label htmlFor="fecha" style={{ display: "block" }}>Fecha:</label>
-                            <DatePicker placeholder="Eliga una fecha" id="fecha" format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
+                            <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "180px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
                         </div>
-                        <div>
+                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
                             <label htmlFor="Estado" style={{ display: "block" }}>Estado:</label>
-                            <Select id="Estado" defaultValue={true} style={{ width: '180px' }} onChange={(value) => onChangeEstado(value)}>
+                            <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "180px" }} onChange={(value) => onChangeEstado(value)}>
                                 <Option value={true}>Todos</Option>
                                 <Option value={EstadoCompra.EsperandoConfirmacion}>Esperando confirmación</Option>
                                 <Option value={EstadoCompra.Confirmada}>Confirmada</Option>
@@ -152,16 +241,14 @@ export const MisCompras: React.FC<{}> = () => {
                                 <Option value={EstadoCompra.Completada}>Completada</Option>
                             </Select>
                         </div>
-                        <div style={{ marginBottom: "-7px" }}>
-                            <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px' }}>Buscar</Button>
+                        <div style={{ minWidth: "150px" }}>
+                            <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                         </div>
 
-                        <div style={{ marginBottom: "auto", fontSize: "12px", display: "flex" }}>
-                            <div style={{ marginTop: "7px" }}>
-                                <p>Cantidad: {infoPaginacion.totalItems}</p>
-                            </div>
+                        <div style={{ fontSize: "12px", display: "flex", alignItems: "center" }}>
+                            <span>Cantidad: {infoPaginacion.totalItems}</span>
                         </div>
-                    </Space>
+                    </Row>
                 </Card>
             </div>
 
@@ -178,68 +265,66 @@ export const MisCompras: React.FC<{}> = () => {
                 dataSource={compras}
                 renderItem={item => (
                     <List.Item>
-                        <Card title={"Realizada el " + item.fecha.toString()}>
-                            <Layout>
-                                <Sider style={{ backgroundColor: "transparent" }}>
-                                    <div style={{ margin: "10px" }}>
-                                        <Image
-                                            width={150}
-                                            src={item.imagenURL}
-                                        />
+                        <Card title={"Realizada el " + item.fecha.toString()} bodyStyle={{ background: "#f0f2f5" }}>
+                            <Row className={styles.comprasContainer} >
+                                <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
+                                    <Step title="Esperando confirmación" />
+                                    <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} />
+                                    <Step title="Completada" />
+                                </Steps>
+                                <Divider></Divider>
+                                <Row gutter={[0, 20]} className={styles.comprasContainer} >
+                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                        <Image width={150} src={item.imagenURL} />
                                     </div>
-                                </Sider>
-                                <Layout>
-                                    <Header style={{ backgroundColor: "transparent" }}>
-                                        <Steps style={{ marginTop: "10px" }} size="small" current={stepCompra(item.estadoCompra)}>
-                                            <Step title="Esperando confirmación" />
-                                            <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} />
-                                            <Step title="Completada" />
-                                        </Steps>
-                                    </Header>
-                                    <Content>
-                                        <div className="misCompras-principal-div">
-                                            <div style={{ width: "100%", display: "flex", alignItems: "center" }}>
-                                                <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
-                                            </div>
-                                            <div style={{ width: "100%", display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                                                <p style={{ font: "revert-layer" }}>{item.nombreVendedor}</p>
-                                                <a onClick={iniciarChat}>Iniciar chat</a>
-                                            </div>
-                                            <div style={{ width: "100%", display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                                                <span id="Total">{"Total: $" + item.montoTotal}</span>
-                                                <Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
-                                                    <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
-                                                </Tooltip>
-                                            </div>
 
 
-                                            <div style={{ width: "90%", display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
-                                                <Space direction="vertical" size={15}>
-                                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                                        <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                        <Button style={{ width: "150px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }}/></Button>
-                                                    </div>
-                                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                                        <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                        <Button style={{ width: "150px" }} disabled={!item.puedeCalificar}>Calificar <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
-                                                    </div>
-                                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                                        <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                        <Button disabled={!item.puedeCompletar} style={{ width: "150px" }} type="primary">Completar compra <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
-                                                    </div>
-                                                </Space>
+                                    <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                    </div>
+                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                        <p style={{ font: "revert-layer" }}>{item.nombreVendedor}</p>
+                                        <a onClick={iniciarChat}>Iniciar chat</a>
+                                    </div>
+                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
+                                        <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
+                                            <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
+                                        </Tooltip></span>
+
+                                    </div>
+
+
+                                    <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                                        <Space direction="vertical" size={15}>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                <Button style={{ width: "150px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion} onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
-                                        </div>
-                                    </Content>
-                                    <Footer>
-                                    </Footer>
-                                </Layout>
-                            </Layout>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                <Button style={{ width: "150px" }} disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor, idBoton: item.idCompra + "Calificar" }) }}>Calificar <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                            </div>
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                <Button disabled={!item.puedeCompletar} style={{ width: "150px" }} type="primary" onClick={() => completarCompra(item.idCompra)} >Completar compra <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                            </div>
+                                        </Space>
+                                    </div>
+                                </Row>
+                            </Row>
+
                         </Card>
                     </List.Item>
                 )}
             />
             <Pagination style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
+            {
+                (mostrarReclamo.mostrar) ? <RealizarReclamo nombreUsuario={mostrarCalificar.nombreUsuario} showModal={() => { setMostrarReclamo({ mostrar: false, id: "", nombreUsuario: "" }) }} idCompra={mostrarReclamo.id} /> : null
+            }
+
+            {
+                (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { changeButtonAttribute(mostrarCalificar.idBoton) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={""} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "", idBoton: "" }) }}></RealizarCalificacion> : null
+            }
         </div >
 
     );

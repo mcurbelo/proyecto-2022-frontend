@@ -20,8 +20,6 @@ import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
 import { MisCompras } from './components/MisCompras';
 import AddProductForm from './components/ProductForm';
-import { RealizarReclamo } from './components/RealizarReclamo';
-import { Calificar } from './components/RealizarCalificacion';
 
 require('dotenv').config();
 
@@ -49,9 +47,6 @@ root.render(
         <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
 
 
-
-        <Route path="/realizarReclamo" element= {<RealizarReclamo idCompra='80'/>} />
-        <Route path="/calificar" element= {<Calificar idCompra='80'/>} />
       </Routes>
     </BrowserRouter>
 
