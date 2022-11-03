@@ -11,9 +11,6 @@ import PickerCategoria from "./PickerCategoria";
 
 const useStyles = createUseStyles({
   "@global": {
-    "body": {
-      padding: 15
-    },
     ".ant-carousel .slick-dots li button": {
       background: "#096dd9",
       opacity: 0.2
@@ -45,10 +42,19 @@ const AddProductForm = ({ esSolicitud = false }) => {
     })
   }
 
+  const errorModal = (mensaje: string) => {
+    Modal.error({
+      title: "Ha ocurrido un error",
+      content: mensaje
+    })
+  }
   const handleFormSubmition = (values: any) => {
     let token = localStorage.getItem("token")
-    let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
-    let formatted = format(dateFechaNac, "dd/MM/yyyy")
+    let formatted = ""
+    if(values.fechaFinProducto) {
+      let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
+      formatted = format(dateFechaNac, "dd/MM/yyyy")
+    }
     let datosProducto = {
       nombreProducto: values.nombreProducto,
       stock: values.stockProducto,
@@ -75,6 +81,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
         setTimeout(() => {
           navigate("/")
         }, 2000)
+      }).catch((error) => {
+        errorModal(error.response.data.message)
       })
     } else {
       VendedorService.altaProducto(datosProducto, selectedImages, token!).then((response) => {
@@ -82,6 +90,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
         setTimeout(() => {
           navigate("/")
         }, 2000)
+      }).catch((error) => {
+        errorModal(error.response.data.message)
       })
     }
   }
@@ -89,7 +99,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
   return (
     <div className={styles.wrapper}>
 
-      {idDireccion.length == 0 && <Directions permiteSeleccion={true} onSelectDirection={(id) => {
+      {(idDireccion.length == 0 && esSolicitud) && <Directions permiteSeleccion={true} onSelectDirection={(id) => {
         setIdDireccion(id)
       }} />}
 
@@ -113,7 +123,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
           })}
         </Carousel>
       )}
-      {idDireccion.length != 0 && (<><Button
+      {(idDireccion.length != 0 || !esSolicitud) && (<><Button
         disabled={selectedImages.length == 5}
         icon={<UploadOutlined />}
         type="primary"
