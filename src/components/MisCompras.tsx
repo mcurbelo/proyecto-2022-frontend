@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Card, List, Input, Space, Button, Layout, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Col, Divider, Modal, Result } from 'antd';
+import { Card, List, Input, Space, Layout, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Col, Divider, Modal, Result } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { CompartidoUsuario, CompradorService } from "shopit-shared";
 import { DtCompraSlimComprador, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
@@ -12,6 +12,9 @@ import Calificar from "./RealizarCalificacion";
 import Meta from "antd/lib/card/Meta";
 import RealizarReclamo from "./RealizarReclamo";
 import RealizarCalificacion from "./RealizarCalificacion";
+import Button from 'antd-button-color';
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 
 
 interface AppState {
@@ -42,7 +45,7 @@ const useStyles = createUseStyles({
         margin: "auto"
     },
     comprasContainer: {
-        gap: "10%",
+        gap: "8%",
         width: "100%",
         justifyContent: "center"
     },
@@ -269,8 +272,8 @@ export const MisCompras: React.FC<{}> = () => {
                             <Row className={styles.comprasContainer} >
                                 <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
                                     <Step title="Esperando confirmación" />
-                                    <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} />
-                                    <Step title="Completada" />
+                                    <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
+                                    <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
                                 </Steps>
                                 <Divider></Divider>
                                 <Row gutter={[0, 20]} className={styles.comprasContainer} >
@@ -286,11 +289,15 @@ export const MisCompras: React.FC<{}> = () => {
                                         <p style={{ font: "revert-layer" }}>{item.nombreVendedor}</p>
                                         <a onClick={iniciarChat}>Iniciar chat</a>
                                     </div>
-                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "center" }}>
-                                        <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
-                                            <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
-                                        </Tooltip></span>
-
+                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", width: "13%" }}>
+                                        <Space direction="vertical">
+                                            <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
+                                                <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
+                                            </Tooltip></span>
+                                            <div>
+                                                <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.fechaEntrega) ? item.fechaEntrega?.toString() : "-"}</span>
+                                            </div>
+                                        </Space>
                                     </div>
 
 
@@ -298,15 +305,15 @@ export const MisCompras: React.FC<{}> = () => {
                                         <Space direction="vertical" size={15}>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button style={{ width: "160px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion} onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button style={{ width: "170px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion || item.estadoCompra == EstadoCompra.Cancelada } type="primary" onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Realizar reclamo</b> <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button style={{ width: "160px" }} disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor, idBoton: item.idCompra + "Calificar" }) }}>Calificar <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button style={{ width: "170px" }} disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} type="warning" onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor, idBoton: item.idCompra + "Calificar" }) }}><b>Calificar</b> <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button disabled={!item.puedeCompletar} style={{ width: "160px" }} type="primary" onClick={() => completarCompra(item.idCompra)} >Completar compra <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button disabled={!item.puedeCompletar} style={{ width: "170px" }} type="success" onClick={() => completarCompra(item.idCompra)}> <b>Completar compra</b> <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                         </Space>
                                     </div>
