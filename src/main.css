@@ -71,7 +71,8 @@ body, html {
 h3{
     flex: 1;
 }
-  button{
+
+/* button{
     padding: 0 !important;
     background: transparent;
     color: grey;
@@ -82,7 +83,7 @@ h3{
     text-transform: uppercase;
     transition: color .3s;
     cursor: pointer;
-  }
+  } */
 .inputWrapper{
   display: flex;
   flex-direction: column;

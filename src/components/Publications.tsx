@@ -101,7 +101,7 @@ function Publicactions() {
   };
 
   const handleChangeCategoria = (tag: string, checked: boolean) => {
-    const nextSelectedTags = checked ? [...valoresFiltros.categorias, tag] : valoresFiltros.categorias.filter(t => t !== tag.toString());
+    const nextSelectedTags = checked ? [...valoresFiltros.categorias, tag] : valoresFiltros.categorias.filter(t => t !== tag);
     setValoresFiltro({ ...valoresFiltros, 'categorias': nextSelectedTags });
   };
 
@@ -191,10 +191,10 @@ function Publicactions() {
                 <label style={{ display: "block" }}>Categorias:</label>
                 {categorias.map(tag => (
                   <CheckableTag
-                    key={tag.toString()}
-                    checked={valoresFiltros.categorias.indexOf(tag.toString()) > -1}
-                    onChange={checked => handleChangeCategoria(tag.toString(), checked)}>
-                    &#9675; {tag.toString()}
+                    key={tag.nombre}
+                    checked={valoresFiltros.categorias.indexOf(tag.nombre) > -1}
+                    onChange={checked => handleChangeCategoria(tag.nombre, checked)}>
+                    &#9675; {tag.nombre}
                   </CheckableTag>
                 ))}
               </Space>

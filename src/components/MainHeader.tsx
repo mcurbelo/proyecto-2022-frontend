@@ -111,10 +111,13 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   }
 
   useEffect(() => {
-    obtenerCategorias();
     let token = localStorage.getItem("token")
     if(token) setSesionIniciada(true)
   })
+
+  useEffect(() => {
+    obtenerCategorias();
+  },[])
 
   return (
     <div className={styles.wrapper}>
@@ -149,7 +152,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           {
             categorias.map((categoria, index) => {
               return (
-                <Button type="text" style={{ gridColumn: index + 1 }} key={index} value={categoria.toString()} onClick={buscarCategoria}>{categoria.toString()}</Button>
+                <Button type="text" style={{ gridColumn: index + 1 }} key={index} value={categoria.nombre} onClick={buscarCategoria}>{categoria.nombre}</Button>
               )
             })
           }

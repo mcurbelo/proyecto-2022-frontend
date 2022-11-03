@@ -33,7 +33,7 @@ const useStyles = createUseStyles({
     flexDirection: "row",
   },
   infoProducto: {
-    width: "25%"
+    width: "24%",
   },
   compra: {
     width: "25%",
@@ -163,11 +163,6 @@ export const InfoProducto = () => {
     )
   }
 
-  const content = (
-    <div>
-      <Text>Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.</Text>
-    </div>
-  );
 
   const realizarCompra = () => {
     if (cantidadProducto === 0) {
@@ -244,9 +239,9 @@ export const InfoProducto = () => {
           <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
           <hr />
           <Space>
-            <Text>Garantía: {producto?.garantia}</Text> <Popover content={content} trigger="click">
-              <Button type="primary" style={{ width: "20px" }} >?</Button>
-            </Popover>
+            <Text>Garantía: {producto?.garantia}</Text> <Tooltip  title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
+              <Button type="primary" style={{ width: "20px" }}>?</Button>
+            </Tooltip >
           </Space>
           <hr />
           <Text>Diponibilidad: <b>{estadoStock()}</b></Text>

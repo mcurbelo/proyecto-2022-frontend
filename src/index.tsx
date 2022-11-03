@@ -29,7 +29,8 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-  <React.StrictMode>
+
+  <>
     <MainHeader />
     <BrowserRouter>
       <Routes>
@@ -39,20 +40,19 @@ root.render(
         <Route path="/users" element={<UserList />} />
         <Route path="/directions" element={<Directions />} />
         <Route path="/miscompras" element={<MisCompras />} />
-        <Route path="/testNotifiacion" element={<NotificacionTest/>} />
-        <Route path="/addCard"  element={<AddCardForm />} />
-        <Route path="/profile"  element={<HomePage showHeader={true} showProfile={true} />} />
+        <Route path="/testNotifiacion" element={<NotificacionTest />} />
+        <Route path="/addCard" element={<AddCardForm />} />
+        <Route path="/profile" element={<HomePage showHeader={true} showProfile={true} />} />
         <Route path="/cards" element={<CardList onSelectCard={(id) => {
           console.log("Selected card: " + id)
         }} />} />
         <Route path="/productos/:id" element={<InfoProducto />} />
         <Route path="/compra" element={<RealizarCompra />} />
         <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
-
+        <Route path="/altaProducto" element={<AddProductForm esSolicitud={false} />} />
 
       </Routes>
     </BrowserRouter>
-
-  </React.StrictMode>
+  </>
 );
 reportWebVitals();

@@ -161,6 +161,7 @@ export const RealizarCompra = () => {
                             content: 'Ha sucedido un problema al realizar el pago, intentelo de nuevo más tarde.',
                         });
                     }
+                    navigate("/");
                 })
             },
             onCancel() { },

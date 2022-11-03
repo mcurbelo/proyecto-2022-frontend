@@ -47,8 +47,11 @@ const AddProductForm = ({ esSolicitud = false }) => {
 
   const handleFormSubmition = (values: any) => {
     let token = localStorage.getItem("token")
-    let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
-    let formatted = format(dateFechaNac, "dd/MM/yyyy")
+    let formatted = undefined
+    if (values.fechaFinProducto) {
+      let dateFechaNac = new Date((values.fechaFinProducto as any)._d)
+      formatted = format(dateFechaNac, "dd/MM/yyyy")
+    }
     let datosProducto = {
       nombreProducto: values.nombreProducto,
       stock: values.stockProducto,
@@ -158,7 +161,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
           <Form.Item
             rules={[{
               required: true,
-              message: "La descripción del producto es obligatoria"
+              message: "La descripción del producto es obligatoria y un máximo de 255 caracteres",
+              max: 255
             }]}
             name="descripcionProducto"
             label="Descripcion del producto"

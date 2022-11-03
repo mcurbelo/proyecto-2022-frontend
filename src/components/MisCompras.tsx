@@ -298,15 +298,15 @@ export const MisCompras: React.FC<{}> = () => {
                                         <Space direction="vertical" size={15}>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button style={{ width: "150px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion} onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button style={{ width: "160px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion} onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}> Realizar reclamo <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button style={{ width: "150px" }} disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor, idBoton: item.idCompra + "Calificar" }) }}>Calificar <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button style={{ width: "160px" }} disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor, idBoton: item.idCompra + "Calificar" }) }}>Calificar <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button disabled={!item.puedeCompletar} style={{ width: "150px" }} type="primary" onClick={() => completarCompra(item.idCompra)} >Completar compra <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button disabled={!item.puedeCompletar} style={{ width: "160px" }} type="primary" onClick={() => completarCompra(item.idCompra)} >Completar compra <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                         </Space>
                                     </div>
