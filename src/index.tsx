@@ -49,8 +49,7 @@ root.render(
         <Route path="/productos/:id" element={<InfoProducto />} />
         <Route path="/compra" element={<RealizarCompra />} />
         <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
-        <Route path="/altaProducto" element={<AddProductForm esSolicitud={false} />} />
-
+        <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
       </Routes>
     </BrowserRouter>
   </>
