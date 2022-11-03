@@ -111,10 +111,13 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   }
 
   useEffect(() => {
-    obtenerCategorias();
     let token = localStorage.getItem("token")
     if(token) setSesionIniciada(true)
   })
+
+  useEffect(() => {
+    obtenerCategorias();
+  },[])
 
   return (
     <div className={styles.wrapper}>
