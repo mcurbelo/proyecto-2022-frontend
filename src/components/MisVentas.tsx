@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { Card, List, Input, Space, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Divider, Modal, message, Dropdown } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined, UserOutlined } from '@ant-design/icons';
+import { Card, List, Input, Space, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Divider, Modal, Dropdown, Menu, Rate } from 'antd';
+import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { CompartidoUsuario, VendedorService } from "shopit-shared";
 import { DtCompraSlimVendedor, DtFiltrosVentas, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faSquareCheck, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
+import { faBars, faSquareCheck, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
 import { faCircleXmark, faHandshake, faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
-import RealizarReclamo from "./RealizarReclamo";
 import RealizarCalificacion from "./RealizarCalificacion";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
-import type { MenuProps } from 'antd';
+import { MenuInfo } from "rc-menu/lib/interface";
+import GestionarVenta from "./GestionarVenta";
 
 interface AppState {
     ventas: DtCompraSlimVendedor[],
@@ -76,7 +76,7 @@ const useStyles = createUseStyles({
 
 })
 
-export const MisCompras: React.FC<{}> = () => {
+export const MisVentas: React.FC<{}> = () => {
     const styles = useStyles();
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
@@ -109,6 +109,15 @@ export const MisCompras: React.FC<{}> = () => {
         nombreUsuario: "",
         idBoton: ""
     })
+    const [mostrarGestionVenta, setGestionVenta] = useState({
+        mostrar: false,
+        idVenta: "",
+        nombreUsuario: "",
+        esEnvio: false,
+        aceptar: false,
+        direccion: ""
+    })
+
 
     useEffect(() => {
         busqueda()
@@ -142,6 +151,7 @@ export const MisCompras: React.FC<{}> = () => {
     };
 
     const onChangeEstado = (value: EstadoCompra | boolean) => {
+        console.log(value)
         if (typeof value === "boolean") {
             setFiltros({ ...filtros, estado: undefined })
         } else {
@@ -181,9 +191,9 @@ export const MisCompras: React.FC<{}> = () => {
     const completarVenta = (idVenta: string, esEnvio: boolean) => {
 
         confirm({
-            title: 'Estás seguro que desea completar esta compra?',
+            title: 'Estás seguro que desea completar esta venta?',
             icon: <ExclamationCircleOutlined />,
-            content: 'Al confirmar ',
+            content: 'Al confirmar se completará la venta y podrá calificar al comprador.',
             onOk() {
                 if (esEnvio) {
                     return CompartidoUsuario.completarEnvio(idVenta, token!).then((result) => {
@@ -192,6 +202,7 @@ export const MisCompras: React.FC<{}> = () => {
                                 title: "Acción exitosa",
                                 content: 'Estado de la venta actualizado exitosamente',
                             });
+                            cambiarEstadoVenta(idVenta, EstadoCompra.Completada)
                         } else {
                             Modal.error({
                                 title: 'Error',
@@ -221,13 +232,21 @@ export const MisCompras: React.FC<{}> = () => {
         });
     }
 
-    const handleMenuClick: MenuProps['onClick'] = e => {
-        message.info('Click on menu item.');
-        console.log('click', e);
-    };
+    const cambiarEstadoVenta = (idVenta: string, estadoCompra: EstadoCompra) => {
+        const ventasActualizadas = ventas!.map(venta => {
+            if (venta.idVenta === idVenta && estadoCompra !== EstadoCompra.Completada) {
+                return { ...venta, estadoCompra: estadoCompra };
+            }
+            if (venta.idVenta === idVenta && estadoCompra === EstadoCompra.Completada)
+                return { ...venta, estadoCompra: estadoCompra, puedeCalificar: true, puedeCompletar: false };
+
+            return venta;
+        });
+        setVentas(ventasActualizadas);
+    }
 
 
-    const opciones: MenuProps['items'] = [
+    const opciones = [
         {
             label: 'Aceptar',
             key: '1',
@@ -240,10 +259,15 @@ export const MisCompras: React.FC<{}> = () => {
         },
     ];
 
-    const menuProps = {
-        opciones,
-        onClick: handleMenuClick,
-    };
+    const handleAcciones = (e: MenuInfo, venta: DtCompraSlimVendedor) => {
+        setGestionVenta({
+            mostrar: true, idVenta: venta.idVenta, esEnvio: venta.esEnvio,
+            nombreUsuario: venta.nombreComprador, direccion: venta.direccion,
+            aceptar: (e.key === "1") ? true : false
+        })
+    }
+
+
 
 
     return (
@@ -251,25 +275,25 @@ export const MisCompras: React.FC<{}> = () => {
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
                 <Card>
                     <Row style={{ gap: "20px" }}>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="nVen" style={{ display: "block" }}>Vendedor:</label>
                             <Input id="nVen" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombre")} prefix={<SearchOutlined />} />
                         </div>
 
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
-                            <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "180px" }} onChange={handleChange}>
+                            <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "192px" }} onChange={handleChange}>
                                 <Option value="fechaDsc">Últimas compras</Option>
                                 <Option value="fechaAsc">Compras más antiguas</Option>
                             </Select>
                         </div>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="fecha" style={{ display: "block" }}>Fecha:</label>
-                            <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "180px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
+                            <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "192px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
                         </div>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="Estado" style={{ display: "block" }}>Estado:</label>
-                            <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "180px" }} onChange={(value) => onChangeEstado(value)}>
+                            <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "192px" }} onChange={(value) => onChangeEstado(value)}>
                                 <Option value={true}>Todos</Option>
                                 <Option value={EstadoCompra.EsperandoConfirmacion}>Esperando confirmación</Option>
                                 <Option value={EstadoCompra.Confirmada}>Confirmada</Option>
@@ -318,6 +342,16 @@ export const MisCompras: React.FC<{}> = () => {
                                     <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                         <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                     </div>
+
+                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                        <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
+                                        <Tooltip title={"Calificación: " + item.calificacionComprador + "/5"} placement="bottom">
+                                            <div>
+                                                <Rate allowHalf disabled defaultValue={item.calificacionComprador} />
+                                            </div>
+                                        </Tooltip>
+                                    </div>
+
                                     <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", width: "13%" }}>
                                         <Space direction="vertical">
                                             <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
@@ -333,16 +367,18 @@ export const MisCompras: React.FC<{}> = () => {
                                     <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
                                         <Space direction="vertical" size={15}>
                                             <div style={{ display: "flex", alignItems: "center" }}>
-                                                <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Dropdown.Button menu={menuProps}>Acciones</Dropdown.Button>
+                                                <Tooltip title="Solo se puede realizar acciones en ventas en esperando confirmación."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                <Dropdown overlay={<Menu items={opciones} onClick={(e) => handleAcciones(e, item)} />} disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}>
+                                                    <Button disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion} style={{ width: "170px" }}><b>Acciones</b><FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faBars} /></Button>
+                                                </Dropdown>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
-                                                <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button style={{ width: "170px" }} disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} type="warning" onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreComprador, idBoton: item.idCompra + "Calificar" }) }}><b>Calificar</b> <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                <Button style={{ width: "170px" }} disabled={!item.puedeCalificar} id={item.idVenta + "Calificar"} type="warning" onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador, idBoton: item.idVenta + "Calificar" }) }}><b>Calificar</b> <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
-                                                <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button disabled={!item.puedeCompletar} style={{ width: "170px" }} type="success" onClick={() => completarVenta(item.idCompra, item.esEnvio)}> <b>Completar venta</b> <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Tooltip title="Solo se puede completar ventas una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                <Button disabled={!item.puedeCompletar} style={{ width: "170px" }} type="success" onClick={() => completarVenta(item.idVenta, item.esEnvio)}> <b>Completar venta</b> <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                         </Space>
                                     </div>
@@ -355,13 +391,12 @@ export const MisCompras: React.FC<{}> = () => {
             />
             <Pagination style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
             {
-                (mostrarReclamo.mostrar) ? <RealizarReclamo nombreUsuario={mostrarCalificar.nombreUsuario} showModal={() => { setMostrarReclamo({ mostrar: false, id: "", nombreUsuario: "" }) }} idCompra={mostrarReclamo.id} /> : null
+                (mostrarGestionVenta.mostrar) ? <GestionarVenta realizoAccion={(idVenta, aceptar) => cambiarEstadoVenta(idVenta, (aceptar) ? EstadoCompra.Confirmada : EstadoCompra.Cancelada)} informacion={mostrarGestionVenta} showModal={() => { setGestionVenta({ ...mostrarGestionVenta, mostrar: false }) }}></GestionarVenta> : null
             }
 
             {
-                (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { changeButtonAttribute(mostrarCalificar.idBoton) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={""} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "", idBoton: "" }) }}></RealizarCalificacion> : null
+                (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { changeButtonAttribute(mostrarCalificar.idBoton) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "", idBoton: "" }) }}></RealizarCalificacion> : null
             }
         </div >
-
     );
 }

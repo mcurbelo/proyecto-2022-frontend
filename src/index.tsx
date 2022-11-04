@@ -21,6 +21,7 @@ import { Directions } from './components/Directions';
 import RealizarCompra from './components/RealizarCompra';
 import AddProductForm from './components/ProductForm';
 import { MisCompras } from './components/MisCompras';
+import {MisVentas} from './components/MisVentas';
 
 require('dotenv').config();
 
@@ -50,6 +51,7 @@ root.render(
         <Route path="/compra" element={<RealizarCompra />} />
         <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
         <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
+        <Route path="/misventas" element={<MisVentas/>} />
       </Routes>
     </BrowserRouter>
   </>

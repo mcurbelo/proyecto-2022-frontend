@@ -193,6 +193,7 @@ export const MisCompras: React.FC<{}> = () => {
                             title: "Acción exitosa",
                             content: 'Estado de la compra actualizado exitosamente',
                         });
+
                     } else {
                         Modal.error({
                             title: 'Error',
@@ -204,6 +205,15 @@ export const MisCompras: React.FC<{}> = () => {
             },
             onCancel() { },
         });
+    }
+
+    const cambiarEstadoVenta = (idCompra: string, estadoCompra: EstadoCompra) => {
+        const comprasAct = compras!.map(compra => {
+            if (compra.idCompra === idCompra && estadoCompra === EstadoCompra.Completada)
+                return { ...compra, estadoCompra: estadoCompra, puedeCalificar: true, puedeCompletar: false };
+            return compra;
+        });
+        setCompras(comprasAct);
     }
 
 
@@ -303,7 +313,7 @@ export const MisCompras: React.FC<{}> = () => {
                                         <Space direction="vertical" size={15}>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                <Button style={{ width: "170px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion || item.estadoCompra == EstadoCompra.Cancelada } type="primary" onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Realizar reclamo</b> <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                <Button style={{ width: "170px" }} disabled={item.estadoCompra == EstadoCompra.EsperandoConfirmacion || item.estadoCompra == EstadoCompra.Cancelada} type="primary" onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Realizar reclamo</b> <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             </div>
                                             <div style={{ display: "flex", alignItems: "center" }}>
                                                 <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
