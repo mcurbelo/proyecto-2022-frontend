@@ -50,12 +50,13 @@ const useStyles = createUseStyles({
 
     },
 
-    '@media screen and (max-width: 500px)': {
+    '@media screen and (max-width: 600px)': {
         divTitulo: {
             width: "100%"
         },
         divPequeño: {
-            width: "100%"
+            width: "100%",
+            flexDirection: "initial !important"
         },
         container: {
             width: "100%"
@@ -98,11 +99,6 @@ export const MisVentas: React.FC<{}> = () => {
         totalItems: 0
     })
     const [paginaAbuscar, setPaginaAbuscar] = useState(0)
-    const [mostrarReclamo, setMostrarReclamo] = useState({
-        mostrar: false,
-        id: "",
-        nombreUsuario: ""
-    })
     const [mostrarCalificar, setMostrarCalificar] = useState({
         mostrar: false,
         id: "",
@@ -209,7 +205,6 @@ export const MisVentas: React.FC<{}> = () => {
                                 content: 'Ha ocurrido un error inesperado',
                             });
                         }
-
                     })
                 } else {
                     return VendedorService.completarVentaRetiro(id!, token!, idVenta).then((result) => {
@@ -232,11 +227,11 @@ export const MisVentas: React.FC<{}> = () => {
         });
     }
 
-    const cambiarEstadoVenta = (idVenta: string, estadoCompra: EstadoCompra) => {
+    const cambiarEstadoVenta = (idVenta: string, estadoCompra: EstadoCompra, fechaEntrega?: string) => {
         const ventasActualizadas = ventas!.map(venta => {
-            if (venta.idVenta === idVenta && estadoCompra !== EstadoCompra.Completada) {
-                return { ...venta, estadoCompra: estadoCompra };
-            }
+            if (venta.idVenta === idVenta && estadoCompra !== EstadoCompra.Completada)
+                return { ...venta, estadoCompra: estadoCompra, fechaEntrega: (fechaEntrega) ? fechaEntrega : undefined };
+
             if (venta.idVenta === idVenta && estadoCompra === EstadoCompra.Completada)
                 return { ...venta, estadoCompra: estadoCompra, puedeCalificar: true, puedeCompletar: false };
 
@@ -262,7 +257,7 @@ export const MisVentas: React.FC<{}> = () => {
     const handleAcciones = (e: MenuInfo, venta: DtCompraSlimVendedor) => {
         setGestionVenta({
             mostrar: true, idVenta: venta.idVenta, esEnvio: venta.esEnvio,
-            nombreUsuario: venta.nombreComprador, direccion: venta.direccion,
+            nombreUsuario: venta.nombreComprador, direccion: venta.direccionEntrega,
             aceptar: (e.key === "1") ? true : false
         })
     }
@@ -272,6 +267,7 @@ export const MisVentas: React.FC<{}> = () => {
 
     return (
         <div className={styles.container} >
+            <h1 style={{ textAlign: "center" }}>Mis ventas</h1>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
                 <Card>
                     <Row style={{ gap: "20px" }}>
@@ -294,8 +290,8 @@ export const MisVentas: React.FC<{}> = () => {
                         <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="Estado" style={{ display: "block" }}>Estado:</label>
                             <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "192px" }} onChange={(value) => onChangeEstado(value)}>
-                                <Option value={true}>Todos</Option>
-                                <Option value={EstadoCompra.EsperandoConfirmacion}>Esperando confirmación</Option>
+                                <Option value={true}>Todos</Option>|
+                                <Option value={EstadoCompra.EsperandoConfirmacion}>Confirmación pendiente</Option>
                                 <Option value={EstadoCompra.Confirmada}>Confirmada</Option>
                                 <Option value={EstadoCompra.Cancelada}>Cancelada</Option>
                                 <Option value={EstadoCompra.Completada}>Completada</Option>
@@ -328,7 +324,7 @@ export const MisVentas: React.FC<{}> = () => {
                         <Card title={"Iniciada el " + item.fecha.toString()} bodyStyle={{ background: "#f0f2f5" }}>
                             <Row className={styles.comprasContainer} >
                                 <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
-                                    <Step title="Esperando confirmación" />
+                                    <Step title="Confirmación pendiente" />
                                     <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
                                     <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
                                 </Steps>
@@ -344,21 +340,28 @@ export const MisVentas: React.FC<{}> = () => {
                                     </div>
 
                                     <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                                        <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
-                                        <Tooltip title={"Calificación: " + item.calificacionComprador + "/5"} placement="bottom">
+                                        <Space direction="vertical">
                                             <div>
-                                                <Rate allowHalf disabled defaultValue={item.calificacionComprador} />
+                                                <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
                                             </div>
-                                        </Tooltip>
+                                            <Tooltip title={"Calificación: " + item.calificacionComprador + "/5"} placement="bottom">
+                                                <div>
+                                                    <Rate allowHalf disabled defaultValue={item.calificacionComprador} />
+                                                </div>
+                                            </Tooltip>
+                                        </Space>
                                     </div>
 
-                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", width: "13%" }}>
+                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>
                                         <Space direction="vertical">
                                             <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
                                                 <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
                                             </Tooltip></span>
                                             <div>
                                                 <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.fechaEntrega) ? item.fechaEntrega?.toString() : "-"}</span>
+                                            </div>
+                                            <div>
+                                                <span style={{ whiteSpace: "nowrap" }} id="tipoEntrega">Tipo de entrega: {(item.esEnvio) ? "Envío" : "Retiro"}</span>
                                             </div>
                                         </Space>
                                     </div>
@@ -383,6 +386,7 @@ export const MisVentas: React.FC<{}> = () => {
                                         </Space>
                                     </div>
                                 </Row>
+                                <Row style={{ marginTop: "3%" }}><span style={{ textAlign: "center" }}>Dirección de entrega elegida: {item.direccionEntrega}</span></Row>
                             </Row>
 
                         </Card>

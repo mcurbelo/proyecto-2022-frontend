@@ -51,12 +51,13 @@ const useStyles = createUseStyles({
 
     },
 
-    '@media screen and (max-width: 500px)': {
+    '@media screen and (max-width: 600px)': {
         divTitulo: {
             width: "100%"
         },
         divPequeño: {
-            width: "100%"
+            width: "100%",
+            flexDirection: "initial !important"
         },
         container: {
             width: "100%"
@@ -193,7 +194,7 @@ export const MisCompras: React.FC<{}> = () => {
                             title: "Acción exitosa",
                             content: 'Estado de la compra actualizado exitosamente',
                         });
-
+                        cambiarEstadoCompra(id, EstadoCompra.Completada)
                     } else {
                         Modal.error({
                             title: 'Error',
@@ -207,7 +208,7 @@ export const MisCompras: React.FC<{}> = () => {
         });
     }
 
-    const cambiarEstadoVenta = (idCompra: string, estadoCompra: EstadoCompra) => {
+    const cambiarEstadoCompra = (idCompra: string, estadoCompra: EstadoCompra) => {
         const comprasAct = compras!.map(compra => {
             if (compra.idCompra === idCompra && estadoCompra === EstadoCompra.Completada)
                 return { ...compra, estadoCompra: estadoCompra, puedeCalificar: true, puedeCompletar: false };
@@ -219,32 +220,33 @@ export const MisCompras: React.FC<{}> = () => {
 
     return (
         <div className={styles.container} >
+            <h1 style={{ textAlign: "center" }}>Mis compras</h1>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
                 <Card>
                     <Row style={{ gap: "20px" }}>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="nProd" style={{ display: "block" }}>Producto:</label>
                             <Input id="nProd" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreProducto")} prefix={<SearchOutlined />} />
                         </div>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="nVen" style={{ display: "block" }}>Vendedor:</label>
                             <Input id="nVen" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreVendedor")} prefix={<SearchOutlined />} />
                         </div>
 
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
-                            <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "180px" }} onChange={handleChange}>
+                            <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "192px" }} onChange={handleChange}>
                                 <Option value="fechaDsc">Últimas compras</Option>
                                 <Option value="fechaAsc">Compras más antiguas</Option>
                             </Select>
                         </div>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="fecha" style={{ display: "block" }}>Fecha:</label>
-                            <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "180px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
+                            <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "192px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
                         </div>
-                        <div style={{ minWidth: "180px" }} className={styles.filtros}>
+                        <div style={{ minWidth: "192px" }} className={styles.filtros}>
                             <label htmlFor="Estado" style={{ display: "block" }}>Estado:</label>
-                            <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "180px" }} onChange={(value) => onChangeEstado(value)}>
+                            <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "192px" }} onChange={(value) => onChangeEstado(value)}>
                                 <Option value={true}>Todos</Option>
                                 <Option value={EstadoCompra.EsperandoConfirmacion}>Esperando confirmación</Option>
                                 <Option value={EstadoCompra.Confirmada}>Confirmada</Option>
@@ -297,7 +299,7 @@ export const MisCompras: React.FC<{}> = () => {
                                         <p style={{ font: "revert-layer" }}>{item.nombreVendedor}</p>
                                         <a onClick={iniciarChat}>Iniciar chat</a>
                                     </div>
-                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", width: "13%" }}>
+                                    <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>
                                         <Space direction="vertical">
                                             <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
                                                 <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
@@ -326,6 +328,7 @@ export const MisCompras: React.FC<{}> = () => {
                                         </Space>
                                     </div>
                                 </Row>
+                                <Row style={{ marginTop: "3%" }}><span style={{ textAlign: "center" }}>Dirección de entrega elegida: {item.direccionEntrega}</span></Row>
                             </Row>
 
                         </Card>
