@@ -8,8 +8,8 @@ const { Option } = Select;
 type reclamoProps = {
     idCompra: string,
     showModal: () => void,
-    nombreUsuario: string
-    califico: () => void
+    nombreUsuario: string,
+    califico: () => void,
 }
 
 export const Calificar = (props: reclamoProps) => {
