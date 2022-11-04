@@ -29,12 +29,19 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
   const [direccionesLocales, setDireccioneLocales] = useState([] as DtDireccion[]);
   
 
-  const editarDireccion = (event:any, key?:string) => {
+  const editarDireccion = (event:any, local:boolean, key?:string ) => {
     if(!key) return;
     let direccion = {id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: ""};
-    direcciones.forEach(e => { debugger; if(e.id === key){
-      setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
-    }})
+    if(local){
+      direccionesLocales.forEach(e => { debugger; if(e.id === key){
+        setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
+      }})
+    }else{
+      direcciones.forEach(e => {if(e.id === key){
+        setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
+      }})
+    }
+    
     
     setIdDireccion(key);
     setIsModalOpen(true);
@@ -72,7 +79,8 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
   function updateDirecciones (values: any){
     handleClose();
     getDirecciones();
-    onAddDirection()
+    onAddDirection();
+    setAddDirection(false);
   }
 
 
@@ -82,15 +90,17 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
 
 
   function getDirecciones(){
-    let data: any = [];
+    let direcciones: any = [];
     let locales: any = [];
     CompradorService.obtenerDirecciones(token).then(res => {
       res.forEach(direccion => {
         if(direccion.esLocal){
           locales.push(direccion);
+        }else{
+          direcciones.push(direccion);
         }
       });
-      setDirecciones(res);
+      setDirecciones(direcciones);
       setDireccioneLocales(locales);
     })
   }
@@ -104,7 +114,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
           itemLayout="horizontal"
           dataSource={direcciones}
           renderItem={(item) => (
-            <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
+            <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, false, item.id)} key={item.id}></EditOutlined>]}> 
               {props.permiteSeleccion && <Checkbox checked={item.id === idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
               <List.Item.Meta
                 avatar={<EnvironmentOutlined /> }
@@ -120,7 +130,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
-              <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event, item.id)} key={item.id}></EditOutlined>]}> 
+              <List.Item actions={[<EditOutlined style={{fontSize: "20px"}} onClick={event => editarDireccion(event,true, item.id)} key={item.id}></EditOutlined>]}> 
                 {props.permiteSeleccion && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{margin:'20px'}}></Checkbox> } 
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined /> }

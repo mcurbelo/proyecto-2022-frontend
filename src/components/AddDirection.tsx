@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import {Form, Input, Checkbox, Button, Select, message } from 'antd';
 import { CompradorService } from "shopit-shared";
 import { type } from "@testing-library/user-event/dist/type";
+import { debug } from "console";
 
 
 const AddDirection: React.FC<{esVendedor:boolean, callBack: any, editar: boolean, idDireccion?: string, datosActuales?: editDireccion }> = (props) => {
@@ -44,8 +45,12 @@ const AddDirection: React.FC<{esVendedor:boolean, callBack: any, editar: boolean
         doc.getElementById("numero").value = "";
         setEsEnvio(false);
         setEsLocal(false);
-        message.success('Direccion agregada con exito');
-
+        if(res.success){
+          message.success('Direccion agregada con exito');
+        }else{
+          message.success('Direccion agregada con exito');
+        }
+        
         form.setFieldsValue({
           calle: "",
           numero: "",
