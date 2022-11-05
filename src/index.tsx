@@ -54,6 +54,7 @@ root.render(
         <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
         <Route path="/misventas" element={<MisVentas />} />
         <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
+        <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />
       </Routes>
     </BrowserRouter>
   </>

@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
         width: "80%",
     },
     comprasContainer: {
-        gap: "8%",
+        gap: "4%",
         width: "100%",
         justifyContent: "center"
     },
@@ -201,6 +201,7 @@ export const MisVentas: React.FC<{}> = () => {
             title: 'Estás seguro que desea completar esta venta?',
             icon: <ExclamationCircleOutlined />,
             content: 'Al confirmar se completará la venta y podrá calificar al comprador.',
+            cancelText: "Cancelar",
             onOk() {
                 if (esEnvio) {
                     return CompartidoUsuario.completarEnvio(idVenta, token!).then((result) => {
@@ -224,6 +225,7 @@ export const MisVentas: React.FC<{}> = () => {
                                 title: "Acción exitosa",
                                 content: 'Estado de la venta actualizado exitosamente',
                             });
+                            cambiarEstadoVenta(idVenta, EstadoCompra.Completada)
                         } else {
                             Modal.error({
                                 title: 'Error',
@@ -351,7 +353,7 @@ export const MisVentas: React.FC<{}> = () => {
                                             <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "12%" }}>
                                             <Space direction="vertical">
                                                 <div>
                                                     <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
@@ -382,18 +384,29 @@ export const MisVentas: React.FC<{}> = () => {
                                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
                                             <Space direction="vertical" size={15}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede realizar acciones en ventas en esperando confirmación."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Dropdown overlay={<Menu items={opciones} onClick={(e) => handleAcciones(e, item)} />} disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}>
-                                                        <Button type="primary" disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion} style={{ width: "170px", textShadow: (item.estadoCompra === EstadoCompra.EsperandoConfirmacion) ? "0 0 2px black" : "" }}><b>Acciones</b><FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faBars} /></Button>
+                                                    <Tooltip title="Solo se puede realizar acciones en ventas en esperando confirmación."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Dropdown overlay={<Menu items={opciones} onClick={(e) => handleAcciones(e, item)} />}
+                                                        disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}>
+                                                        <Button type="primary" disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}
+                                                            style={{ width: "170px", textShadow: (item.estadoCompra === EstadoCompra.EsperandoConfirmacion) ? "0 0 2px black" : "" }}><b>Acciones</b>
+                                                            <FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faBars} />
+                                                        </Button>
                                                     </Dropdown>
                                                 </div>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }} disabled={!item.puedeCalificar} id={item.idVenta + "Calificar"} type="warning" onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador, idBoton: item.idVenta + "Calificar" }) }}><b>Calificar</b> <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                    <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
+                                                        disabled={!item.puedeCalificar} id={item.idVenta + "Calificar"} type="warning"
+                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador, idBoton: item.idVenta + "Calificar" }) }}><b>Calificar</b>
+                                                        <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                    </Button>
                                                 </div>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede completar ventas una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button disabled={!item.puedeCompletar} style={{ width: "170px", textShadow: (item.puedeCompletar) ? "0 0 2px black" : "" }} type="success" onClick={() => completarVenta(item.idVenta, item.esEnvio)}> <b>Completar venta</b> <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                    <Tooltip title="Solo se puede completar ventas una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Button disabled={!item.puedeCompletar} style={{ width: "170px", textShadow: (item.puedeCompletar) ? "0 0 2px black" : "" }}
+                                                        type="success" onClick={() => completarVenta(item.idVenta, item.esEnvio)}> <b>Completar venta</b>
+                                                        <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                    </Button>
                                                 </div>
                                             </Space>
                                         </div>
