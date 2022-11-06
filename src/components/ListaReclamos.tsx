@@ -1,11 +1,11 @@
 import { SearchOutlined, ExclamationCircleOutlined, UserOutlined } from "@ant-design/icons";
-import { faMoneyBillTransfer, faQuestionCircle, faSquareCheck } from "@fortawesome/free-solid-svg-icons";
+import { faMoneyBillTransfer, faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Card, Collapse, DatePicker, DatePickerProps, Divider, Empty, Image, Input, List, Modal, Pagination, Row, Select, Space, Steps, Tooltip } from "antd";
+import { Avatar, Card, Collapse, DatePicker, DatePickerProps, Divider, Empty, Image, Input, List, Modal, Pagination, Row, Select, Space, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { CompradorService, VendedorService } from "shopit-shared";
-import { DtFiltoReclamo, DtReclamo, EstadoCompra, TipoReclamo, TipoResolucion } from "shopit-shared/dist/user/VendedorService";
+import { DtFiltoReclamo, DtReclamo, TipoReclamo, TipoResolucion } from "shopit-shared/dist/user/VendedorService";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
@@ -46,11 +46,12 @@ const useStyles = createUseStyles({
         justifyContent: "space-around"
     },
     filtros: {
-
+        
     },
 
     containerFiltros: {
-        justifyContent: "space-between"
+        justifyContent: "space-between",
+        gap:"10px"
     },
 
 
@@ -87,16 +88,45 @@ const useStyles = createUseStyles({
         },
     },
 
-    '@media screen and (max-width: 589px)': {
+    '@media screen and (max-width: 1184px)': {
         filtros: {
             width: "100%"
         }
     },
-    '@media screen and (max-width: 1574px)': {
+    '@media screen and (max-width: 1374px)': {
         containerFiltros: {
-            justifyContent: "flex-start"
-        }
-    }
+            justifyContent: "flex-start",
+            columnGap:"70px"
+        },
+    },
+
+    '@media screen and (max-width: 1334px)': {
+        containerFiltros: {
+            justifyContent: "flex-start",
+            columnGap:"60px"
+        },
+    },
+
+    '@media screen and (max-width: 1297px)': {
+        containerFiltros: {
+            justifyContent: "flex-start",
+            columnGap:"50px"
+        },
+    },
+
+    '@media screen and (max-width: 1259px)': {
+        containerFiltros: {
+            justifyContent: "flex-start",
+            columnGap:"40px"
+        },
+    },
+
+    '@media screen and (max-width: 1222px)': {
+        containerFiltros: {
+            justifyContent: "flex-start",
+            columnGap:"30px"
+        },
+    },
 
 })
 
@@ -105,7 +135,6 @@ export const Reclamos = (props: propReclamo) => {
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
     const { listarRealizados } = props
-    const { Step } = Steps;
     const [reclamos, setReclamos] = useState<AppState["reclamos"]>()
     const [filtros, setFiltros] = useState<AppState["filtros"]>({
         fecha: undefined,
@@ -301,7 +330,7 @@ export const Reclamos = (props: propReclamo) => {
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
                     <Card style={{ width: "100%" }}>
                         <div>
-                            <Row className={styles.containerFiltros} style={{ gap: "10px" }}>
+                            <Row className={styles.containerFiltros}>
                                 <div style={{ minWidth: "202px" }} className={styles.filtros}>
                                     <label htmlFor="nVen" style={{ display: "block" }}>{(listarRealizados) ? "Vendedor:" : "Nombre comprador"}</label>
                                     <Input id="nVen" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreUsuario")} prefix={<SearchOutlined />} />
