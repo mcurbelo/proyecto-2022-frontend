@@ -113,7 +113,6 @@ export const MisVentas: React.FC<{}> = () => {
         mostrar: false,
         id: "",
         nombreUsuario: "",
-        idBoton: ""
     })
     const [mostrarGestionVenta, setGestionVenta] = useState({
         mostrar: false,
@@ -190,9 +189,16 @@ export const MisVentas: React.FC<{}> = () => {
         )
     }
 
-    const changeButtonAttribute = (id: string) => {
-        var botonCalificar = document.getElementById(id);
-        botonCalificar?.setAttribute("disabled", "true");
+
+
+    const cambiarEstadoCalificar = (idVenta: string) => {
+        const ventasActualizadas = ventas!.map(venta => {
+            if (venta.idVenta === idVenta )
+                return { ...venta, puedeCalificar: false};
+
+            return venta;
+        });
+        setVentas(ventasActualizadas);
     }
 
     const completarVenta = (idVenta: string, esEnvio: boolean) => {
@@ -396,8 +402,8 @@ export const MisVentas: React.FC<{}> = () => {
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
                                                     <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
-                                                        disabled={!item.puedeCalificar} id={item.idVenta + "Calificar"} type="warning"
-                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador, idBoton: item.idVenta + "Calificar" }) }}><b>Calificar</b>
+                                                        disabled={!item.puedeCalificar}  type="warning"
+                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador }) }}><b>Calificar</b>
                                                         <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                     </Button>
                                                 </div>
@@ -425,7 +431,7 @@ export const MisVentas: React.FC<{}> = () => {
                 }
 
                 {
-                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { changeButtonAttribute(mostrarCalificar.idBoton) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "", idBoton: "" }) }}></RealizarCalificacion> : null
+                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: ""}) }}></RealizarCalificacion> : null
                 }
             </div >
         </div>

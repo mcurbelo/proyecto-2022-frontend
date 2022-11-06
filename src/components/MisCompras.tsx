@@ -119,7 +119,6 @@ export const MisCompras: React.FC<{}> = () => {
         mostrar: false,
         id: "",
         nombreUsuario: "",
-        idBoton: ""
     })
 
     useEffect(() => {
@@ -185,9 +184,14 @@ export const MisCompras: React.FC<{}> = () => {
         )
     }
 
-    const changeButtonAttribute = (id: string) => {
-        var botonCalificar = document.getElementById(id);
-        botonCalificar?.setAttribute("disabled", "true");
+    const cambiarEstadoCalificar = (idCompra: string) => {
+        const comprasActualizadas = compras!.map(compra => {
+            if (compra.idCompra === idCompra)
+                return { ...compra, puedeCalificar: false };
+
+            return compra;
+        });
+        setCompras(comprasActualizadas);
     }
 
     const completarCompra = (id: string) => {
@@ -333,8 +337,8 @@ export const MisCompras: React.FC<{}> = () => {
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
                                                     <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
-                                                        disabled={!item.puedeCalificar} id={item.idCompra + "Calificar"} type="warning"
-                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor, idBoton: item.idCompra + "Calificar" }) }}><b>Calificar</b>
+                                                        disabled={!item.puedeCalificar} type="warning"
+                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Calificar</b>
                                                         <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                     </Button>
                                                 </div>
@@ -362,7 +366,7 @@ export const MisCompras: React.FC<{}> = () => {
                 }
 
                 {
-                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { changeButtonAttribute(mostrarCalificar.idBoton) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={""} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "", idBoton: "" }) }}></RealizarCalificacion> : null
+                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={""} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "" }) }}></RealizarCalificacion> : null
                 }
             </div >
         </div>
