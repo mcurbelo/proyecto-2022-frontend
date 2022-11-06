@@ -73,7 +73,7 @@ const useStyles = createUseStyles({
 
 
     },
-    '@media screen and (max-width: 589px)': {
+    '@media screen and (max-width: 1184px)': {
         filtros: {
             width: "100%"
         }
@@ -299,8 +299,8 @@ export const MisVentas: React.FC<{}> = () => {
                             <div style={{ minWidth: "192px" }} className={styles.filtros}>
                                 <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
                                 <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "192px" }} onChange={handleChange}>
-                                    <Option value="fechaDsc">Últimas compras</Option>
-                                    <Option value="fechaAsc">Compras más antiguas</Option>
+                                    <Option value="fechaDsc">Últimas ventas</Option>
+                                    <Option value="fechaAsc">Ventas más antiguas</Option>
                                 </Select>
                             </div>
                             <div style={{ minWidth: "192px" }} className={styles.filtros}>

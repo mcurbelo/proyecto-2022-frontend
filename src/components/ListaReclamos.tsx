@@ -46,12 +46,12 @@ const useStyles = createUseStyles({
         justifyContent: "space-around"
     },
     filtros: {
-        
+
     },
 
     containerFiltros: {
         justifyContent: "space-between",
-        gap:"10px"
+        gap: "10px"
     },
 
 
@@ -96,35 +96,35 @@ const useStyles = createUseStyles({
     '@media screen and (max-width: 1374px)': {
         containerFiltros: {
             justifyContent: "flex-start",
-            columnGap:"70px"
+            columnGap: "70px"
         },
     },
 
     '@media screen and (max-width: 1334px)': {
         containerFiltros: {
             justifyContent: "flex-start",
-            columnGap:"60px"
+            columnGap: "60px"
         },
     },
 
     '@media screen and (max-width: 1297px)': {
         containerFiltros: {
             justifyContent: "flex-start",
-            columnGap:"50px"
+            columnGap: "50px"
         },
     },
 
     '@media screen and (max-width: 1259px)': {
         containerFiltros: {
             justifyContent: "flex-start",
-            columnGap:"40px"
+            columnGap: "40px"
         },
     },
 
     '@media screen and (max-width: 1222px)': {
         containerFiltros: {
             justifyContent: "flex-start",
-            columnGap:"30px"
+            columnGap: "30px"
         },
     },
 
@@ -373,13 +373,15 @@ export const Reclamos = (props: propReclamo) => {
                                     </Select>
                                 </div>
                             </Row>
-                            <Row style={{ gap: "10px", marginTop: "2%" }}>
-                                <div style={{ minWidth: "150px" }}>
-                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
-                                </div>
+                            <Divider></Divider>
+                            <Row style={{ gap: "10px", marginTop: "2%", justifyContent: "space-evenly" }}>
 
                                 <div style={{ fontSize: "12px", display: "flex", alignItems: "center" }}>
-                                    <span>Cantidad: {infoPaginacion.totalItems}</span>
+                                    <span>Resultados: {infoPaginacion.totalItems}</span>
+                                </div>
+
+                                <div style={{ minWidth: "150px" }}>
+                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                                 </div>
                             </Row>
                         </div>

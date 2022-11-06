@@ -47,11 +47,12 @@ const useStyles = createUseStyles({
         justifyContent: "center"
     },
     filtros: {
-
+        minWidth: "192px",
+        width: "250px"
     },
 
     containerFiltros: {
-        justifyContent: "space-around"
+        justifyContent: "space-between"
     },
 
 
@@ -74,17 +75,22 @@ const useStyles = createUseStyles({
 
 
     },
-    '@media screen and (max-width: 589px)': {
+    '@media screen and (max-width: 1184px)': {
         filtros: {
-            width: "100%"
+            width: "100% !important"
         }
     },
-    '@media screen and (max-width: 1271px)': {
+    '@media screen and (max-width: 1674px)': {
         containerFiltros: {
-            justifyContent: "flex-start"
-        }
-    }
+            justifyContent: "space-between",
+            gap: "10px"
+        },
 
+        filtros: {
+            minWidth: "201px",
+            width: "auto"
+        },
+    }
 })
 
 export const MisCompras: React.FC<{}> = () => {
@@ -257,30 +263,30 @@ export const MisCompras: React.FC<{}> = () => {
                 <h1 style={{ textAlign: "center" }}>Mis compras</h1>
                 <div style={{ display: "flex", flexDirection: "row", justifyContent: "center", marginBottom: "2%" }}>
                     <Card style={{ width: "100%" }} >
-                        <Row className={styles.containerFiltros} style={{ gap: "20px" }}>
-                            <div style={{ minWidth: "192px" }} className={styles.filtros}>
+                        <Row className={styles.containerFiltros} style={{ gap: "10px" }}>
+                            <div className={styles.filtros}>
                                 <label htmlFor="nProd" style={{ display: "block" }}>Producto:</label>
                                 <Input id="nProd" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreProducto")} prefix={<SearchOutlined />} />
                             </div>
-                            <div style={{ minWidth: "192px" }} className={styles.filtros}>
+                            <div className={styles.filtros}>
                                 <label htmlFor="nVen" style={{ display: "block" }}>Vendedor:</label>
                                 <Input id="nVen" placeholder="Buscar" onChange={(e) => handleInputChange(e, "nombreVendedor")} prefix={<SearchOutlined />} />
                             </div>
 
-                            <div style={{ minWidth: "192px" }} className={styles.filtros}>
+                            <div className={styles.filtros}>
                                 <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
-                                <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "192px" }} onChange={handleChange}>
+                                <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "201px" }} onChange={handleChange}>
                                     <Option value="fechaDsc">Últimas compras</Option>
                                     <Option value="fechaAsc">Compras más antiguas</Option>
                                 </Select>
                             </div>
-                            <div style={{ minWidth: "192px" }} className={styles.filtros}>
+                            <div className={styles.filtros}>
                                 <label htmlFor="fecha" style={{ display: "block" }}>Fecha:</label>
-                                <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "192px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
+                                <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "201px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
                             </div>
-                            <div style={{ minWidth: "192px" }} className={styles.filtros}>
+                            <div className={styles.filtros}>
                                 <label htmlFor="Estado" style={{ display: "block" }}>Estado:</label>
-                                <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "192px" }} onChange={(value) => onChangeEstado(value)}>
+                                <Select id="Estado" defaultValue={true} className={styles.filtros} style={{ minWidth: "201px" }} onChange={(value) => onChangeEstado(value)}>
                                     <Option value={true}>Todos</Option>
                                     <Option value={EstadoCompra.EsperandoConfirmacion}>Esperando confirmación</Option>
                                     <Option value={EstadoCompra.Confirmada}>Confirmada</Option>
@@ -288,12 +294,15 @@ export const MisCompras: React.FC<{}> = () => {
                                     <Option value={EstadoCompra.Completada}>Completada</Option>
                                 </Select>
                             </div>
-                            <div style={{ minWidth: "150px" }}>
-                                <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
-                            </div>
+                        </Row>
+                        <Divider></Divider>
+                        <Row style={{ gap: "10px", marginTop: "2%", justifyContent:"space-evenly" }}>
 
                             <div style={{ fontSize: "12px", display: "flex", alignItems: "center" }}>
-                                <span>Cantidad: {infoPaginacion.totalItems}</span>
+                                <span>Resultados: {infoPaginacion.totalItems}</span>
+                            </div>
+                            <div style={{ minWidth: "150px" }}>
+                                <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                             </div>
                         </Row>
                     </Card>
@@ -332,14 +341,16 @@ export const MisCompras: React.FC<{}> = () => {
                                         <div style={{ display: "flex", alignItems: "center" }}>
                                             <Image width={150} src={item.imagenURL} />
                                         </div>
-
-
-                                        <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                
+                                        <div className={styles.divPequeño} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
+                                        
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ font: "revert-layer" }}>{item.nombreVendedor}</p>
+                                            <div>
+                                            <p style={{ font: "revert-layer", textAlign:"center" }}>{item.nombreVendedor}</p>
                                             <a onClick={iniciarChat}>Iniciar chat</a>
+                                            </div>
                                         </div>
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>
                                             <Space direction="vertical">
