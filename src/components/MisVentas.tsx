@@ -193,8 +193,8 @@ export const MisVentas: React.FC<{}> = () => {
 
     const cambiarEstadoCalificar = (idVenta: string) => {
         const ventasActualizadas = ventas!.map(venta => {
-            if (venta.idVenta === idVenta )
-                return { ...venta, puedeCalificar: false};
+            if (venta.idVenta === idVenta)
+                return { ...venta, puedeCalificar: false };
 
             return venta;
         });
@@ -343,11 +343,18 @@ export const MisVentas: React.FC<{}> = () => {
                         <List.Item>
                             <Card title={"Iniciada el " + item.fecha.toString()}>
                                 <Row className={styles.comprasContainer} >
-                                    <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
-                                        <Step title="Confirmación pendiente" />
-                                        <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
-                                        <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
-                                    </Steps>
+                                    {
+                                        item.estadoCompra !== EstadoCompra.Devolucion &&
+                                        <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
+                                            <Step title="Esperando confirmación" />
+                                            <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
+                                            <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
+                                        </Steps>
+                                    }
+                                    {
+                                        item.estadoCompra === EstadoCompra.Devolucion && <h2 style={{ color: "#ff4d4f" }}>Reembolsada</h2>
+
+                                    }
                                     <Divider></Divider>
                                     <Row gutter={[0, 20]} className={styles.comprasContainer} >
                                         <div style={{ display: "flex", alignItems: "center" }}>
@@ -359,7 +366,7 @@ export const MisVentas: React.FC<{}> = () => {
                                             <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", maxWidth: "12%" }}>
+                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "13%" }}>
                                             <Space direction="vertical">
                                                 <div>
                                                     <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
@@ -402,7 +409,7 @@ export const MisVentas: React.FC<{}> = () => {
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
                                                     <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
-                                                        disabled={!item.puedeCalificar}  type="warning"
+                                                        disabled={!item.puedeCalificar} type="warning"
                                                         onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador }) }}><b>Calificar</b>
                                                         <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                     </Button>
@@ -431,7 +438,7 @@ export const MisVentas: React.FC<{}> = () => {
                 }
 
                 {
-                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: ""}) }}></RealizarCalificacion> : null
+                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "" }) }}></RealizarCalificacion> : null
                 }
             </div >
         </div>

@@ -275,10 +275,10 @@ export const InfoProducto = () => {
           </div>
           <Divider />
           <div>
-            <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock==0} onClick={realizarCompra}>
+            <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0} onClick={realizarCompra}>
               Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-            <Button block disabled={producto?.stock==0}>
-              Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }}  icon={faCartPlus} /></Button>
+            <Button block disabled={producto?.stock == 0}>
+              Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
           </div>
         </Card>
       </Col>

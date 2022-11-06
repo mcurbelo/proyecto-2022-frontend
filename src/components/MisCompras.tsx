@@ -295,11 +295,19 @@ export const MisCompras: React.FC<{}> = () => {
                         <List.Item>
                             <Card title={"Realizada el " + item.fecha.toString()} >
                                 <Row className={styles.comprasContainer} >
-                                    <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
-                                        <Step title="Esperando confirmación" />
-                                        <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
-                                        <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
-                                    </Steps>
+                                    {
+                                        item.estadoCompra !== EstadoCompra.Devolucion &&
+                                        <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
+                                            <Step title="Esperando confirmación" />
+                                            <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
+                                            <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
+                                        </Steps>
+                                    }
+                                    {
+                                        item.estadoCompra === EstadoCompra.Devolucion && <h2 style={{ color: "#ff4d4f" }}>Reembolsada</h2>
+
+                                    }
+
                                     <Divider></Divider>
                                     <Row gutter={[0, 20]} className={styles.comprasContainer} >
                                         <div style={{ display: "flex", alignItems: "center" }}>
