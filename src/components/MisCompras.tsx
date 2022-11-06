@@ -231,6 +231,25 @@ export const MisCompras: React.FC<{}> = () => {
         setCompras(comprasAct);
     }
 
+    const garantiaEstado = (garantiaActiva: boolean, estado: EstadoCompra) => {
+        if (estado === EstadoCompra.Completada && garantiaActiva) {
+            return (<span style={{ color: "#28a745" }}>Activa</span>)
+        }
+        if (estado === EstadoCompra.Completada && !garantiaActiva) {
+            return (<span style={{ color: "#ff4d4f" }}>Expirada</span>)
+        }
+        return (<span>-</span>)
+    }
+
+    const cambiarPuedeReclamar = (idCompra: string) => {
+        const comprasAct = compras!.map(compra => {
+            if (compra.idCompra === idCompra)
+                return { ...compra, puedeReclamar: false };
+            return compra;
+        });
+        setCompras(comprasAct);
+    }
+
     document.body.style.backgroundColor = "#F0F0F0"
     return (
         <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#F0F0F0" }}>
@@ -330,6 +349,12 @@ export const MisCompras: React.FC<{}> = () => {
                                                 <div>
                                                     <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.fechaEntrega) ? item.fechaEntrega?.toString() : "-"}</span>
                                                 </div>
+                                                <div>
+                                                    <span style={{ whiteSpace: "nowrap" }} id="garantia">Estado de garantía: {garantiaEstado(item.garantiaActiva, item.estadoCompra)}</span>
+                                                </div>
+                                                <div>
+                                                    <span style={{ whiteSpace: "nowrap" }} id="tipoEntrega">Tipo de entrega: {(item.esEnvio) ? "Envío" : "Retiro"}</span>
+                                                </div>
                                             </Space>
                                         </div>
 
@@ -337,7 +362,7 @@ export const MisCompras: React.FC<{}> = () => {
                                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
                                             <Space direction="vertical" size={15}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía. Solo se puede tener un reclamo activo por compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
                                                     <Button style={{ width: "170px", textShadow: (item.puedeReclamar) ? "0 0 2px black" : "" }}
                                                         disabled={!item.puedeReclamar} type="primary"
                                                         onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Realizar reclamo</b> <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
@@ -370,7 +395,7 @@ export const MisCompras: React.FC<{}> = () => {
                 />
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
                 {
-                    (mostrarReclamo.mostrar) ? <RealizarReclamo nombreUsuario={mostrarCalificar.nombreUsuario} showModal={() => { setMostrarReclamo({ mostrar: false, id: "", nombreUsuario: "" }) }} idCompra={mostrarReclamo.id} /> : null
+                    (mostrarReclamo.mostrar) ? <RealizarReclamo realizoReclamo={() => { cambiarPuedeReclamar(mostrarReclamo.id) }} nombreUsuario={mostrarReclamo.nombreUsuario} showModal={() => { setMostrarReclamo({ mostrar: false, id: "", nombreUsuario: "" }) }} idCompra={mostrarReclamo.id} /> : null
                 }
 
                 {
