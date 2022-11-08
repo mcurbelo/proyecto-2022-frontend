@@ -4,6 +4,7 @@ import '../main.css';
 import userDefault from "../images/user.png"
 import { Button, Divider, Form, Modal, Row, Upload, UploadFile, UploadProps } from 'antd';
 import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 
 type basicinfo = {
@@ -13,6 +14,7 @@ type basicinfo = {
 const { confirm } = Modal;
 
 export const BasicInfo: FC<basicinfo> = (props) => {
+  const navigate = useNavigate();
   const uuid: string = (localStorage.getItem("uuid") as string);
   const token: string = (localStorage.getItem("token") as string);
   const { imagenPerfil } = props
@@ -61,7 +63,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
     confirm({
       title: 'Realmente quiere eliminar su cuenta?',
       icon: <ExclamationCircleOutlined />,
-      content: 'Si confirma, su cuenta será eliminda y dejará de estar disponible',
+      content: 'Si confirma, su cuenta será eliminda y dejará de estar disponible. No puede tener compras ni ventas pendientes.',
       onOk() {
         return UserService.eliminarCuenta(token, uuid).then((response) => {
           if (response.success) {
@@ -69,8 +71,10 @@ export const BasicInfo: FC<basicinfo> = (props) => {
               title: "Cuenta eliminada con éxito",
               content: 'Su cuenta se ha eliminado exitosamente',
             });
+            localStorage.removeItem("token")
+            localStorage.removeItem("uuid")
+            navigate("/")
           }
-          //Cerrar sesion
           else {
             Modal.error({
               title: 'Error',
@@ -118,6 +122,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
       <div style={{ display: "flex", justifyContent: "center" }}>
         <Button type='primary' size='large' danger onClick={eliminarCuenta}>Eliminar cuenta</Button>
       </div>
+      <Divider></Divider>
     </div>
   )
 }
