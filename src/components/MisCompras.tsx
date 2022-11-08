@@ -342,7 +342,7 @@ export const MisCompras: React.FC<{}> = () => {
                                             <Image width={150} src={item.imagenURL} />
                                         </div>
                                 
-                                        <div className={styles.divPequeño} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                        <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
                                         

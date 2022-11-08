@@ -1,8 +1,10 @@
-import React, {FC, useEffect, useState} from 'react'
-import {BasicInfo} from './BasicInfo';
-import {OtherInfo} from './OtherInfo';
-import { UserService } from "shopit-shared";
+import { FC, useState } from 'react'
+import { BasicInfo } from './BasicInfo';
+import { OtherInfo } from './OtherInfo';
 import "../main.css"
+import { Button, Col, Divider, Row } from 'antd';
+
+
 
 const Perfil: FC<{}> = () => {
   const [infoUsuario, setInfoUsuario] = useState({
@@ -10,15 +12,22 @@ const Perfil: FC<{}> = () => {
     correo: "",
     nombre: "",
     telefono: "",
-    imagen: "https://xsgames.co/randomusers/avatar.php?g=male"
+    imagen: ""
   });
+
+
+  const onGetImagen = (src: string) => {
+    setInfoUsuario({ ...infoUsuario, imagen: src });
+  }
+
   return (
-    <div className="infoWrapper">
+    <Row style={{ justifyContent: "center", gap: "5%" }}>
+      <Col>
         <BasicInfo nombre={infoUsuario.nombre} imagenPerfil={infoUsuario.imagen} />
-        <div className="otherinfocenter">
-          <OtherInfo />
-        </div>
-    </div>
+      </Col>
+      <OtherInfo imagenGet={(src) => onGetImagen(src)} />
+    </Row>
+
   )
 }
 
