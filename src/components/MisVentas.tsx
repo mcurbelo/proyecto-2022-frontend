@@ -41,7 +41,7 @@ const useStyles = createUseStyles({
         width: "80%",
     },
     comprasContainer: {
-        gap: "8%",
+        gap: "4%",
         width: "100%",
         justifyContent: "center"
     },
@@ -73,7 +73,7 @@ const useStyles = createUseStyles({
 
 
     },
-    '@media screen and (max-width: 589px)': {
+    '@media screen and (max-width: 1184px)': {
         filtros: {
             width: "100%"
         }
@@ -113,7 +113,6 @@ export const MisVentas: React.FC<{}> = () => {
         mostrar: false,
         id: "",
         nombreUsuario: "",
-        idBoton: ""
     })
     const [mostrarGestionVenta, setGestionVenta] = useState({
         mostrar: false,
@@ -190,9 +189,16 @@ export const MisVentas: React.FC<{}> = () => {
         )
     }
 
-    const changeButtonAttribute = (id: string) => {
-        var botonCalificar = document.getElementById(id);
-        botonCalificar?.setAttribute("disabled", "true");
+
+
+    const cambiarEstadoCalificar = (idVenta: string) => {
+        const ventasActualizadas = ventas!.map(venta => {
+            if (venta.idVenta === idVenta)
+                return { ...venta, puedeCalificar: false };
+
+            return venta;
+        });
+        setVentas(ventasActualizadas);
     }
 
     const completarVenta = (idVenta: string, esEnvio: boolean) => {
@@ -201,6 +207,7 @@ export const MisVentas: React.FC<{}> = () => {
             title: 'Estás seguro que desea completar esta venta?',
             icon: <ExclamationCircleOutlined />,
             content: 'Al confirmar se completará la venta y podrá calificar al comprador.',
+            cancelText: "Cancelar",
             onOk() {
                 if (esEnvio) {
                     return CompartidoUsuario.completarEnvio(idVenta, token!).then((result) => {
@@ -224,6 +231,7 @@ export const MisVentas: React.FC<{}> = () => {
                                 title: "Acción exitosa",
                                 content: 'Estado de la venta actualizado exitosamente',
                             });
+                            cambiarEstadoVenta(idVenta, EstadoCompra.Completada)
                         } else {
                             Modal.error({
                                 title: 'Error',
@@ -291,8 +299,8 @@ export const MisVentas: React.FC<{}> = () => {
                             <div style={{ minWidth: "192px" }} className={styles.filtros}>
                                 <label htmlFor="orden" style={{ display: "block" }}>Ordenar por:</label>
                                 <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "192px" }} onChange={handleChange}>
-                                    <Option value="fechaDsc">Últimas compras</Option>
-                                    <Option value="fechaAsc">Compras más antiguas</Option>
+                                    <Option value="fechaDsc">Últimas ventas</Option>
+                                    <Option value="fechaAsc">Ventas más antiguas</Option>
                                 </Select>
                             </div>
                             <div style={{ minWidth: "192px" }} className={styles.filtros}>
@@ -335,11 +343,18 @@ export const MisVentas: React.FC<{}> = () => {
                         <List.Item>
                             <Card title={"Iniciada el " + item.fecha.toString()}>
                                 <Row className={styles.comprasContainer} >
-                                    <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
-                                        <Step title="Confirmación pendiente" />
-                                        <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
-                                        <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
-                                    </Steps>
+                                    {
+                                        item.estadoCompra !== EstadoCompra.Devolucion &&
+                                        <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
+                                            <Step title="Esperando confirmación" />
+                                            <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
+                                            <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
+                                        </Steps>
+                                    }
+                                    {
+                                        item.estadoCompra === EstadoCompra.Devolucion && <h2 style={{ color: "#ff4d4f" }}>Reembolsada</h2>
+
+                                    }
                                     <Divider></Divider>
                                     <Row gutter={[0, 20]} className={styles.comprasContainer} >
                                         <div style={{ display: "flex", alignItems: "center" }}>
@@ -351,7 +366,7 @@ export const MisVentas: React.FC<{}> = () => {
                                             <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "13%" }}>
                                             <Space direction="vertical">
                                                 <div>
                                                     <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
@@ -382,18 +397,29 @@ export const MisVentas: React.FC<{}> = () => {
                                         <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
                                             <Space direction="vertical" size={15}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede realizar acciones en ventas en esperando confirmación."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Dropdown overlay={<Menu items={opciones} onClick={(e) => handleAcciones(e, item)} />} disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}>
-                                                        <Button type="primary" disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion} style={{ width: "170px", textShadow: (item.estadoCompra === EstadoCompra.EsperandoConfirmacion) ? "0 0 2px black" : "" }}><b>Acciones</b><FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faBars} /></Button>
+                                                    <Tooltip title="Solo se puede realizar acciones en ventas en esperando confirmación."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Dropdown overlay={<Menu items={opciones} onClick={(e) => handleAcciones(e, item)} />}
+                                                        disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}>
+                                                        <Button type="primary" disabled={item.estadoCompra !== EstadoCompra.EsperandoConfirmacion}
+                                                            style={{ width: "170px", textShadow: (item.estadoCompra === EstadoCompra.EsperandoConfirmacion) ? "0 0 2px black" : "" }}><b>Acciones</b>
+                                                            <FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faBars} />
+                                                        </Button>
                                                     </Dropdown>
                                                 </div>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }} disabled={!item.puedeCalificar} id={item.idVenta + "Calificar"} type="warning" onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador, idBoton: item.idVenta + "Calificar" }) }}><b>Calificar</b> <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                    <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la venta."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
+                                                        disabled={!item.puedeCalificar} type="warning"
+                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idVenta, nombreUsuario: item.nombreComprador }) }}><b>Calificar</b>
+                                                        <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                    </Button>
                                                 </div>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede completar ventas una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" color="#17a2b8" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button disabled={!item.puedeCompletar} style={{ width: "170px", textShadow: (item.puedeCompletar) ? "0 0 2px black" : "" }} type="success" onClick={() => completarVenta(item.idVenta, item.esEnvio)}> <b>Completar venta</b> <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                    <Tooltip title="Solo se puede completar ventas una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                    <Button disabled={!item.puedeCompletar} style={{ width: "170px", textShadow: (item.puedeCompletar) ? "0 0 2px black" : "" }}
+                                                        type="success" onClick={() => completarVenta(item.idVenta, item.esEnvio)}> <b>Completar venta</b>
+                                                        <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                    </Button>
                                                 </div>
                                             </Space>
                                         </div>
@@ -412,7 +438,7 @@ export const MisVentas: React.FC<{}> = () => {
                 }
 
                 {
-                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { changeButtonAttribute(mostrarCalificar.idBoton) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "", idBoton: "" }) }}></RealizarCalificacion> : null
+                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "" }) }}></RealizarCalificacion> : null
                 }
             </div >
         </div>

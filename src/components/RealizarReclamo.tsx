@@ -9,13 +9,14 @@ const { Option } = Select;
 type reclamoProps = {
     idCompra: string,
     showModal: () => void,
-    nombreUsuario: string
+    nombreUsuario: string,
+    realizoReclamo: () => void
 }
 
 export const RealizarReclamo = (props: reclamoProps) => {
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
-    const { idCompra, showModal, nombreUsuario } = props
+    const { idCompra, showModal, nombreUsuario, realizoReclamo } = props
     const [open, setOpen] = useState(true);
     const [datosReclamos, setDatosReclamos] = useState<DtAltaReclamo>({
         descripcion: "",
@@ -31,6 +32,7 @@ export const RealizarReclamo = (props: reclamoProps) => {
         setLoading(true);
         CompradorService.nuevoReclamo(id!, token!, idCompra, datosReclamos).then((result) => {
             if (result == "200") {
+                realizoReclamo();
                 Modal.success({
                     title: "Reclamo enviado correctamente",
                     content: "Se ha notificado al comprador que tiene un nuevo reclamo. Se te avisará cuando haya una respuesta.",

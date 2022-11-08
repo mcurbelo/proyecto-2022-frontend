@@ -239,7 +239,7 @@ export const InfoProducto = () => {
           <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
           <hr />
           <Space>
-            <Text>Garantía: {producto?.garantia}</Text> <Tooltip  title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
+            <Text>Garantía: {producto?.garantia}</Text> <Tooltip title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
               <Button type="primary" style={{ width: "20px" }}>?</Button>
             </Tooltip >
           </Space>
@@ -275,9 +275,9 @@ export const InfoProducto = () => {
           </div>
           <Divider />
           <div>
-            <Button type="primary" block style={{ marginBottom: "3%" }} onClick={realizarCompra}>
+            <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0} onClick={realizarCompra}>
               Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-            <Button block>
+            <Button block disabled={producto?.stock == 0}>
               Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
           </div>
         </Card>
