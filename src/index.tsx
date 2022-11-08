@@ -23,6 +23,7 @@ import AddProductForm from './components/ProductForm';
 import { MisCompras } from './components/MisCompras';
 import { MisVentas } from './components/MisVentas';
 import { Reclamos } from './components/ListaReclamos';
+import { MisProductos } from './components/ListarMisProductos';
 
 require('dotenv').config();
 
@@ -55,6 +56,7 @@ root.render(
         <Route path="/misventas" element={<MisVentas />} />
         <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
         <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />
+        <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>
       </Routes>
     </BrowserRouter>
   </>
