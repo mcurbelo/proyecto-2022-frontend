@@ -1,15 +1,17 @@
-import { SearchOutlined, UserOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
-import { faCircleQuestion, faSquareCheck, faComments, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
+import { SearchOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { faPause } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Card, Collapse, DatePicker, DatePickerProps, Divider, Empty, Input, List, Pagination, Row, Select, Space, Tooltip, Image } from "antd";
-import locale from "antd/lib/date-picker/locale/en_US";
+import { Card, DatePicker, DatePickerProps, Divider, Empty, Input, List, Pagination, Row, Select, Image, Carousel, Modal } from "antd";
 import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
-import { VendedorService } from "shopit-shared";
-import { DtFiltrosMisProductos, DtMiProducto, EstadoProducto, TipoReclamo, TipoResolucion } from "shopit-shared/dist/user/VendedorService";
+import { CategoriaService, VendedorService } from "shopit-shared";
+import { DtFiltrosMisProductos, DtMiProducto, EstadoProducto } from "shopit-shared/dist/user/VendedorService";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
+import { faCircleCheck, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
+import type { SelectProps } from 'antd';
+import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
 
 interface AppState {
     productos: DtMiProducto[],
@@ -69,6 +71,7 @@ const useStyles = createUseStyles({
 })
 
 const { Option } = Select;
+const { confirm } = Modal;
 
 export const MisProductos = () => {
     const styles = useStyles();
@@ -92,12 +95,12 @@ export const MisProductos = () => {
         totalItems: 0
     })
     const [paginaAbuscar, setPaginaAbuscar] = useState(0)
-
-    const { Panel } = Collapse;
+    const [categorias, setCategorias] = useState<DtCategoria[]>()
 
 
     useEffect(() => {
         busqueda()
+        obtenerCategorias()
     }, [paginaAbuscar])
 
     const busqueda = () => {
@@ -139,6 +142,56 @@ export const MisProductos = () => {
     }
 
 
+    const cambiarEstadoProducto = (idProducto: string, nuevoEstado: EstadoProducto) => {
+        confirm({
+            title: "Estás seguro que deseas cambiar de estado el producto a '" + nuevoEstado + "' ?",
+            icon: <ExclamationCircleOutlined />,
+            content: 'Al confirmar se cambiará el estado del producto.',
+            cancelText: "Cancelar",
+            onOk() {
+                return VendedorService.cambiarEstadoProducto(id!, token!, idProducto, nuevoEstado).then((result) => {
+                    if (result == "200") {
+                        Modal.success({
+                            title: "Acción exitosa",
+                            content: 'Estado del producto actualizado exitosamente',
+                        });
+                        actualizarEstadoProducto(idProducto, nuevoEstado);
+                    } else {
+                        Modal.error({
+                            title: 'Error',
+                            content: 'Ha ocurrido un error inesperado',
+                        });
+                    }
+                })
+            },
+            onCancel() { },
+        });
+
+    }
+
+    const actualizarEstadoProducto = (idProducto: string, estado: EstadoProducto) => {
+        const productosActualizados = productos!.map(producto => {
+            if (producto.idProducto === idProducto)
+                return { ...producto, estado: estado };
+            return producto;
+        });
+        setProductos(productosActualizados);
+    }
+
+    const obtenerCategorias = () => {
+        CategoriaService.listarCategorias().then((result) => {
+            if (result) {
+                setCategorias(result);
+            }
+        })
+    }
+
+    const handleChangeCategorias = (value: string[]) => {
+        setFiltros({ ...filtros, categorias: value })
+    };
+
+
+
     document.body.style.backgroundColor = "#F0F0F0"
     return (
         <div style={{ display: "flex", justifyContent: "center", backgroundColor: "#F0F0F0" }}>
@@ -168,16 +221,27 @@ export const MisProductos = () => {
                                     <DatePicker placeholder="Eliga una fecha" className={styles.filtros} id="fecha" style={{ minWidth: "202px" }} format={"DD/MM/YYYY"} onChange={onChangeDatePicker} />
                                 </div>
                                 <div style={{ minWidth: "202px" }} className={styles.filtros}>
-                                    <label htmlFor="tipo" style={{ display: "block" }}>Tipo:</label>
+                                    <label htmlFor="tipo" style={{ display: "block" }}>Estado:</label>
                                     <Select id="tipo" defaultValue={true} className={styles.filtros} style={{ minWidth: "202px" }} onChange={(value) => onChangeTipo(value)}>
                                         <Option value={true}>Todos</Option>
-                                        <Option value={EstadoProducto.Activo}>Producto con desperfecto</Option>
-                                        <Option value={EstadoProducto.Pausado}>No listado</Option>
+                                        <Option value={EstadoProducto.Activo}>Activo</Option>
+                                        <Option value={EstadoProducto.Pausado}>Pausado</Option>
                                         <Option value={EstadoProducto.BloqueadoADM}>Bloqueado</Option>
                                     </Select>
                                 </div>
 
-
+                                <div style={{ minWidth: "300px" }} className={styles.filtros}>
+                                    <label htmlFor="categorias" style={{ display: "block" }}>Por categorias:</label>
+                                    <Select
+                                        id="categorias"
+                                        mode="multiple"
+                                        allowClear
+                                        style={{ width: '100%', minWidth: "300px" }}
+                                        placeholder="Categorias"
+                                        onChange={handleChangeCategorias}
+                                        options={categorias?.map(categoria => ({ label: categoria.nombre, value: categoria.nombre }))}
+                                    />
+                                </div>
                             </Row>
                             <Divider></Divider>
                             <Row style={{ gap: "10px", marginTop: "2%", justifyContent: "space-evenly" }}>
@@ -194,32 +258,65 @@ export const MisProductos = () => {
                     </Card>
                 </div>
 
+
+
                 <List locale={locale}
                     grid={{
                         gutter: 16,
                         xs: 1,
                         sm: 1,
-                        md: 1,
-                        lg: 1,
-                        xl: 1,
-                        xxl: 1,
+                        md: 2,
+                        lg: 2,
+                        xl: 3,
+                        xxl: 4,
                     }}
                     dataSource={productos}
                     renderItem={item => (
                         <List.Item>
                             <Card style={{ width: 300 }}>
-                                    <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombre}</p>
-                          
-                                    <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{"Fecha ingresado: " + item.fechaInicio}</p>
-                  
-                                    <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{"Fecha fin: "+item.fechaFin}</p>
+                                <Carousel>
+                                    {
+                                        item.imagenes.map((option, index) => {
+                                            return (<Image key={index} src={option} height={200} ></Image>)
+                                        })
+                                    }
 
-                                    <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>Stock: {item.stock}</p>
+                                </Carousel>
+                                <Divider></Divider>
+                                <div >
+                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.nombre}</p>
 
+                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{"Fecha ingresado: " + item.fechaInicio}</p>
+
+                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Fecha fin: {(item.fechaFin) ? item.fechaFin : "-"}</p>
+
+                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Cantidad de stock: {(item.stock === 1) ? item.stock + " unidad" : item.stock + " unidades"}</p>
+
+                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Estado publicación: {(item.estado === EstadoProducto.BloqueadoADM) ? "Bloqueado" : item.estado}</p>
+                                </div>
+                                <Divider></Divider>
+                                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                    <div style={{ width: "45%" }}>
+                                        <Button type="warning" disabled={item.estado === EstadoProducto.BloqueadoADM || item.estado === EstadoProducto.Pausado}
+                                            style={{ textShadow: (item.estado !== EstadoProducto.BloqueadoADM && item.estado !== EstadoProducto.Pausado) ? "0 0 2px black" : "" }}
+                                            block={true} onClick={() => cambiarEstadoProducto(item.idProducto, EstadoProducto.Pausado)}>Pausar <FontAwesomeIcon icon={faPause} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                    </div>
+                                    <div style={{ width: "45%" }}>
+                                        <Button type="success" disabled={item.estado === EstadoProducto.BloqueadoADM || item.estado === EstadoProducto.Activo}
+                                            style={{ textShadow: (item.estado !== EstadoProducto.BloqueadoADM && item.estado !== EstadoProducto.Activo) ? "0 0 2px black" : "" }}
+                                            block={true} onClick={() => cambiarEstadoProducto(item.idProducto, EstadoProducto.Activo)}>Habilitar <FontAwesomeIcon icon={faCircleCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                    </div>
+                                </div>
+                                <Divider></Divider>
+                                <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                    <Button type="primary" block={true} style={{ textShadow: "0 0 2px black" }}>Ver detalles | Editar <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                </div>
                             </Card>
+
                         </List.Item>
                     )}
                 />
+
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
             </div >
         </div>
