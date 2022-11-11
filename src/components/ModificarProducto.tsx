@@ -1,4 +1,4 @@
-import { Card, Col, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Tooltip, Typography, Upload } from "antd";
+import { Affix, Card, Checkbox, Col, Collapse, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Space, Tooltip, Typography, Upload } from "antd";
 import { useEffect, useState } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router";
 import { VendedorService } from "shopit-shared";
@@ -15,6 +15,7 @@ import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import { createUseStyles } from "react-jss";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { RcFile } from "antd/lib/upload";
+import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 
 const useStyles = createUseStyles({
@@ -31,7 +32,6 @@ const useStyles = createUseStyles({
 const { confirm } = Modal;
 
 export const ModificarProducto = () => {
-    const styles = useStyles();
     const navigate = useNavigate();
     const { state } = useLocation();
     const { productoInfo } = state;
@@ -44,7 +44,8 @@ export const ModificarProducto = () => {
         fechaFin: undefined,
         imagenesQuitar: [],
         precio: undefined,
-        stock: undefined
+        stock: undefined,
+        permiteEnvio: undefined
     })
     const [imagenesMax, setImangenesMax] = useState<Array<string>>([])
     const [fileList, setFileList] = useState<Array<RcFile | null>>([]);
@@ -60,21 +61,15 @@ export const ModificarProducto = () => {
 
 
     useEffect(() => {
-        if (!productoInfo) {
-            console.log("hola");
-        }
-
         form.resetFields()
     }, [producto]);
-
 
     useEffect(() => {
         let defaultImg = [] as (RcFile | null)[]
         producto.imagenes.map((value, index) => {
-            setFileList({ ...fileList, [index]: null });
             defaultImg[index] = null
         })
-
+        setFileList(defaultImg);
         let imagenesMax = ["", "", "", "", ""];
         producto.imagenes.map((value, index) => {
             imagenesMax[index] = producto.imagenes[index];
@@ -95,22 +90,32 @@ export const ModificarProducto = () => {
             content: 'Los cambios serán permanentes una vez confirmados.',
             cancelText: "Cancelar",
             onOk() {
+                let productoInfoNuevo = producto;
                 let imagenesEnviar = new Array<File>();
+                let imagenesNuevas = new Array<string>();
                 Array.from(Object.values(fileList)).map((value, index) => {
-                    if (value !== null)
+                    if (value !== null) {
                         imagenesEnviar[index] = value;
-                    else
+                        imagenesNuevas[index] = URL.createObjectURL(new File([value], "imagen" + index))
+                    } else {
                         imagenesEnviar[index] = new File([""], "");
+                        imagenesNuevas[index] = producto.imagenes[index];
+                    }
                 })
-
                 return VendedorService.modificarProducto(id, token, producto.idProducto!, datosModificar, imagenesEnviar!).then((response) => {
                     if (response.success) {
                         Modal.success({
                             title: "Edición completada con éxito",
-                            content: 'Sus datos se han actualizado exitosamente',
+                            content: 'Sus datos se han actualizado exitosamente.',
                         });
-                        window.history.replaceState({}, document.title)
-                        //navigate("/misProductos");
+                        productoInfoNuevo["descripcion"] = (datosModificar.descripcion) ? datosModificar.descripcion : productoInfoNuevo.descripcion
+                        productoInfoNuevo["fechaFin"] = (datosModificar.fechaFin) ? datosModificar.fechaFin : productoInfoNuevo.fechaFin
+                        productoInfoNuevo["stock"] = (datosModificar.stock) ? datosModificar.stock : productoInfoNuevo.stock
+                        productoInfoNuevo["precio"] = (datosModificar.precio) ? datosModificar.precio : productoInfoNuevo.precio
+                        productoInfoNuevo["imagenes"] = imagenesNuevas;
+                        productoInfoNuevo["permiteEnvio"] = (datosModificar.permiteEnvio) ? datosModificar.permiteEnvio : productoInfoNuevo.permiteEnvio
+                        navigate('/modificarProducto', { state: { productoInfo: productoInfoNuevo } })
+                        navigate("/misProductos");
                     }
                     else {
                         Modal.error({
@@ -171,7 +176,7 @@ export const ModificarProducto = () => {
                 setFileList(newFileList);
 
                 let imagesEliminar = Array.from(datosModificar.imagenesQuitar!).slice();
-                imagesEliminar.push(url)
+                imagesEliminar.push(index)
                 setDatosModificar({ ...datosModificar, imagenesQuitar: imagesEliminar });
             },
             onCancel() {
@@ -187,7 +192,8 @@ export const ModificarProducto = () => {
             (datosModificar.precio != undefined && datosModificar.precio !== producto.precio) ||
             (datosModificar.imagenesQuitar!.length > 0) ||
             (Object.keys(fileList).length !== imagenesAux.length) ||
-            (Array.from(Object.values(fileList)).indexOf(null) == -1))
+            (Array.from(Object.values(fileList)).indexOf(null) == -1) ||
+            (datosModificar.permiteEnvio != undefined && datosModificar.permiteEnvio !== producto.permiteEnvio))
             return false;
         return true
     }
@@ -227,106 +233,38 @@ export const ModificarProducto = () => {
         setDatosModificar({ ...datosModificar, "fechaFin": dateString })
     };
 
-    const { Text, Link } = Typography;
+    const onChangeCheck = (e: CheckboxChangeEvent) => {
+        setDatosModificar({ ...datosModificar, permiteEnvio: (e.target.checked === producto.permiteEnvio) ? undefined : e.target.checked })
+    };
+
+    const { Text } = Typography;
+    const { Panel } = Collapse;
 
     document.body.style.backgroundColor = "#F0F0F0"
     return (
         <div>
             <div style={{ textAlign: "center" }}>
-
                 <h1>Modificación de producto</h1>
-            </div>
+            </div >
+            <Row justify="center" >
+                <div style={{ width: "60%", display: "flex", justifyContent: "end", paddingBottom:"1%"}}>
+                    <Button type="primary" onClick={restablecer}  disabled={iguales}>Restablecer <FontAwesomeIcon icon={faRotateRight} style={{ marginLeft: "5px" }} /></Button>
+                </div>
+            </Row>
+
             <Row justify="center">
-                <Card style={{ width: "70%" }} title="Datos editables" extra={<Button type="primary" onClick={restablecer} disabled={iguales}>Restablecer <FontAwesomeIcon icon={faRotateRight} style={{ marginLeft: "5px" }} /></Button>}>
-
-                    <Row>
-                        <div>
-                            <Text>{producto.nombre} | Fecha de ingreso: {producto.fechaInicio}</Text>
-                        </div>
-
-                    </Row>
-                    <Divider></Divider>
-                    <Row justify="space-between">
-                        <Col style={{ width: "60%" }}>
-                            <h2>Imágenes actuales <Tooltip title="Son las imágenes que ya tiene el producto, estas se puede cambiar o quitar (siempre y cuando haya al menos una)."><FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} />  </Tooltip></h2>
-                            <List
-                                itemLayout="horizontal"
-                                dataSource={imagenesAux}
-                                renderItem={(item, index) => (
-                                    <List.Item style={{ display: "flex", justifyContent: "center" }}>
-                                        <div style={{ width: "80%" }}>
-                                            <h4 style={{ textAlign: "center" }}>Imagen {index + 1}</h4>
-
-                                            {
-
-                                                (item !== "") &&
-                                                <>
-                                                    <Row justify="space-around">
-                                                        <Col>
-                                                            <Image src={item} height={150} width={150} />
-                                                        </Col>
-                                                        {fileList[index] !== null &&
-                                                            <>
-                                                                <Col style={{ justifyContent: "center", alignItems: "center", display: "flex" }}>
-                                                                    <FontAwesomeIcon size="2x" color="black" icon={faRightLong} style={{ padding: "20px" }} />
-                                                                </Col>
-
-                                                                <Col>
-                                                                    <Image height={150} width={150} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
-                                                                </Col>
-                                                            </>
-                                                        }
-                                                    </Row>
-                                                    <Row justify="space-around" style={{ alignItems: "flex-start", width: "100%", marginTop: "3%" }}>
-                                                        <Upload onRemove={(file) => onRemove(file.originFileObj!, true, index)} maxCount={1} beforeUpload={(file) => beforeUpload(file, index)} accept="image/png, image/jpeg">
-                                                            <Button type="info" with="dashed" style={{ width: "200px" }} >Cambiar imagen <FontAwesomeIcon icon={faArrowRightArrowLeft} style={{ marginLeft: "5px" }} /></Button>
-                                                        </Upload>
-                                                        {fileList[index] === null &&
-                                                            <div>
-                                                                <Button type="danger" disabled={imagenesAux.length === 1} style={{ width: "200px" }} onClick={() => eliminar(index)}>Quitar <FontAwesomeIcon icon={faTrashCan} style={{ marginLeft: "5px" }} /></Button>
-                                                            </div>
-                                                        }
-                                                    </Row>
-                                                </>
-                                            }
-
-
-                                        </div>
-                                    </List.Item>
-                                )}
-                            />
-                            <Divider></Divider>
-                            <h2>Agregar nuevas imágenes <Tooltip title="Agregar imágenes en el orden deseado de aparición. En total pueden haber 5 imagenes."><FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} />  </Tooltip></h2>
-                            <List
-                                grid={{ column: 5, gutter: 20 }}
-                                dataSource={imagenesMax}
-                                renderItem={(item, index) => (
-                                    <List.Item>
-                                        {index >= imagenesAux.length && (item === "") && fileList[index] &&
-                                            <div>
-                                                <Image height={150} width={150} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
-                                            </div>
-                                        }
-                                    </List.Item>
-                                )}
-                            />
-
-                            <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
-
-                                <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
-                                    <Upload key={key} onRemove={(file) => onRemove(file.originFileObj!, false)} beforeUpload={(file) => beforeUpload(file, undefined)} maxCount={5 - imagenesAux.length} accept="image/png, image/jpeg">
-                                        <Button type="dashed" disabled={fileList.length === 5} style={{ width: "200px" }}>Seleccione una imágen <FontAwesomeIcon icon={faArrowUpFromBracket} style={{ marginLeft: "5px" }} /></Button>
-                                    </Upload>
-                                </Row>
-                            </Row>
-                        </Col>
-
-                        <Col style={{ width: "40%" }}>
-                            <h2>Información</h2>
+                <Collapse defaultActiveKey={['1']} style={{ width: "60%" }}>
+                    <Panel header="Información" key="1" >
+                        <Row justify="center">
                             <Form
                                 name="basic"
                                 form={form}
-                                initialValues={{ descripcion: producto?.descripcion, precio: producto?.precio, stock: producto?.stock, fechaFin: (producto.fechaFin) ? moment(producto.fechaFin, "DD/MM/YYYY") : "" }}
+                                initialValues={{
+                                    descripcion: producto?.descripcion,
+                                    precio: producto?.precio, stock: producto?.stock,
+                                    fechaFin: (producto.fechaFin) ? moment(producto.fechaFin, "DD/MM/YYYY") : "",
+                                    permiteEnvio: producto.permiteEnvio
+                                }}
                                 onFinish={modificarProducto}
                                 layout="vertical"
                             >
@@ -364,18 +302,113 @@ export const ModificarProducto = () => {
                                     </div>
                                 </Row>
 
-                                <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-                                    <Button type="success" disabled={iguales} htmlType="submit">
-                                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk} style={{ marginLeft: "5px" }} />
-                                    </Button>
+                                <Form.Item
+                                    name="permiteEnvio"
+                                    valuePropName="checked"
+                                >
+                                    <Checkbox onChange={onChangeCheck} > Permite envío </Checkbox>
                                 </Form.Item>
-                            </Form>
-                        </Col>
-                    </Row>
-                </Card>
 
-            </Row >
+                            </Form>
+                        </Row>
+                    </Panel>
+                    <Panel header={<span>Imágenes actuales<Tooltip title="Son las imágenes que ya tiene el producto, estas se puede cambiar o quitar (siempre y cuando haya al menos una).">
+                        <FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faQuestionCircle} /></Tooltip></span>
+                    } key="2">
+                        <Row justify="center">
+                            <Col style={{ width: "60%" }}>
+                                <List
+                                    itemLayout="horizontal"
+                                    dataSource={imagenesAux}
+                                    renderItem={(item, index) => (
+                                        <List.Item style={{ display: "flex", justifyContent: "center" }}>
+                                            <div style={{ width: "80%" }}>
+                                                <h4 style={{ textAlign: "center" }}>Imagen {index + 1}</h4>
+
+                                                {
+
+                                                    (item !== "") &&
+                                                    <>
+                                                        <Row justify="space-around">
+                                                            <Col>
+                                                                <Image src={item} height={150} width={150} />
+                                                            </Col>
+                                                            {fileList[index] !== null &&
+                                                                <>
+                                                                    <Col style={{ justifyContent: "center", alignItems: "center", display: "flex" }}>
+                                                                        <FontAwesomeIcon size="2x" color="black" icon={faRightLong} style={{ padding: "20px" }} />
+                                                                    </Col>
+
+                                                                    <Col>
+                                                                        <Image height={150} width={150} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
+                                                                    </Col>
+                                                                </>
+                                                            }
+                                                        </Row>
+                                                        <Row justify="space-around" style={{ alignItems: "flex-start", width: "100%", marginTop: "3%" }}>
+                                                            <Upload onRemove={(file) => onRemove(file.originFileObj!, true, index)} maxCount={1} beforeUpload={(file) => beforeUpload(file, index)} accept="image/png, image/jpeg">
+                                                                <Button type="info" with="dashed" style={{ width: "200px" }} >Cambiar imagen <FontAwesomeIcon icon={faArrowRightArrowLeft} style={{ marginLeft: "5px" }} /></Button>
+                                                            </Upload>
+                                                            {fileList[index] === null &&
+                                                                <div>
+                                                                    <Button type="danger" disabled={imagenesAux.length === 1} style={{ width: "200px" }} onClick={() => eliminar(index)}>Quitar <FontAwesomeIcon icon={faTrashCan} style={{ marginLeft: "5px" }} /></Button>
+                                                                </div>
+                                                            }
+                                                        </Row>
+                                                    </>
+                                                }
+
+
+                                            </div>
+                                        </List.Item>
+                                    )}
+                                />
+                            </Col>
+                        </Row>
+                    </Panel>
+
+                    <Panel header={<span>Agregar nuevas imágenes <Tooltip title="Agregar imágenes en el orden deseado de aparición. En total pueden haber 5 imagenes."><FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faQuestionCircle} />  </Tooltip></span>} key="3">
+                        <div style={{ width: "100%" }}>
+                            <List
+                                grid={{ column: 5 }}
+                                dataSource={["", "", "", ""]}
+                                renderItem={(item, index) => (
+                                    <List.Item>
+                                        {fileList[index + producto.imagenes.length] &&
+                                            <div>
+                                                <Image height={150} width={150} alt="Sin asdfdsf" src={URL.createObjectURL(new File([fileList[index + producto.imagenes.length]!], "imagen"))} />
+                                            </div>
+                                        }
+                                    </List.Item>
+
+                                )}
+                            />
+                            <Divider></Divider>
+                            <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
+
+                                <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
+                                    <Upload key={key} onRemove={(file) => onRemove(file.originFileObj!, false)} beforeUpload={(file) => beforeUpload(file, undefined)} maxCount={5 - imagenesAux.length} accept="image/png, image/jpeg">
+                                        <Button type="dashed" disabled={Object.keys(fileList).length === 5} style={{ width: "200px" }}>Seleccione una imágen <FontAwesomeIcon icon={faArrowUpFromBracket} style={{ marginLeft: "5px" }} /></Button>
+                                    </Upload>
+                                </Row>
+                            </Row>
+                        </div>
+                    </Panel>
+
+                </Collapse>
+
+            </Row>
+
+            <div>
+                <Affix style={{ position: 'fixed', bottom: "29%", right: "5%" }}>
+                    <Button type="success" size="large" style={{ width: "130%" }} disabled={iguales} htmlType="submit">
+                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk} onClick={() => form.submit()} style={{ marginLeft: "5px" }} />
+                    </Button>
+
+                </Affix>
+            </div>
         </div >
+
     )
 
 }
