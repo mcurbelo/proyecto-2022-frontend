@@ -124,7 +124,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
     UserService.updateUser(token, body).then((response) => {
       if (response.success) {
         Modal.success({
-          title: "Edicion completada con éxito",
+          title: "Edición completada con éxito",
           content: 'Sus datos se han actualizado exitosamente',
         });
         setEditando(!editando);
@@ -143,7 +143,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
     UserService.updateDatosEmpresa(token, uuid, datosEmpresaNuevos).then((response) => {
       if (response.success) {
         Modal.success({
-          title: "Edicion completada con éxito",
+          title: "Edición completada con éxito",
           content: 'Sus datos se han actualizado exitosamente',
         });
         setEditando(!editando);
@@ -174,7 +174,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
     UserService.updateContrasena(token, uuid, datosCambioContrasena).then((response) => {
       if (response.success) {
         Modal.success({
-          title: "Edicion completada con éxito",
+          title: "Edición completada con éxito",
           content: 'Sus datos se han actualizado exitosamente',
         });
         setEditando(!editando);
@@ -217,7 +217,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
               </div>
 
               <div>
-                <Tooltip title="Calificacion obtenida de los vendedores ">
+                <Tooltip title="Calificación obtenida de los vendedores ">
                   <div>
                     <label>Calificación:</label>
                     <Form.Item>

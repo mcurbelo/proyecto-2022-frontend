@@ -12,6 +12,7 @@ import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css
 import { faCircleCheck, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
 import type { SelectProps } from 'antd';
 import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
+import { useNavigate } from "react-router-dom";
 
 interface AppState {
     productos: DtMiProducto[],
@@ -75,6 +76,7 @@ const { confirm } = Modal;
 
 export const MisProductos = () => {
     const styles = useStyles();
+    const navigate = useNavigate();
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
     const [productos, setProductos] = useState<AppState["productos"]>()
@@ -190,7 +192,9 @@ export const MisProductos = () => {
         setFiltros({ ...filtros, categorias: value })
     };
 
-
+    const modificarProducto = (producto: DtMiProducto) => {
+        navigate('/modificarProducto', { state: { productoInfo: producto } })
+    }
 
     document.body.style.backgroundColor = "#F0F0F0"
     return (
@@ -309,15 +313,16 @@ export const MisProductos = () => {
                                 </div>
                                 <Divider></Divider>
                                 <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                    <Button type="primary" block={true} style={{ textShadow: "0 0 2px black" }}>Ver detalles | Editar <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                    <Button type="primary" block={true} style={{ textShadow: "0 0 2px black" }} onClick={() => { modificarProducto(item) }}>Ver detalles | Editar <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                 </div>
                             </Card>
-
                         </List.Item>
                     )}
                 />
 
-                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
+                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}
+                    defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual}
+                    onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
             </div >
         </div>
     )
