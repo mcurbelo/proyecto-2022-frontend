@@ -1,16 +1,17 @@
-import { Card, Col, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Upload } from "antd";
+import { Card, Col, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Tooltip, Typography, Upload } from "antd";
 import { useEffect, useState } from "react";
-import { useLocation } from "react-router";
+import { Navigate, useLocation, useNavigate } from "react-router";
 import { VendedorService } from "shopit-shared";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { DtMiProducto, DtModificarProducto } from "shopit-shared/dist/user/VendedorService";
-import DatePicker, { RangePickerProps } from "antd/lib/date-picker";
+import DatePicker, { DatePickerProps, RangePickerProps } from "antd/lib/date-picker";
 import moment from "moment";
 import { ExclamationCircleOutlined, UploadOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowRightArrowLeft, faRightLong, faRotateRight } from "@fortawesome/free-solid-svg-icons";
+import { faArrowRightArrowLeft, faArrowUpFromBracket, faFloppyDisk, faRightLong, faRotateRight } from "@fortawesome/free-solid-svg-icons";
+import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import { createUseStyles } from "react-jss";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { RcFile } from "antd/lib/upload";
@@ -31,6 +32,7 @@ const { confirm } = Modal;
 
 export const ModificarProducto = () => {
     const styles = useStyles();
+    const navigate = useNavigate();
     const { state } = useLocation();
     const { productoInfo } = state;
     const [form] = Form.useForm();
@@ -49,9 +51,6 @@ export const ModificarProducto = () => {
     const [iguales, setIguales] = useState(true)
     const [imagenesAux, setImagenAux] = useState(producto.imagenes)
     const [key, setKey] = useState(0);
-    const [prueba, setPrueba] = useState<Array<string | number>>([]);
-
-    const [fileList2, setFileList2] = useState<Array<RcFile | null>>([])
 
     // eslint-disable-next-line arrow-body-style
     const disabledDate: RangePickerProps['disabledDate'] = current => {
@@ -59,6 +58,14 @@ export const ModificarProducto = () => {
         return current && current < moment().endOf('day');
     };
 
+
+    useEffect(() => {
+        if (!productoInfo) {
+            console.log("hola");
+        }
+
+        form.resetFields()
+    }, [producto]);
 
 
     useEffect(() => {
@@ -68,8 +75,6 @@ export const ModificarProducto = () => {
             defaultImg[index] = null
         })
 
-        setFileList2(defaultImg);
-
         let imagenesMax = ["", "", "", "", ""];
         producto.imagenes.map((value, index) => {
             imagenesMax[index] = producto.imagenes[index];
@@ -78,52 +83,59 @@ export const ModificarProducto = () => {
         producto.imagenes.map((value, index) => {
             p[index] = index
         })
-        setPrueba(p);
         setImangenesMax(imagenesMax)
         form.resetFields()
-    }, [producto, key]);
+    }, [key]);
 
 
     const modificarProducto = () => {
-        let imagenesEnviar = new Array<File>();
-        fileList.map((value, index) => {
-            if (value !== null)
-                imagenesEnviar[index] = value;
-            else
-                imagenesEnviar[index] = new File([""], "");
-        })
+        confirm({
+            title: 'Realmente desea guardar los cambios?',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Los cambios serán permanentes una vez confirmados.',
+            cancelText: "Cancelar",
+            onOk() {
+                let imagenesEnviar = new Array<File>();
+                Array.from(Object.values(fileList)).map((value, index) => {
+                    if (value !== null)
+                        imagenesEnviar[index] = value;
+                    else
+                        imagenesEnviar[index] = new File([""], "");
+                })
 
-        VendedorService.modificarProducto(id, token, producto.idProducto!, datosModificar, imagenesEnviar!).then((response) => {
-            if (response.success) {
-                Modal.success({
-                    title: "Edición completada con éxito",
-                    content: 'Sus datos se han actualizado exitosamente',
-                });
-                //setEditando(!editando);
-            }
-            else {
-                Modal.error({
-                    title: 'Error',
-                    content: response.message,
-                });
-            }
-        })
+                return VendedorService.modificarProducto(id, token, producto.idProducto!, datosModificar, imagenesEnviar!).then((response) => {
+                    if (response.success) {
+                        Modal.success({
+                            title: "Edición completada con éxito",
+                            content: 'Sus datos se han actualizado exitosamente',
+                        });
+                        window.history.replaceState({}, document.title)
+                        //navigate("/misProductos");
+                    }
+                    else {
+                        Modal.error({
+                            title: 'Error',
+                            content: response.message,
+                        });
+                    }
+
+                })
+            },
+            onCancel() {
+
+            },
+        });
+
+
+
     }
 
     const onRemove = (file: RcFile, esBase: boolean, index?: number) => {
-
-        const a = Array.from(fileList2);
-        const b = Array.from(fileList);
-        console.log(a);
-        console.log(b);
-        
         if (!esBase) {
-            let i = 0;
-            Array.from(fileList).forEach((element, index) => {
-                if (element?.uid == file.uid)
-                    i = index;
-            });
-            console.log(i);
+            const newFileList = Array.from(Object.values(fileList));
+            const indice = newFileList.indexOf(file);
+            newFileList.splice(indice, 1)
+            setFileList(newFileList);
         }
         else {
             setFileList({ ...fileList, [index!]: null });
@@ -141,19 +153,31 @@ export const ModificarProducto = () => {
     }
 
     const eliminar = (index: number) => {
-        const url = imagenesAux[index]
 
-        const imagesSinEliminar = (imagenesAux).slice();
-        imagesSinEliminar.splice(index, 1);
-        setImagenAux(imagesSinEliminar);
+        confirm({
+            title: 'Realmente quiere eliminar esta imagen?',
+            icon: <ExclamationCircleOutlined />,
+            content: 'Solo se podrá recuperar restableciendo los datos.',
+            cancelText: "Cancelar",
+            onOk() {
+                const url = imagenesAux[index]
 
-        const newFileList = fileList;
-        Array.from(newFileList).splice(index, 1);
-        setFileList(newFileList);
+                const imagesSinEliminar = (imagenesAux).slice();
+                imagesSinEliminar.splice(index, 1);
+                setImagenAux(imagesSinEliminar);
 
-        let imagesEliminar = Array.from(datosModificar.imagenesQuitar!).slice();
-        imagesEliminar.push(url)
-        setDatosModificar({ ...datosModificar, imagenesQuitar: imagesEliminar });
+                const newFileList = Array.from(Object.values(fileList));
+                newFileList.splice(index, 1);
+                setFileList(newFileList);
+
+                let imagesEliminar = Array.from(datosModificar.imagenesQuitar!).slice();
+                imagesEliminar.push(url)
+                setDatosModificar({ ...datosModificar, imagenesQuitar: imagesEliminar });
+            },
+            onCancel() {
+
+            }
+        })
     }
 
     const igualesFuncion = () => {
@@ -162,11 +186,13 @@ export const ModificarProducto = () => {
             (datosModificar.fechaFin != undefined && datosModificar.fechaFin !== producto.fechaFin) ||
             (datosModificar.precio != undefined && datosModificar.precio !== producto.precio) ||
             (datosModificar.imagenesQuitar!.length > 0) ||
-            (fileList.length != imagenesAux.length))
+            (Object.keys(fileList).length !== imagenesAux.length) ||
+            (Array.from(Object.values(fileList)).indexOf(null) == -1))
             return false;
         return true
     }
-    useEffect(() => { setIguales(igualesFuncion()) }, [datosModificar]);
+
+    useEffect(() => { setIguales(igualesFuncion()) }, [datosModificar, fileList]);
 
     const restablecer = () => {
         confirm({
@@ -197,19 +223,32 @@ export const ModificarProducto = () => {
         });
 
     }
+    const onChange: DatePickerProps['onChange'] = (date, dateString) => {
+        setDatosModificar({ ...datosModificar, "fechaFin": dateString })
+    };
+
+    const { Text, Link } = Typography;
 
     document.body.style.backgroundColor = "#F0F0F0"
     return (
         <div>
             <div style={{ textAlign: "center" }}>
+
                 <h1>Modificación de producto</h1>
             </div>
             <Row justify="center">
-                <Card style={{ width: "70%" }} extra={<Button type="primary" onClick={restablecer} disabled={iguales}>Restablecer <FontAwesomeIcon icon={faRotateRight} style={{ marginLeft: "5px" }} /></Button>}>
-                    <Row justify="space-between">
+                <Card style={{ width: "70%" }} title="Datos editables" extra={<Button type="primary" onClick={restablecer} disabled={iguales}>Restablecer <FontAwesomeIcon icon={faRotateRight} style={{ marginLeft: "5px" }} /></Button>}>
 
+                    <Row>
+                        <div>
+                            <Text>{producto.nombre} | Fecha de ingreso: {producto.fechaInicio}</Text>
+                        </div>
+
+                    </Row>
+                    <Divider></Divider>
+                    <Row justify="space-between">
                         <Col style={{ width: "60%" }}>
-                            <h2>Imagenes actuales</h2>
+                            <h2>Imágenes actuales <Tooltip title="Son las imágenes que ya tiene el producto, estas se puede cambiar o quitar (siempre y cuando haya al menos una)."><FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} />  </Tooltip></h2>
                             <List
                                 itemLayout="horizontal"
                                 dataSource={imagenesAux}
@@ -240,7 +279,7 @@ export const ModificarProducto = () => {
                                                     </Row>
                                                     <Row justify="space-around" style={{ alignItems: "flex-start", width: "100%", marginTop: "3%" }}>
                                                         <Upload onRemove={(file) => onRemove(file.originFileObj!, true, index)} maxCount={1} beforeUpload={(file) => beforeUpload(file, index)} accept="image/png, image/jpeg">
-                                                            <Button type="warning" style={{ width: "200px" }} >Cambiar imagen <FontAwesomeIcon icon={faArrowRightArrowLeft} style={{ marginLeft: "5px" }} /></Button>
+                                                            <Button type="info" with="dashed" style={{ width: "200px" }} >Cambiar imagen <FontAwesomeIcon icon={faArrowRightArrowLeft} style={{ marginLeft: "5px" }} /></Button>
                                                         </Upload>
                                                         {fileList[index] === null &&
                                                             <div>
@@ -257,15 +296,15 @@ export const ModificarProducto = () => {
                                 )}
                             />
                             <Divider></Divider>
-                            <h2>Agregar nuevas imagenes</h2>
+                            <h2>Agregar nuevas imágenes <Tooltip title="Agregar imágenes en el orden deseado de aparición. En total pueden haber 5 imagenes."><FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} />  </Tooltip></h2>
                             <List
-                                grid={{ column: 5 }}
+                                grid={{ column: 5, gutter: 20 }}
                                 dataSource={imagenesMax}
                                 renderItem={(item, index) => (
                                     <List.Item>
                                         {index >= imagenesAux.length && (item === "") && fileList[index] &&
                                             <div>
-                                                <Image style={{ height: 200 }} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
+                                                <Image height={150} width={150} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
                                             </div>
                                         }
                                     </List.Item>
@@ -276,7 +315,7 @@ export const ModificarProducto = () => {
 
                                 <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
                                     <Upload key={key} onRemove={(file) => onRemove(file.originFileObj!, false)} beforeUpload={(file) => beforeUpload(file, undefined)} maxCount={5 - imagenesAux.length} accept="image/png, image/jpeg">
-                                        <Button disabled={fileList.length === 5} style={{ width: "200px" }} icon={<UploadOutlined />}>Seleccione una imagen</Button>
+                                        <Button type="dashed" disabled={fileList.length === 5} style={{ width: "200px" }}>Seleccione una imágen <FontAwesomeIcon icon={faArrowUpFromBracket} style={{ marginLeft: "5px" }} /></Button>
                                     </Upload>
                                 </Row>
                             </Row>
@@ -302,7 +341,7 @@ export const ModificarProducto = () => {
                                 <Form.Item
                                     label="Fecha fin publicación:"
                                     name="fechaFin">
-                                    <DatePicker placeholder="Seleccione una fecha de fin" disabledDate={disabledDate} style={{ width: "100%" }} format="DD/MM/YYYY" />
+                                    <DatePicker placeholder="Seleccione una fecha de fin" disabledDate={disabledDate} style={{ width: "100%" }} format="DD/MM/YYYY" onChange={onChange} />
                                 </Form.Item>
                                 <Row justify="space-between">
                                     <div style={{ width: "45%" }}>
@@ -327,7 +366,7 @@ export const ModificarProducto = () => {
 
                                 <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
                                     <Button type="success" disabled={iguales} htmlType="submit">
-                                        Terminar edición
+                                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk} style={{ marginLeft: "5px" }} />
                                     </Button>
                                 </Form.Item>
                             </Form>
