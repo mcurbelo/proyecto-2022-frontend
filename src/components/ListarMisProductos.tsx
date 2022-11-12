@@ -67,6 +67,10 @@ const useStyles = createUseStyles({
             gap: "10%"
         },
 
+        filtros: {
+            width: "100%"
+        }
+
     },
 
 })
@@ -117,8 +121,12 @@ export const MisProductos = () => {
     const handleChange = (value: string) => {
         if (value === "fechaAsc")
             setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "asc", "ordenamiento": "fecha_inicio" })
-        else
+        if (value === "fechaDsc")
             setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "dsc", "ordenamiento": "fecha_inicio" })
+        if (value === "nombreAsc")
+            setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "asc", "ordenamiento": "nombre" })
+        if (value === "nombreDsc")
+            setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "dsc", "ordenamiento": "nombre" })
     };
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, id: string) => {
@@ -216,8 +224,8 @@ export const MisProductos = () => {
                                     <Select id="orden" className={styles.filtros} defaultValue={"fechaDsc"} style={{ minWidth: "202px" }} onChange={handleChange}>
                                         <Option value="fechaDsc">Últimos productos</Option>
                                         <Option value="fechaAsc">Productos más antiguos</Option>
-                                        <Option value="fechaAsc">Nombre (A-Z)</Option>
-                                        <Option value="fechaAsc">Nombre (Z-A)</Option>
+                                        <Option value="nombreAsc">Nombre (A-Z)</Option>
+                                        <Option value="nombreDsc">Nombre (Z-A)</Option>
                                     </Select>
                                 </div>
                                 <div style={{ minWidth: "202px" }} className={styles.filtros}>
@@ -264,28 +272,31 @@ export const MisProductos = () => {
 
 
 
+
                 <List locale={locale}
                     grid={{
-                        gutter: 16,
+                        gutter: 20,
                         xs: 1,
-                        sm: 1,
+                        sm: 2,
                         md: 2,
-                        lg: 2,
+                        lg: 3,
                         xl: 3,
                         xxl: 4,
                     }}
                     dataSource={productos}
                     renderItem={item => (
                         <List.Item>
-                            <Card style={{ width: 300 }}>
-                                <Carousel>
-                                    {
-                                        item.imagenes.map((option, index) => {
-                                            return (<Image key={index} src={option} height={200} ></Image>)
-                                        })
-                                    }
+                            <Card>
+                                <div style={{ textAlign: "center" }}>
+                                    <Carousel>
+                                        {
+                                            item.imagenes.map((option, index) => {
+                                                return (<Image key={index} src={option} height={200} ></Image>)
+                                            })
+                                        }
 
-                                </Carousel>
+                                    </Carousel>
+                                </div>
                                 <Divider></Divider>
                                 <div >
                                     <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.nombre}</p>
@@ -319,6 +330,7 @@ export const MisProductos = () => {
                         </List.Item>
                     )}
                 />
+
 
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}
                     defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual}
