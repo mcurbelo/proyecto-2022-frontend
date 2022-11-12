@@ -1,6 +1,6 @@
-import { faCirclePlus, faLeftLong, faList, faLocationDot, faPlus, faShop, faSquare, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
+import { faLeftLong, faLocationDot, faShop, faSquarePlus } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Radio, RadioChangeEvent, Row, Typography } from "antd";
+import { Radio, RadioChangeEvent, Row, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { DtCompra, DtDireccion } from "shopit-shared/dist/user/CompradorService";
