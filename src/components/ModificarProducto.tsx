@@ -1,6 +1,6 @@
-import { Affix, Card, Checkbox, Col, Collapse, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Space, Tooltip, Typography, Upload } from "antd";
+import { Checkbox, Col, Collapse, Form, Image, Input, InputNumber, List, Modal, Row, Tooltip, Typography, Upload } from "antd";
 import { useEffect, useState } from "react";
-import { Navigate, useLocation, useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { VendedorService } from "shopit-shared";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
@@ -8,7 +8,7 @@ import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css
 import { DtMiProducto, DtModificarProducto } from "shopit-shared/dist/user/VendedorService";
 import DatePicker, { DatePickerProps, RangePickerProps } from "antd/lib/date-picker";
 import moment from "moment";
-import { ExclamationCircleOutlined, UploadOutlined } from "@ant-design/icons";
+import { ExclamationCircleOutlined } from "@ant-design/icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRightArrowLeft, faArrowUpFromBracket, faFloppyDisk, faRightLong, faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import { faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
@@ -16,7 +16,6 @@ import { createUseStyles } from "react-jss";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { RcFile } from "antd/lib/upload";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
-import userDefault from "../images/user.png"
 
 
 const useStyles = createUseStyles({

@@ -10,7 +10,6 @@ import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { faCircleCheck, faPenToSquare } from "@fortawesome/free-regular-svg-icons";
-import type { SelectProps } from 'antd';
 import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
 import { useNavigate } from "react-router-dom";
 
