@@ -25,6 +25,7 @@ import { MisVentas } from './components/MisVentas';
 import { Reclamos } from './components/ListaReclamos';
 import { MisProductos } from './components/ListarMisProductos';
 import { ModificarProducto } from './components/ModificarProducto'
+import Chat from './components/Chat';
 
 require('dotenv').config();
 
@@ -54,6 +55,8 @@ root.render(
         <Route path="/compra" element={<RealizarCompra />} />
         <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
         <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
+        <Route path="/misventas" element={<MisVentas/>} />
+        <Route path="/chat/:idchat" element={<Chat/>} />
         <Route path="/misventas" element={<MisVentas />} />
         <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
         <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />

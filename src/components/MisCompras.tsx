@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from 'react-router-dom';
 import { Card, List, Input, Space, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Divider, Modal } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
 import { CompartidoUsuario, CompradorService } from "shopit-shared";
@@ -13,6 +14,33 @@ import RealizarCalificacion from "./RealizarCalificacion";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
+import { getFirestore, collection, doc, getDoc, getDocs, orderBy, limit, query, setDoc, Timestamp, addDoc, deleteDoc} from 'firebase/firestore';
+import firebase, {initializeApp, getApps, getApp} from 'firebase/app';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyBpBoAHC1LdQijNpCLt9UfNGKHkjbKs3Bs",
+    authDomain: "shopnowproyecto2022.firebaseapp.com",
+    projectId: "shopnowproyecto2022",
+    storageBucket: "shopnowproyecto2022.appspot.com",
+    messagingSenderId: "319527562925",
+    appId: "1:319527562925:web:2f6681c9cc98e1eb95a024",
+    measurementId: "G-2S8M3F9J9J"
+  };
+
+const createFirebaseApp = (config = {}) => {
+    try {
+      return getApp();
+    } catch (e) {
+      return initializeApp(config);
+    }
+  };
+
+
+
+const firebaseApp = createFirebaseApp(firebaseConfig);
+const db = getFirestore(firebaseApp);
 
 
 interface AppState {
@@ -93,7 +121,20 @@ const useStyles = createUseStyles({
     }
 })
 
+
+const crearChat = async (idcompra: string) => {
+    let collectionRef = collection(db, "mensajes");
+    return addDoc(collectionRef, {}).then(referece => {
+      let id = referece.id;
+      console.log("Chat id: " + id);
+      CompradorService.iniciarChat(idcompra, id);
+      return id;
+    }).catch(e =>{})
+  };
+
+
 export const MisCompras: React.FC<{}> = () => {
+    const navigate = useNavigate();
     const styles = useStyles();
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
@@ -141,7 +182,18 @@ export const MisCompras: React.FC<{}> = () => {
     }
 
 
-    const iniciarChat = () => { }
+    const iniciarChat = (idCompra:string, idVendedor:string) => {
+        let uuid = localStorage.getItem("uuid");
+        CompradorService.obtenerChat(idCompra).then(res => {
+            if(res === ""){
+                crearChat(idCompra).then(idChat =>{
+                    navigate("/chat/"+idChat);
+                })
+            }else{
+                navigate("/chat/"+res);
+            }
+        })
+     }
 
     const handleChange = (value: string) => {
         if (value === "fechaAsc")
@@ -348,8 +400,8 @@ export const MisCompras: React.FC<{}> = () => {
                                         
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                             <div>
-                                            <p style={{ font: "revert-layer", textAlign:"center" }}>{item.nombreVendedor}</p>
-                                            <a onClick={iniciarChat}>Iniciar chat</a>
+                                                <p style={{ font: "revert-layer", textAlign:"center" }}>{item.nombreVendedor}</p>
+                                                <a onClick={e => iniciarChat(item.idCompra, item.idVendedor)}>Iniciar chat</a>
                                             </div>
                                         </div>
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>
