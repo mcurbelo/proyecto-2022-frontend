@@ -6,6 +6,7 @@ import UsersTable from "../components/UsersTable";
 const UserList = () => {
   const [users, setUsers] = useState([] as DtUsuarioSlim[])
   const [currentPage, setCurrentPage] = useState("0")
+  const [reload, setReload] = useState(false);
   const [totalUsers, setTotalUsers] = useState(0)
 
   useEffect(() => {
@@ -23,10 +24,10 @@ const UserList = () => {
     }).catch((error) => {
       console.log(error)
     })
-  }, [currentPage])
+  }, [currentPage, reload])
 
   return (
-    <UsersTable users={users} totalUsers={totalUsers} onPageChange={page => { setCurrentPage(page.toString()) }} />
+    <UsersTable users={users} totalUsers={totalUsers} onReload={() => {reload ? setReload(false) : setReload(true)}} onPageChange={page => { debugger; setCurrentPage(page.toString()) }} />
   )
 }
 

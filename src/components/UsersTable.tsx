@@ -1,13 +1,16 @@
 import { MoreOutlined } from "@ant-design/icons";
-import { Button, Pagination, PaginationProps, Popover, Table } from "antd";
+import { Button, Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin} from "antd";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
+import { AdministradorService } from "shopit-shared";
+import { EstadoUsuario } from "shopit-shared/dist/user/AdministradorService";
 import { DtUsuarioSlim } from "shopit-shared/dist/user/VendedorService";
 
 type UsersTableProps = {
   users: DtUsuarioSlim[];
   totalUsers: number;
   onPageChange: (page: number) => void;
+  onReload: () => void;
 }
 
 const useStyles = createUseStyles({
@@ -21,11 +24,18 @@ const useStyles = createUseStyles({
 })
 
 
-const UsersTable: React.FC<UsersTableProps> = (props) => {
 
+
+
+const UsersTable: React.FC<UsersTableProps> = (props) => {
+  
   const onChange: PaginationProps['onChange'] = page => {
     console.log(page);
     props.onPageChange(page - 1)
+  };
+
+  const reload= () => {
+    props.onReload();
   };
   
   const { users } = props;
@@ -65,7 +75,7 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
               return 0
             }}
             title="Apellido"
-            render={(_, data) => <PopOver data={data} />}
+            render={(_, data) => <PopOver data={data} reloadFunction={reload} />}
           />
         </Table>
 
@@ -75,26 +85,82 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
   )
 };
 
-const PopOver: React.FC<{data: DtUsuarioSlim}> = (props) => {
-  const {data} = props;
+const PopOver: React.FC<{data: DtUsuarioSlim, reloadFunction: () => void}> = (props) => {
+  const {data, reloadFunction} = props;
   const [isOpen, setIsOpen] = useState(false)
+  const [modalBloqueoOpen, isModalBloqueoOpen] = useState(false);
+  const [motivo, setMotivo] =  useState("");
+  const [loading, setLoading] = useState(false);
+
+  const { TextArea } = Input;
+
+  const onBloquear = (id: string) => {
+    let token: string = localStorage.getItem("token") as string;
+    setIsOpen(false);
+    isModalBloqueoOpen(true);
+    
+  }
+
+  const acceptBlock = (id: string, motivo: string) => {
+    setLoading(true);
+    isModalBloqueoOpen(false);
+    console.log("id: " + id + "motivo: " + motivo);
+    let token: string = localStorage.getItem("token") as string;
+    AdministradorService.cambiarEstadoUsuario(id, token, {motivo: motivo}, EstadoUsuario.Bloqueado).then((res)=>{
+      console.log(res);
+      message.success("Usuario bloqueado con exito");
+      setLoading(false);
+      reloadFunction();
+    })   
+  }
+
+  const cerrarModal = () => {
+    isModalBloqueoOpen(false);
+  }
+  
+  const onDesbloquear = (id: string) => {
+    console.log(id)
+    setIsOpen(false);
+    let token: string = localStorage.getItem("token") as string;
+    AdministradorService.cambiarEstadoUsuario(id, token, {motivo: "Desbloqueo"}, EstadoUsuario.Activo).then((res)=>{
+      console.log(res);
+      message.success("Usuario desbloqueado con exito");
+      isModalBloqueoOpen(false);
+      reloadFunction();
+    }) 
+  }
+
+  const loadMotivo = (e: any) => {
+      console.log(e.target.value);
+      setMotivo(e.target.value);
+  }
+
+  
   return (
+    <Spin spinning={loading}>
     <div style={{ display: "flex", flexDirection: "row" }}>
-      {data.apellido}
-      <Popover
-        trigger="click"
-        open={isOpen}
-        content={
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <Button type="text" disabled={!(data.estadoUsuario != "Activo")}>Desbloquear</Button>
-            <Button danger type="text" disabled={!(data.estadoUsuario == "Activo")}>Bloquear</Button>
-          </div>
-        }
-        onOpenChange={(open) => setIsOpen(open)}
-      >
-        <MoreOutlined style={{ marginLeft: "auto" }} onClick={() => setIsOpen(true)} />
-      </Popover>
+      
+        {data.apellido}
+        
+        <Popover
+          trigger="click"
+          open={isOpen}
+          content={
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              <Button type="text" disabled={!(data.estadoUsuario != "Activo")} onClick={() => onDesbloquear(data.id)}>Desbloquear</Button>
+              <Button danger type="text" disabled={!(data.estadoUsuario == "Activo")} onClick={() => onBloquear(data.id)}>Bloquear</Button>
+            </div>
+          }
+          onOpenChange={(open) => setIsOpen(open)}
+        >
+          <MoreOutlined style={{ marginLeft: "auto" }} onClick={() => setIsOpen(true)} />
+        </Popover>
+      
+        <Modal title="Basic Modal" open={modalBloqueoOpen} onOk={() => acceptBlock(data.id, motivo)} onCancel={cerrarModal}>
+          <TextArea rows={4} placeholder="Ingrese un motivo" onChange={(e) => loadMotivo(e)}/>
+        </Modal>
     </div>
+    </Spin>
   )
 }
 
