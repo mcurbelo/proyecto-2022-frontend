@@ -410,11 +410,11 @@ export const ModificarProducto = () => {
                                 dataSource={["", "", "", ""]}
                                 renderItem={(item, index) => (
                                     <List.Item>
-
-                                        <div>
-                                            <Image className={styles.imagenesContainer} alt="Sin imagen" src={userDefault} />
-                                        </div>
-
+                                        {fileList[index + producto.imagenes.length] &&
+                                            <div>
+                                                <Image className={styles.imagenesContainer} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index + producto.imagenes.length]!], "imagen"))} />
+                                            </div>
+                                        }
                                     </List.Item>
 
                                 )}
