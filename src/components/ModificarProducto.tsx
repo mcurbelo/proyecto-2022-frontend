@@ -16,6 +16,7 @@ import { createUseStyles } from "react-jss";
 import { faTrashCan } from "@fortawesome/free-regular-svg-icons";
 import { RcFile } from "antd/lib/upload";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
+import userDefault from "../images/user.png"
 
 
 const useStyles = createUseStyles({
@@ -27,11 +28,39 @@ const useStyles = createUseStyles({
             width: "200px"
         },
     },
+
+    container: {
+
+    },
+
+    containerFixedBotton: {
+
+    },
+
+    imagenesContainer: {
+        height: "150px",
+        width: "150px"
+    },
+
+    '@media screen and (max-width: 992px)': {
+        container: {
+            width: "100% !important"
+        },
+        containerFixedBotton: {
+            justifyContent: "center !important"
+        },
+        imagenesContainer: {
+            height: "100px",
+            width: "100px"
+        },
+
+    }
 })
 
 const { confirm } = Modal;
 
 export const ModificarProducto = () => {
+    const styles = useStyles();
     const navigate = useNavigate();
     const { state } = useLocation();
     const { productoInfo } = state;
@@ -247,17 +276,18 @@ export const ModificarProducto = () => {
                 <h1>Modificación de producto</h1>
             </div >
             <Row justify="center" >
-                <div style={{ width: "60%", display: "flex", justifyContent: "end", paddingBottom:"1%"}}>
-                    <Button type="primary" onClick={restablecer}  disabled={iguales}>Restablecer <FontAwesomeIcon icon={faRotateRight} style={{ marginLeft: "5px" }} /></Button>
+                <div className={styles.container} style={{ width: "60%", display: "flex", justifyContent: "end", paddingBottom: "1%" }}>
+                    <Button type="primary" onClick={restablecer} disabled={iguales}>Restablecer <FontAwesomeIcon icon={faRotateRight} style={{ marginLeft: "5px" }} /></Button>
                 </div>
             </Row>
 
-            <Row justify="center">
-                <Collapse defaultActiveKey={['1']} style={{ width: "60%" }}>
+            <Row justify="center" style={{ paddingBottom: "15%" }}>
+                <Collapse className={styles.container} defaultActiveKey={['1']} style={{ width: "60%" }}>
                     <Panel header="Información" key="1" >
                         <Row justify="center">
                             <Form
                                 name="basic"
+                                className={styles.container}
                                 form={form}
                                 initialValues={{
                                     descripcion: producto?.descripcion,
@@ -265,6 +295,7 @@ export const ModificarProducto = () => {
                                     fechaFin: (producto.fechaFin) ? moment(producto.fechaFin, "DD/MM/YYYY") : "",
                                     permiteEnvio: producto.permiteEnvio
                                 }}
+                                style={{ width: "60%" }}
                                 onFinish={modificarProducto}
                                 layout="vertical"
                             >
@@ -316,7 +347,7 @@ export const ModificarProducto = () => {
                         <FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faQuestionCircle} /></Tooltip></span>
                     } key="2">
                         <Row justify="center">
-                            <Col style={{ width: "60%" }}>
+                            <Col className={styles.container} style={{ width: "60%" }}>
                                 <List
                                     itemLayout="horizontal"
                                     dataSource={imagenesAux}
@@ -324,14 +355,13 @@ export const ModificarProducto = () => {
                                         <List.Item style={{ display: "flex", justifyContent: "center" }}>
                                             <div style={{ width: "80%" }}>
                                                 <h4 style={{ textAlign: "center" }}>Imagen {index + 1}</h4>
-
                                                 {
 
                                                     (item !== "") &&
                                                     <>
-                                                        <Row justify="space-around">
+                                                        <Row justify="space-around" >
                                                             <Col>
-                                                                <Image src={item} height={150} width={150} />
+                                                                <Image src={item} className={styles.imagenesContainer} />
                                                             </Col>
                                                             {fileList[index] !== null &&
                                                                 <>
@@ -340,12 +370,12 @@ export const ModificarProducto = () => {
                                                                     </Col>
 
                                                                     <Col>
-                                                                        <Image height={150} width={150} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
+                                                                        <Image className={styles.imagenesContainer} alt="Sin imagen" src={URL.createObjectURL(new File([fileList[index]!], "imagen"))} />
                                                                     </Col>
                                                                 </>
                                                             }
                                                         </Row>
-                                                        <Row justify="space-around" style={{ alignItems: "flex-start", width: "100%", marginTop: "3%" }}>
+                                                        <Row justify="space-around" style={{ alignItems: "flex-start", width: "100%", marginTop: "3%", rowGap: 20 }}>
                                                             <Upload onRemove={(file) => onRemove(file.originFileObj!, true, index)} maxCount={1} beforeUpload={(file) => beforeUpload(file, index)} accept="image/png, image/jpeg">
                                                                 <Button type="info" with="dashed" style={{ width: "200px" }} >Cambiar imagen <FontAwesomeIcon icon={faArrowRightArrowLeft} style={{ marginLeft: "5px" }} /></Button>
                                                             </Upload>
@@ -366,24 +396,30 @@ export const ModificarProducto = () => {
                             </Col>
                         </Row>
                     </Panel>
-
                     <Panel header={<span>Agregar nuevas imágenes <Tooltip title="Agregar imágenes en el orden deseado de aparición. En total pueden haber 5 imagenes."><FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faQuestionCircle} />  </Tooltip></span>} key="3">
                         <div style={{ width: "100%" }}>
                             <List
-                                grid={{ column: 5 }}
+                                grid={{
+                                    xs: 3,
+                                    sm: 4,
+                                    md: 4,
+                                    lg: 4,
+                                    xl: 4,
+                                    xxl: 4,
+                                }}
                                 dataSource={["", "", "", ""]}
                                 renderItem={(item, index) => (
                                     <List.Item>
-                                        {fileList[index + producto.imagenes.length] &&
-                                            <div>
-                                                <Image height={150} width={150} alt="Sin asdfdsf" src={URL.createObjectURL(new File([fileList[index + producto.imagenes.length]!], "imagen"))} />
-                                            </div>
-                                        }
+
+                                        <div>
+                                            <Image className={styles.imagenesContainer} alt="Sin imagen" src={userDefault} />
+                                        </div>
+
                                     </List.Item>
 
                                 )}
                             />
-                            <Divider></Divider>
+
                             <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
 
                                 <Row justify="center" style={{ alignItems: "center", width: "100%" }}>
@@ -394,19 +430,16 @@ export const ModificarProducto = () => {
                             </Row>
                         </div>
                     </Panel>
-
                 </Collapse>
+                <div className={styles.containerFixedBotton} style={{ position: "fixed", bottom: "0", width: "59.9%", display: "flex", justifyContent: "end", paddingBottom: "1%", paddingRight: "0.5%" }}>
 
-            </Row>
-
-            <div>
-                <Affix style={{ position: 'fixed', bottom: "29%", right: "5%" }}>
-                    <Button type="success" size="large" style={{ width: "130%" }} disabled={iguales} htmlType="submit">
+                    <Button type="success" size="large" disabled={iguales} htmlType="submit">
                         Terminar edición <FontAwesomeIcon icon={faFloppyDisk} onClick={() => form.submit()} style={{ marginLeft: "5px" }} />
                     </Button>
+                </div>
+            </Row>
 
-                </Affix>
-            </div>
+
         </div >
 
     )
