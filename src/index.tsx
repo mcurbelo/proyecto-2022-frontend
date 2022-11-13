@@ -27,6 +27,11 @@ import { MisProductos } from './components/ListarMisProductos';
 import { ModificarProducto } from './components/ModificarProducto'
 import Chat from './components/Chat';
 import { Solicitudes } from './components/ListarSolicitudes'
+import { Outlet } from 'react-router';
+import WithoutNav from './withoutNav';
+import WithNav from './WithNav';
+
+export default () => <Outlet />
 
 require('dotenv').config();
 
@@ -35,35 +40,37 @@ const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement
 );
 root.render(
-
   <>
-    <MainHeader />
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<HomePage showHeader={true} showProfile={false} />} />
-        <Route path="/signin" element={<SignInPage />} />
-        <Route path="/signup" element={<SignUpPage />} />
-        <Route path="/users" element={<UserList />} />
-        <Route path="/directions" element={<Directions />} />
-        <Route path="/miscompras" element={<MisCompras />} />
-        <Route path="/testNotifiacion" element={<NotificacionTest />} />
-        <Route path="/addCard" element={<AddCardForm />} />
-        <Route path="/profile" element={<HomePage showHeader={true} showProfile={true} />} />
-        <Route path="/cards" element={<CardList onSelectCard={(id) => {
-          console.log("Selected card: " + id)
-        }} />} />
-        <Route path="/productos/:id" element={<InfoProducto />} />
-        <Route path="/compra" element={<RealizarCompra />} />
-        <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
-        <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
-        <Route path="/misventas" element={<MisVentas />} />
-        <Route path="/chat/:idchat" element={<Chat />} />
-        <Route path="/misventas" element={<MisVentas />} />
-        <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
-        <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />
-        <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>
-        <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
-        <Route path="/listarSolicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
+        <Route element={<WithoutNav />}>
+          <Route path="/signin" element={<SignInPage />} />
+        </Route>
+        <Route element={<WithNav />}>
+          <Route path='/' element={<HomePage showHeader={true} showProfile={false} />} />
+          <Route path="/signup" element={<SignUpPage />} />
+          <Route path="/users" element={<UserList />} />
+          <Route path="/directions" element={<Directions />} />
+          <Route path="/miscompras" element={<MisCompras />} />
+          <Route path="/testNotifiacion" element={<NotificacionTest />} />
+          <Route path="/addCard" element={<AddCardForm />} />
+          <Route path="/profile" element={<HomePage showHeader={true} showProfile={true} />} />
+          <Route path="/cards" element={<CardList onSelectCard={(id) => {
+            console.log("Selected card: " + id)
+          }} />} />
+          <Route path="/productos/:id" element={<InfoProducto />} />
+          <Route path="/compra" element={<RealizarCompra />} />
+          <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
+          <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
+          <Route path="/misventas" element={<MisVentas />} />
+          <Route path="/chat/:idchat" element={<Chat />} />
+          <Route path="/misventas" element={<MisVentas />} />
+          <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
+          <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />
+          <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>
+          <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
+          <Route path="/listarSolicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
+        </Route>
       </Routes>
     </BrowserRouter>
   </>

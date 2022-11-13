@@ -8,7 +8,6 @@ function App() {
 
 
     onMessageListener().then(payload => {
-        console.log(payload);
         notification.open({
             message: payload.notification.title,
             description: payload.notification.body,

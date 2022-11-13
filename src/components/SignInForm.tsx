@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import { createUseStyles } from "react-jss"
 import { useNavigate } from "react-router";
 import { UserService } from "shopit-shared"
+import { fetchToken } from "../firebase";
 type SignInFormProps = {}
 
 type SignInFormData = {
@@ -16,15 +17,18 @@ const useStyles = createUseStyles({
   form: {
     maxWidth: 600,
     display: "flex",
-    width: "35%",
     flexDirection: "column",
     padding: 12,
+    background: "white"
   }
 });
 const SignInForm: React.FC<SignInFormProps> = (props) => {
   const styles = useStyles();
   const [state, setState] = useState({ username: "", password: "", error: false } as SignInFormData)
   const navigate = useNavigate()
+  const [isTokenFound, setTokenFound] = useState(false);
+  fetchToken(setTokenFound);
+
   return (
     <Form className={styles.form} onFinish={async (_) => {
       UserService.iniciarSesion(state.username, state.password)
@@ -42,6 +46,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
           }
         })
     }}>
+      <h1 style={{ textAlign: "center" }}>Inicio de sesión</h1>
       <Form.Item
         name="usuario"
         rules={[{
@@ -72,15 +77,15 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
       </FormItem>
 
       {state.error && <Alert type="error" message="Los datos no son correctos" showIcon={true} closable={true}
-          onClose={() => {
-            setState({...state, error: false})
-          }}
-        />
+        onClose={() => {
+          setState({ ...state, error: false })
+        }}
+      />
       }
-      
-      <Button htmlType="submit" type="primary" style={{marginTop: state.error ? 16 : 0}}>Iniciar Sesion</Button>
+
+      <Button htmlType="submit" type="primary" style={{ marginTop: state.error ? 16 : 0 }}>Iniciar sesión</Button>
       <label style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>¿No tienes una cuenta?</label>
-      <Button style={{marginTop: 16}} type="ghost" onClick={() => navigate("/signup")}>Registrate</Button>
+      <Button style={{ marginTop: 16 }} type="ghost" onClick={() => navigate("/signup")}>Registrate</Button>
       <Button type="link" style={{ marginTop: 16 }}>¿Olvidaste tu contraseña?</Button>
     </Form>
   )

@@ -1,5 +1,5 @@
 import { SearchOutlined } from "@ant-design/icons";
-import { Button, Image, Input, Dropdown, Avatar, Menu } from "antd";
+import { Button, Image, Input, Dropdown, Avatar, Menu, notification } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
@@ -7,6 +7,7 @@ import { useMitt } from "react-mitt";
 import { useNavigate } from "react-router";
 import { CategoriaService } from "shopit-shared";
 import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
+import { fetchToken, onMessageListener } from "../firebase";
 import logo from "./../images/logo192.png"
 type MainHeaderProps = {}
 
@@ -55,6 +56,11 @@ const useStyles = createUseStyles({
 })
 
 
+
+
+
+
+
 const menu = (
   <Menu
     items={[
@@ -76,9 +82,9 @@ const menu = (
               window.location.reload()
             }}
           >
-          {/* <a target="_blank" rel="noopener noreferrer" href="/logout"> */}
+            {/* <a target="_blank" rel="noopener noreferrer" href="/logout"> */}
             Cerrar sesion
-          {/* </a> */}
+            {/* </a> */}
           </Button>
         ),
       }
@@ -93,6 +99,62 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const styles = useStyles()
   const [categorias, setCategorias] = useState<DtCategoria[]>([])
   const [sesionIniciada, setSesionIniciada] = useState(false)
+  const [isTokenFound, setTokenFound] = useState(false);
+  const navigate = useNavigate();
+
+
+  const itemsComprador = [
+    {
+      label: (<Button type="text" onClick={() => navigate("/misCompras")}>Mis compras</Button>),
+      key: 'item-1'
+    },
+    {
+      label: (<Button type="text" onClick={() => navigate("/profile")}>Mi perfil</Button>),
+      key: 'item-2'
+    },
+    {
+      label: (<Button type="text" onClick={() => navigate("/cards")}>Mis tarjetas(URL)</Button>),
+      key: 'item-3'
+    },
+    {
+      label: (<Button type="text" onClick={() => navigate("/directions")}>Mis direcciones</Button>),
+      key: 'item-4'
+    },
+    {
+      label: (<Button type="text" onClick={() => navigate("/misReclamos")}>Mis reclamos</Button>),
+      key: 'item-5'
+    },
+    {
+      label: (<Button type="text"
+        onClick={(_) => {
+          localStorage.removeItem("token")
+          localStorage.removeItem("uuid")
+          window.location.reload() //State
+        }}
+      >
+        Cerrar sesión
+      </Button>), key: 'item-6'
+    }
+    ,
+  ];
+
+  const menu2 = (<Menu items={itemsComprador}></Menu>)
+
+
+
+  onMessageListener().then(payload => {
+    console.log(payload);
+    notification.open({
+      message: payload.notification.title,
+      description: payload.notification.body,
+      onClick: () => {
+        console.log('Notification Clicked!');
+      },
+    });
+  }).catch(err => console.log('failed: ', err));
+
+
+
 
   const buscarProducto = (value: string) => {
     emitter.emit('busquedaProducto', { data: value });
@@ -112,12 +174,13 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
   useEffect(() => {
     let token = localStorage.getItem("token")
-    if(token) setSesionIniciada(true)
-  })
+    if (token) setSesionIniciada(true)
+    fetchToken(setTokenFound);
+  }, [])
 
   useEffect(() => {
     obtenerCategorias();
-  },[])
+  }, [])
 
   return (
     <div className={styles.wrapper}>
@@ -135,7 +198,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         />
 
         {sesionIniciada ?
-          <Dropdown overlay={menu} placement="bottomLeft" >
+          <Dropdown overlay={menu2} placement="bottomLeft" >
             <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male" style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
           </Dropdown> :
 
