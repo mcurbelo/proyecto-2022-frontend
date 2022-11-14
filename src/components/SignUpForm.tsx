@@ -59,7 +59,7 @@ const SignUpForm = () => {
         type: "email",
         message: "Debe ser un mail valido"
       }]}>
-        <Input placeholder="usuario@shopit.com" />
+        <Input placeholder="usuario@shopnow.com" />
       </Form.Item>
 
       <Form.Item name="nombre" rules={[{
@@ -113,7 +113,7 @@ const SignUpForm = () => {
           message: "Solo numeros, con un maximo de 9 caracteres",
           pattern: new RegExp("^[0-9]{0,9}$")
         }
-      ]}
+        ]}
       >
         <Input placeholder="093254142" />
       </Form.Item>
@@ -127,9 +127,9 @@ const SignUpForm = () => {
             message: "Es obligatorio ser mayor de edad"
           }]}
         >
-          <DatePicker style={{ width: "100%" }} format={"DD/MM/yyyy"} />
+          <DatePicker style={{ width: "100%" }} format={"DD/MM/yyyy"} placeholder="Seleccione una fecha" />
         </Form.Item>
-        {error?.error && <Alert style={{marginTop: 16, marginBottom: 16, width:"100%"}} message={error.message} type="error" showIcon={true} />}
+        {error?.error && <Alert style={{ marginTop: 16, marginBottom: 16, width: "100%" }} message={error.message} type="error" showIcon={true} />}
         <Button type="primary" htmlType="submit">Registrarse!</Button>
       </div>
     </Form>

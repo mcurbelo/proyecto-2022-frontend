@@ -35,7 +35,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
   const [state, setState] = useState({ success: false, loading: false } as AddCardState)
   return (
     <div className={styles.wrapper}>
-      <p>Agregar Tarjeta</p>
+      <h1>Agregar tarjeta</h1>
       <Form
         className={styles.form}
         disabled={state.loading}

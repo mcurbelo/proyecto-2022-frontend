@@ -35,7 +35,7 @@ export const fetchToken = (setTokenFound) => {
             setTokenFound(false);
             // Muestra en la UI que el permiso es requerido
         }
-        localStorage.setItem("tokeNotificacion", (currentToken) ? currentToken : "");
+        localStorage.setItem("tokenNotificacion", (currentToken) ? currentToken : "");
     }).catch((err) => {
         console.log('Error al crear el token. ', err);
         // Agarra el error cuando se esta creando el token del cliente.

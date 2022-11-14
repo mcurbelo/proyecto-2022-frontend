@@ -1,14 +1,24 @@
-import { SearchOutlined } from "@ant-design/icons";
-import { Button, Image, Input, Dropdown, Avatar, Menu, notification } from "antd";
+import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faCircleChevronDown, faCirclePlus, faClipboardList, faCreditCard, faEnvelopeOpen, faEnvelopeOpenText, faMapLocationDot, faMoneyBill, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRoute, faUserPlus, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { Image, Dropdown, Avatar, Menu, notification, Badge, Space } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMitt } from "react-mitt";
 import { useNavigate } from "react-router";
-import { CategoriaService } from "shopit-shared";
+import { CategoriaService, UserService } from "shopit-shared";
 import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
-import { fetchToken, onMessageListener } from "../firebase";
+import { onMessageListener } from "../firebase";
 import logo from "./../images/logo192.png"
+import Button from 'antd-button-color';
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
+import { Link } from "react-router-dom";
+import { EstadoSolicitud } from "shopit-shared/dist/user/UserService";
+import { info } from "console";
+import { UserOutlined } from "@ant-design/icons";
+import { getMessaging, onMessage } from "firebase/messaging";
+
 type MainHeaderProps = {}
 
 
@@ -17,7 +27,8 @@ const useStyles = createUseStyles({
     display: "grid",
     background: "#FFFFA7",
     height: 100,
-    gridTemplateRows: "1fr 1fr 1fr "
+    gridTemplateRows: "1fr 1fr 1fr ",
+    marginBottom: "1%"
   },
   firstRow: {
     gridRow: "1 / span 2",
@@ -57,102 +68,101 @@ const useStyles = createUseStyles({
 
 
 
-
-
-
-
-const menu = (
-  <Menu
-    items={[
-      {
-        key: '1',
-        label: (
-          <a rel="noopener noreferrer" href="/profile">
-            Ver perfil
-          </a>
-        ),
-      },
-      {
-        key: '2',
-        label: (
-          <Button type="text"
-            onClick={(_) => {
-              localStorage.removeItem("token")
-              localStorage.removeItem("uuid")
-              window.location.reload()
-            }}
-          >
-            {/* <a target="_blank" rel="noopener noreferrer" href="/logout"> */}
-            Cerrar sesion
-            {/* </a> */}
-          </Button>
-        ),
-      }
-    ]}
-  />
-);
-
-
-
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const { emitter } = useMitt()
+  const messaging = getMessaging();
   const styles = useStyles()
   const [categorias, setCategorias] = useState<DtCategoria[]>([])
   const [sesionIniciada, setSesionIniciada] = useState(false)
   const [isTokenFound, setTokenFound] = useState(false);
+  const [infoUsuario, setInfoUsuario] = useState({
+    nombre: "",
+    estadoSolicitud: EstadoSolicitud.NoSolicitada,
+    esVendedor: false,
+    imagen: ""
+  })
   const navigate = useNavigate();
 
 
   const itemsComprador = [
     {
-      label: (<Button type="text" onClick={() => navigate("/misCompras")}>Mis compras</Button>),
+      label: (<Link type="text" to="/compras" className="ant-btn ant-btn-text">Mis compras<FontAwesomeIcon icon={faBagShopping} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-1'
     },
     {
-      label: (<Button type="text" onClick={() => navigate("/profile")}>Mi perfil</Button>),
+      label: (<Link type="text" to="/profile" className="ant-btn ant-btn-text">Mi perfil<FontAwesomeIcon icon={faAddressCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-2'
     },
+
     {
-      label: (<Button type="text" onClick={() => navigate("/cards")}>Mis tarjetas(URL)</Button>),
+      label: (<Link type="text" to="/profile"
+        className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
+        Solcitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-3'
     },
     {
-      label: (<Button type="text" onClick={() => navigate("/directions")}>Mis direcciones</Button>),
+      label: (<Link type="text" to="/cards" className="ant-btn ant-btn-text">Mis tarjetas<FontAwesomeIcon icon={faCreditCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-4'
     },
     {
-      label: (<Button type="text" onClick={() => navigate("/misReclamos")}>Mis reclamos</Button>),
+      label: (<Link type="text" to="/directions" className="ant-btn ant-btn-text">Mis direcciones<FontAwesomeIcon icon={faMapLocationDot} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-5'
+    },
+    {
+      label: (<Link type="text" to="/misReclamos" className="ant-btn ant-btn-text">Mis reclamos<FontAwesomeIcon icon={faBullhorn} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-6'
     },
     {
       label: (<Button type="text"
         onClick={(_) => {
           localStorage.removeItem("token")
           localStorage.removeItem("uuid")
-          window.location.reload() //State
+          setSesionIniciada(false);
+          navigate("/")
         }}
       >
-        Cerrar sesión
-      </Button>), key: 'item-6'
+        Cerrar sesión<FontAwesomeIcon icon={faRightFromBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
+      </Button>), key: 'item-7'
     }
     ,
   ];
 
-  const menu2 = (<Menu items={itemsComprador}></Menu>)
+
+  const itemsVendedor = [
+    {
+      label: (<Link type="text" to="/ventas" className="ant-btn ant-btn-text">Mis ventas<FontAwesomeIcon icon={faMoneyBillTrendUp} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-1'
+    },
+    {
+      label: (<Link type="text" to="/misProductos" className="ant-btn ant-btn-text">Mis productos<FontAwesomeIcon icon={faWarehouse} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-2'
+    },
+    {
+      label: (<Link type="text" to="/agregarproducto" className="ant-btn ant-btn-text">Agregar producto<FontAwesomeIcon icon={faCirclePlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-3'
+    },
+    {
+      label: (<Link type="text" to="/misReclamosRecibidos" className="ant-btn ant-btn-text">Reclamos recibidos<FontAwesomeIcon icon={faEnvelopeOpenText} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-4'
+    },
+
+  ];
+
+  const menuComprador = (<Menu items={itemsComprador}></Menu>)
+
+  const menuVendedor = (<Menu items={itemsVendedor}></Menu>)
 
 
-
-  onMessageListener().then(payload => {
-    console.log(payload);
+  onMessage(messaging, (payload) => {
+    console.log('Message received. ', payload);
     notification.open({
-      message: payload.notification.title,
-      description: payload.notification.body,
+      message: payload.notification!.title,
+      description: payload.notification!.body,
       onClick: () => {
         console.log('Notification Clicked!');
       },
     });
-  }).catch(err => console.log('failed: ', err));
-
+  });
 
 
 
@@ -160,8 +170,8 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     emitter.emit('busquedaProducto', { data: value });
   };
 
-  const buscarCategoria = (event: React.MouseEvent<HTMLButtonElement>) => {
-    emitter.emit('busquedaCategoria', { data: event.currentTarget.value.toString() });
+  const buscarCategoria = (nombre: string) => {
+    emitter.emit('busquedaCategoria', { data: nombre });
   };
 
   const obtenerCategorias = () => {
@@ -175,8 +185,27 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   useEffect(() => {
     let token = localStorage.getItem("token")
     if (token) setSesionIniciada(true)
-    fetchToken(setTokenFound);
   }, [])
+
+  useEffect(() => {
+    if (sesionIniciada) {
+      UserService.obtenerInformacion(localStorage.getItem("token")!, localStorage.getItem("uuid")!)
+        .then((infoUsuario) => {
+          const { datosVendedor } = infoUsuario;
+          let nombre = infoUsuario.nombre;
+          let esVendedor = (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Aceptado) || false
+          let estadoSolicitud = EstadoSolicitud.NoSolicitada;
+          if (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Pendiente) {
+            estadoSolicitud = EstadoSolicitud.Pendiente;
+          }
+          setInfoUsuario({ nombre: nombre, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: infoUsuario.imagen });
+        })
+    } else {
+
+    }
+
+  }, [sesionIniciada])
+
 
   useEffect(() => {
     obtenerCategorias();
@@ -186,11 +215,16 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
         <div style={{ gridRow: 1, marginLeft: 24 }}>
-          <Image
-            preview={false}
-            className={styles.profileImage}
-            src={logo} />
+          <Link to="/">
+            <Image
+              preview={false}
+              className={styles.profileImage}
+              src={logo}
+            />
+
+          </Link>
         </div>
+
         <Search
 
           placeholder="Buscar productos"
@@ -198,16 +232,46 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         />
 
         {sesionIniciada ?
-          <Dropdown overlay={menu2} placement="bottomLeft" >
-            <Avatar size="large" src="https://xsgames.co/randomusers/avatar.php?g=male" style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
-          </Dropdown> :
+          <div style={{ gridColumn: 3, justifySelf: "end" }}>
+            <Space size={40}>
+              <Badge count={0} offset={[0, 0]}>
+                <FontAwesomeIcon size="xl" type="regular " icon={faCartShopping} />
+              </Badge>
+              <Badge count={0} offset={[0, 0]}>
+                <FontAwesomeIcon size="xl" icon={faBell} />
+              </Badge>
+              <Dropdown overlay={menuComprador} placement="bottomLeft" >
+                <Button type="text" >Hola, {infoUsuario.nombre} <FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+              </Dropdown>
+              <Dropdown overlay={menuVendedor} placement="bottomLeft" >
+                <Button type="text" >Opciones de vendedor<FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+              </Dropdown>
+              <Link to="/profile">
+                <Avatar size="large" icon={<UserOutlined />} src={infoUsuario.imagen} style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
+              </Link>
+            </Space>
+          </div>
+          :
 
-          <Button
-            onClick={(_) => {
-              window.location.href = "/signin"
-            }}
-            type="primary"
-            style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar Sesion</Button>
+          <>
+            <Button
+              href="/signin"
+              with="link"
+              type="dark"
+              style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar sesión <FontAwesomeIcon icon={faRightToBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
+            </Button>
+
+            <Button
+              onClick={(_) => {
+                _.currentTarget.blur()
+              }}
+              href="/signup"
+              with="link"
+              type="dark"
+              style={{ justifySelf: "end", gridColumn: 4, marginRight: 24 }}>Registrarse<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} />
+            </Button>
+
+          </>
         }
       </div>
       <div className={styles.secondRow}>
@@ -215,7 +279,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           {
             categorias.map((categoria, index) => {
               return (
-                <Button type="text" style={{ gridColumn: index + 1 }} key={index} value={categoria.nombre} onClick={buscarCategoria}>{categoria.nombre}</Button>
+                <Button type="text" style={{ gridColumn: index + 1 }} key={index} value={categoria.nombre} onClick={() => buscarCategoria(categoria.nombre)}>{categoria.nombre}</Button>
               )
             })
           }

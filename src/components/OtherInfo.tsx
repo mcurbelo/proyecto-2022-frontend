@@ -260,15 +260,10 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                 <input disabled={!editandoEmpresa} name='nombreEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={datosVendedor.nombreEmpresa} onChange={(e) => onInputchangeEmpresa(e)} />
               </div>
               <div>
-                <label>Teléfono:</label>
-                <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={datosVendedor.telefonoEmpresa} onChange={(e) => onInputchangeEmpresa(e)} />
-              </div>
-            </div>
-            <div className='rigthValues'>
-              <div>
                 <label>RUT:</label>
                 <input disabled={true} name='rut' type="text" className="usuarioInput" defaultValue={datosVendedor.rut} />
               </div>
+              
               <div>
                 <Tooltip title="Calificación obtenida de los compradores">
                   <div>
@@ -279,12 +274,20 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                   </div>
                 </Tooltip>
               </div>
+            </div>
+            <div className='rigthValues'>
+            <div>
+                <label>Teléfono:</label>
+                <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={datosVendedor.telefonoEmpresa} onChange={(e) => onInputchangeEmpresa(e)} />
+              </div>
+            
               {
-                editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end' }}>
+                editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf:"end" }}>
                   <Button type='primary' onClick={onAcceptEditEmpresa}>Modificar</Button>
                 </div>
               }
             </div>
+          
           </div>
         </div>
       </Col >

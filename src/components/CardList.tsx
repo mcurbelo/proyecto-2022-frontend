@@ -15,7 +15,7 @@ type CardListState = {
 }
 
 type CardListProps = {
-  onSelectCard: (id: string) => void
+  onSelectCard?: (id: string) => void
   selectedCard?: string
   onSelectedCardInfo?: (card: CreditCardData) => void,
 }
@@ -42,7 +42,7 @@ const CardList: React.FC<CardListProps> = (props) => {
     if (onSelectedCardInfo) onSelectedCardInfo(card!)
     if (card) card.selected = true
     setState({ cards: state.cards })
-    onSelectCard(id)
+    if (onSelectCard) onSelectCard(id)
 
   }
 

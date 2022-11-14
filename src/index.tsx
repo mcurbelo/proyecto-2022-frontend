@@ -30,6 +30,8 @@ import { Solicitudes } from './components/ListarSolicitudes'
 import { Outlet } from 'react-router';
 import WithoutNav from './withoutNav';
 import WithNav from './WithNav';
+import Perfil from './components/Perfil';
+import TarjetasPage from './pages/TarjetasPage';
 
 export default () => <Outlet />
 
@@ -47,24 +49,21 @@ root.render(
           <Route path="/signin" element={<SignInPage />} />
         </Route>
         <Route element={<WithNav />}>
-          <Route path='/' element={<HomePage showHeader={true} showProfile={false} />} />
+          <Route path='/' element={<HomePage />} />
           <Route path="/signup" element={<SignUpPage />} />
           <Route path="/users" element={<UserList />} />
           <Route path="/directions" element={<Directions />} />
-          <Route path="/miscompras" element={<MisCompras />} />
+          <Route path="/compras" element={<MisCompras />} />
           <Route path="/testNotifiacion" element={<NotificacionTest />} />
           <Route path="/addCard" element={<AddCardForm />} />
-          <Route path="/profile" element={<HomePage showHeader={true} showProfile={true} />} />
-          <Route path="/cards" element={<CardList onSelectCard={(id) => {
-            console.log("Selected card: " + id)
-          }} />} />
+          <Route path="/profile" element={<Perfil />} />
+          <Route path="/cards" element={<TarjetasPage />} />
           <Route path="/productos/:id" element={<InfoProducto />} />
           <Route path="/compra" element={<RealizarCompra />} />
           <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
           <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
-          <Route path="/misventas" element={<MisVentas />} />
+          <Route path="/ventas" element={<MisVentas />} />
           <Route path="/chat/:idchat" element={<Chat />} />
-          <Route path="/misventas" element={<MisVentas />} />
           <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
           <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />
           <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>

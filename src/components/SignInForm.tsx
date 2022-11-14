@@ -1,6 +1,6 @@
-import { Alert, Button, Form, Input, Result } from "antd"
+import { Alert, Button, Form, Input } from "antd"
 import FormItem from "antd/es/form/FormItem";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss"
 import { useNavigate } from "react-router";
 import { UserService } from "shopit-shared"
@@ -27,11 +27,15 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
   const [state, setState] = useState({ username: "", password: "", error: false } as SignInFormData)
   const navigate = useNavigate()
   const [isTokenFound, setTokenFound] = useState(false);
-  fetchToken(setTokenFound);
+
+
+  useEffect(() => {
+    fetchToken(setTokenFound);
+  }, []);
 
   return (
     <Form className={styles.form} onFinish={async (_) => {
-      UserService.iniciarSesion(state.username, state.password)
+      UserService.iniciarSesion(state.username, state.password, localStorage.getItem("tokenNotificacion")!)
         .then((result) => {
           if (result?.token && result?.uuid) {
             console.log(result)

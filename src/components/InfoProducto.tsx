@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoneyBill1, faShop, faTruckFast, faWallet } from "@fortawesome/free-solid-svg-icons";
 import tarjetas from '../images/tarjetas.jpg';
 import { DtCompra } from "shopit-shared/dist/user/CompradorService";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 interface AppState {
   producto: DtProducto
@@ -63,42 +64,6 @@ const useStyles = createUseStyles({
 
 const { Text, Paragraph } = Typography;
 
-const data = [
-  {
-    actions: [<span key="comment-list-reply-to-0">Reply to</span>],
-    author: 'Han Solo',
-    avatar: 'https://joeschmoe.io/api/v1/random',
-    content: (
-      <p>
-        We supply a series of design principles, practical patterns and high quality design
-        resources (Sketch and Axure), to help people create their product prototypes beautifully and
-        efficiently.
-      </p>
-    ),
-    datetime: (
-      <Tooltip title="2016-11-22 11:22:33">
-        <span>8 hours ago</span>
-      </Tooltip>
-    ),
-  },
-  {
-    actions: [<span key="comment-list-reply-to-0">Reply to</span>],
-    author: 'Han Solo',
-    avatar: 'https://joeschmoe.io/api/v1/random',
-    content: (
-      <p>
-        We supply a series of design principles, practical patterns and high quality design
-        resources (Sketch and Axure), to help people create their product prototypes beautifully and
-        efficiently.
-      </p>
-    ),
-    datetime: (
-      <Tooltip title="2016-11-22 10:22:33">
-        <span>9 hours ago</span>
-      </Tooltip>
-    ),
-  },
-];
 
 export const InfoProducto = () => {
   const navigate = useNavigate();
@@ -190,115 +155,102 @@ export const InfoProducto = () => {
   }
 
 
-
+  document.body.style.backgroundColor = "#F0F0F0"
   return (
-    <Row className={styles.container} style={{ gap: "3%", justifyContent: "center" }}>
-      <Col style={{ display: "flex", justifyContent: "center" }}>
-        <Row gutter={16} className={styles.container2} >
-          <Col className={styles.listaImagenes} style={{ display: "flex" }}>
-            <List
-              style={{ display: "flex" }}
-              className={styles.listaImagenes}
-              dataSource={producto?.imagenes}
-              grid={{
-                xs: 5,
-                sm: 1,
-                md: 1,
-                lg: 1,
-                xl: 1,
-                xxl: 1,
-              }}
-              renderItem={item => (
-                <List.Item style={{ cursor: "pointer" }}>
-                  <Image
-                    width={60}
-                    id={item}
-                    preview={false}
-                    onClick={seleccionarImagen}
-                    src={item}
-                  />
-                </List.Item>
-              )}
-            />
-          </Col>
-          <Col>
-            <Image
-              width={350}
-              height={300}
-              src={imangeSeleccionada}
-            />
-          </Col>
-        </Row>
-      </Col>
-      <Col className={styles.infoProducto}>
-        <Card>
-          <h2> {producto?.nombre}</h2>
-          <hr />
-          <Text><Avatar size="large" src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
-          <hr />
-          <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
-          <hr />
-          <Space>
-            <Text>Garantía: {producto?.garantia}</Text> <Tooltip title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
-              <Button type="primary" style={{ width: "20px" }}>?</Button>
-            </Tooltip >
-          </Space>
-          <hr />
-          <Text>Diponibilidad: <b>{estadoStock()}</b></Text>
-          <hr />
-          <Text>Forma de entrega: {(producto?.permiteEnvio) ? <Text><b>Envío</b> <FontAwesomeIcon icon={faTruckFast} /> | <b>Retiro</b>  <FontAwesomeIcon icon={faShop} /></Text> : <Text><b>Solo retiro</b> <FontAwesomeIcon icon={faShop} /></Text>}</Text>
-          <hr />
-          <Text>Más información del producto: </Text>
-          {renderDescripcion()}
-          {!ellipsis && <a onClick={expansion}>Ver menos</a>}
-        </Card>
-      </Col>
-      <Col className={styles.compra}>
-        <Card>
-          <div>
-            <h4>$ {producto?.precio}  (Pesos uruguayos)</h4>
-            <Divider />
-            <Text> <FontAwesomeIcon icon={faCirclePlus} color='#52c41a' /> <b>Agrega productos</b> al carrito para pagar varios productos en una sola transacción.</Text>
-            <Divider>O</Divider>
-            <Text> <FontAwesomeIcon icon={faMoneyBill1} color='#459E19' /> <b>Compra directamente</b> el producto con ingresando la cantidad deseada.</Text>
-          </div>
-          <Divider />
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+    <Row justify="center">
+      <h1> Información de producto</h1>
+      <Row className={styles.container} style={{ gap: "3%", justifyContent: "center", width: "100%" }}>
+
+        <Col style={{ display: "flex", justifyContent: "center" }}>
+          <Row gutter={16} className={styles.container2} >
+            <Col className={styles.listaImagenes} style={{ display: "flex" }}>
+              <List
+                style={{ display: "flex" }}
+                className={styles.listaImagenes}
+                dataSource={producto?.imagenes}
+                grid={{
+                  xs: 5,
+                  sm: 1,
+                  md: 1,
+                  lg: 1,
+                  xl: 1,
+                  xxl: 1,
+                }}
+                renderItem={item => (
+                  <List.Item style={{ cursor: "pointer" }}>
+                    <Image
+                      width={60}
+                      id={item}
+                      preview={false}
+                      onClick={seleccionarImagen}
+                      src={item}
+                    />
+                  </List.Item>
+                )}
+              />
+            </Col>
+            <Col>
+              <Image
+                width={350}
+                height={350}
+                src={imangeSeleccionada}
+              />
+            </Col>
+          </Row>
+        </Col>
+        <Col className={styles.infoProducto}>
+          <Card>
+            <h2> {producto?.nombre}</h2>
+            <hr />
+            <Text><Avatar size="large" src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
+            <hr />
+            <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
+            <hr />
+            <Space>
+              <Text>Garantía: {producto?.garantia} días</Text><Tooltip title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
+                <FontAwesomeIcon icon={faCircleQuestion}></FontAwesomeIcon>
+              </Tooltip >
+            </Space>
+            <hr />
+            <Text>Diponibilidad: <b>{estadoStock()}</b></Text>
+            <hr />
+            <Text>Forma de entrega: {(producto?.permiteEnvio) ? <Text><b>Envío</b> <FontAwesomeIcon icon={faTruckFast} /> | <b>Retiro</b>  <FontAwesomeIcon icon={faShop} /></Text> : <Text><b>Solo retiro</b> <FontAwesomeIcon icon={faShop} /></Text>}</Text>
+            <hr />
+            <Text>Más información del producto: </Text>
+            {renderDescripcion()}
+            {!ellipsis && <a onClick={expansion}>Ver menos</a>}
+          </Card>
+        </Col>
+        <Col className={styles.compra}>
+          <Card>
             <div>
-              <Text>Cantidad:</Text>
-              <InputNumber id="cantidad" min={1} defaultValue={1} onChange={onChange} />
+              <h4>$ {producto?.precio}  (Pesos uruguayos)</h4>
+              <Divider />
+              <Text> <FontAwesomeIcon icon={faCirclePlus} color='#52c41a' /> <b>Agrega productos</b> al carrito para pagar varios productos en una sola transacción.</Text>
+              <Divider>O</Divider>
+              <Text> <FontAwesomeIcon icon={faMoneyBill1} color='#459E19' /> <b>Compra directamente</b> el producto con ingresando la cantidad deseada.</Text>
             </div>
-            <Image
-              width={170}
-              preview={false}
-              src={tarjetas} />
-          </div>
-          <Divider />
-          <div>
-            <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0} onClick={realizarCompra}>
-              Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-            <Button block disabled={producto?.stock == 0}>
-              Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
-          </div>
-        </Card>
-      </Col>
-      <div>
-        <List
-          className="comment-list"
-          header={`${data.length} replies`}
-          itemLayout="horizontal"
-          dataSource={data}
-          renderItem={item => (
-            <li>
-              <Comment actions={item.actions}
-                author={item.author}
-                avatar={item.avatar}
-                content={item.content}
-                datetime={item.datetime} />
-            </li>
-          )}
-        />
-      </div>
+            <Divider />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <div>
+                <Text>Cantidad:</Text>
+                <InputNumber id="cantidad" min={1} defaultValue={1} onChange={onChange} />
+              </div>
+              <Image
+                width={170}
+                preview={false}
+                src={tarjetas} />
+            </div>
+            <Divider />
+            <div>
+              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0} onClick={realizarCompra}>
+                Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
+              <Button block disabled={producto?.stock == 0}>
+                Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
+            </div>
+          </Card>
+        </Col>
+      </Row>
     </Row>
   )
 }
