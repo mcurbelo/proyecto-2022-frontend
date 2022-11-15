@@ -18,7 +18,7 @@ export const ItemPublication = ({ producto }: Props) => {
     <Card
       key={producto.idProducto}
       hoverable
-      style={{ display: 'flex', flexDirection: 'column', minWidth: "260px" }}
+      style={{ display: 'flex', flexDirection: 'column', maxWidth: "280px" }}
       bodyStyle={{ padding: "5%", flexGrow: 1 }}
       cover={
         <Row justify='center' style={{ padding: "20px" }}>

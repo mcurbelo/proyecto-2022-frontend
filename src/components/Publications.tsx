@@ -36,11 +36,28 @@ const useStyles = createUseStyles({
     flexWrap: "wrap",
     flexDirection: "row",
   },
+  filtros: {
+    width: "18%"
+  },
   '@media screen and (max-width: 500px)': {
     container: {
       flexDirection: "column"
     }
+  },
+  '@media screen and (max-width: 1241px)': {
+    filtros: {
+      width: "30%"
+    }
+  },
+  '@media screen and (max-width: 833px)': {
+    filtros: {
+      width: "100%",
+    },
+    container: {
+      marginRight:"5%"
+    }
   }
+
 })
 
 //TODO Evento Promocional - Segun implementacion
@@ -136,19 +153,19 @@ function Publicactions() {
     }
     else {
       return <div>
-        <Row gutter={[16,16]} >
-            {
-              productos.map((value, index) => {
-                return (
-                  <Col key={index} style={{ display: 'flex', width: "20%" }}>
+        <div style={{ maxWidth: "100%", margin: " 0 auto", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }} >
+          {
+            productos.map((value, index) => {
+              return (
+                <Col key={index} style={{ display: 'flex', justifyContent:"center" }}>
                   <ItemPublication key={index} producto={value}></ItemPublication>
-                  </Col>
-                )
-              })
-            }
+                </Col>
+              )
+            })
+          }
 
-         
-        </Row>
+
+        </div>
         <Pagination style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={paginaActual} total={paginasTotales} current={paginaActual} onChange={onChange} />
       </div>
     }
@@ -158,8 +175,8 @@ function Publicactions() {
 
   return (
     <React.Fragment>
-      <div className={styles.container} style={{ display: 'flex', marginTop: '30px', marginLeft: "5%", marginRight: "5%", justifyContent: 'center', gap: "3%" }}>
-        <div id="filtros" style={{ display: 'flex', justifyContent: "center", marginBottom: '5%', width: "18%" }}>
+      <div className={styles.container} style={{ display: 'flex', marginTop: '30px', marginLeft: "5%", justifyContent: 'center', gap: "3%" }}>
+        <div className={styles.filtros} style={{ display: 'flex', justifyContent: "center", marginBottom: '5%' }}>
           <div style={{ width: "100%", }}>
             <Card title="Filtros aplicados" bodyStyle={{ padding: "5%" }} >
               <Space direction="vertical" size={10} style={{ display: 'flex' }}>

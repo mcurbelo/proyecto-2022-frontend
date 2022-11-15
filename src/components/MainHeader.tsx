@@ -98,11 +98,6 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-1'
     },
     {
-      label: (<Link type="text" to="/profile" className="ant-btn ant-btn-text">Mi perfil<FontAwesomeIcon icon={faAddressCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
-      key: 'item-2'
-    },
-
-    {
       label: (<Link type="text" to="/profile"
         className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
         Solcitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
@@ -120,20 +115,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       label: (<Link type="text" to="/misReclamos" className="ant-btn ant-btn-text">Mis reclamos<FontAwesomeIcon icon={faBullhorn} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-6'
     },
-    {
-      label: (<Button type="text"
-        onClick={(_) => {
-          localStorage.removeItem("token")
-          localStorage.removeItem("uuid")
-          localStorage.removeItem("notificaciones")
-          setSesionIniciada(false);
-          navigate("/")
-        }}
-      >
-        Cerrar sesión<FontAwesomeIcon icon={faRightFromBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
-      </Button>), key: 'item-7'
-    }
-    ,
+
   ];
 
 
@@ -183,14 +165,42 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadisiticas(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-5'
     },
-
+    {
+      label: (<Link type="text" to="/categorias" className="ant-btn ant-btn-text">Crear categoria(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-6'
+    },
   ];
+
+  const itemPerfil = [
+    {
+      label: (<Link type="text" to="/profile" className="ant-btn ant-btn-text">Mi perfil<FontAwesomeIcon icon={faAddressCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-1'
+    },
+
+    {
+      label: (<Button type="text"
+        onClick={(_) => {
+          localStorage.removeItem("token")
+          localStorage.removeItem("uuid")
+          localStorage.removeItem("notificaciones")
+          setSesionIniciada(false);
+          navigate("/")
+        }}
+      >
+        Cerrar sesión<FontAwesomeIcon icon={faRightFromBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
+      </Button>), key: 'item-7'
+    }
+
+  ]
+
+  const menuPerfil = (<Menu items={itemPerfil}></Menu>)
 
   const menuComprador = (<Menu items={itemsComprador}></Menu>)
 
   const menuVendedor = (<Menu items={itemsVendedor}></Menu>)
 
   const menuAdministrador = (<Menu items={itemsAdministrador}></Menu>)
+
 
 
   onMessage(messaging, (payload) => {
@@ -343,9 +353,11 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
                   <Button type="text" >Opciones de vendedor<FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                 </Dropdown>
               }
-              <Link to="/profile">
+
+
+              <Dropdown overlay={menuPerfil} placement="bottomLeft" >
                 <Avatar size="large" icon={<UserOutlined />} src={infoUsuario.imagen} style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
-              </Link>
+              </Dropdown>
             </Space>
           </div>
           :
