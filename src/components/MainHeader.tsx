@@ -1,6 +1,6 @@
-import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faCircleChevronDown, faCirclePlus, faClipboardList, faCreditCard, faEnvelopeOpen, faEnvelopeOpenText, faMapLocationDot, faMoneyBill, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRoute, faUserPlus, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpen, faEnvelopeOpenText, faMapLocationDot, faMoneyBill, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRoute, faUserPlus, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Image, Dropdown, Avatar, Menu, notification, Badge, Space } from "antd";
+import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, Row, Divider, List, Empty } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
@@ -18,6 +18,8 @@ import { EstadoSolicitud } from "shopit-shared/dist/user/UserService";
 import { info } from "console";
 import { UserOutlined } from "@ant-design/icons";
 import { getMessaging, onMessage } from "firebase/messaging";
+import moment from "moment";
+import Meta from "antd/lib/card/Meta";
 
 type MainHeaderProps = {}
 
@@ -66,6 +68,10 @@ const useStyles = createUseStyles({
   }
 })
 
+type Note = {
+  id: string; titulo: string; mensaje: string; fecha: string;
+}
+
 
 
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
@@ -74,15 +80,17 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   const styles = useStyles()
   const [categorias, setCategorias] = useState<DtCategoria[]>([])
   const [sesionIniciada, setSesionIniciada] = useState(false)
-  const [isTokenFound, setTokenFound] = useState(false);
   const [infoUsuario, setInfoUsuario] = useState({
     nombre: "",
     estadoSolicitud: EstadoSolicitud.NoSolicitada,
     esVendedor: false,
     imagen: ""
   })
+  const [carrito, setCarrito] = useState(0)
+  const [notificaciones, setNotificacion] = useState(0)
+  const [notificacionesList, setNotiList] = useState<Note[]>([])
   const navigate = useNavigate();
-
+  const { Paragraph, Text } = Typography;
 
   const itemsComprador = [
     {
@@ -117,6 +125,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         onClick={(_) => {
           localStorage.removeItem("token")
           localStorage.removeItem("uuid")
+          localStorage.removeItem("notificaciones")
           setSesionIniciada(false);
           navigate("/")
         }}
@@ -145,6 +154,35 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       label: (<Link type="text" to="/misReclamosRecibidos" className="ant-btn ant-btn-text">Reclamos recibidos<FontAwesomeIcon icon={faEnvelopeOpenText} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-4'
     },
+    {
+      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadisiticas(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-5'
+    },
+
+  ];
+
+
+  const itemsAdministrador = [
+    {
+      label: (<Link type="text" to="/usuarios" className="ant-btn ant-btn-text">Gestión usuarios<FontAwesomeIcon icon={faMoneyBillTrendUp} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-1'
+    },
+    {
+      label: (<Link type="text" to="/devoluciones" className="ant-btn ant-btn-text">Deshacer venta(PH)<FontAwesomeIcon icon={faWarehouse} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-2'
+    },
+    {
+      label: (<Link type="text" to="/administrador" className="ant-btn ant-btn-text">Crear nuevo administrador<FontAwesomeIcon icon={faCirclePlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-3'
+    },
+    {
+      label: (<Link type="text" to="/solicitudes" className="ant-btn ant-btn-text">Solicitudes de rol vendedor<FontAwesomeIcon icon={faEnvelopeOpenText} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-4'
+    },
+    {
+      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadisiticas(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      key: 'item-5'
+    },
 
   ];
 
@@ -152,17 +190,24 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
   const menuVendedor = (<Menu items={itemsVendedor}></Menu>)
 
+  const menuAdministrador = (<Menu items={itemsAdministrador}></Menu>)
+
 
   onMessage(messaging, (payload) => {
-    console.log('Message received. ', payload);
+    setNotificacion((previo) => previo + 1)
     notification.open({
       message: payload.notification!.title,
       description: payload.notification!.body,
-      onClick: () => {
-        console.log('Notification Clicked!');
-      },
     });
+    setNotiList(actuales => [...actuales, { titulo: payload.notification!.title!, mensaje: payload.notification!.body!, fecha: moment().format("HH:mm"), id: payload.messageId }])
   });
+
+
+  useEffect(() => {
+    if (notificaciones > 0)
+      localStorage.setItem("notificaciones", JSON.stringify(notificacionesList))
+  }, [notificacionesList])
+
 
 
 
@@ -185,6 +230,11 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   useEffect(() => {
     let token = localStorage.getItem("token")
     if (token) setSesionIniciada(true)
+    let notificaciones = JSON.parse(localStorage.getItem("notificaciones")!) as Note[]
+    if (notificaciones) {
+      setNotiList(notificaciones)
+      setNotificacion(notificaciones.length)
+    }
   }, [])
 
   useEffect(() => {
@@ -211,6 +261,21 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     obtenerCategorias();
   }, [])
 
+  let locale = {
+    emptyText: (
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: "black" }} description="No hay nuevas notificaciones" />
+    )
+  }
+
+  const quitarNotificacion = (id: Note) => {
+    const nuevas = notificacionesList.slice()
+    let index = nuevas.indexOf(id);
+    nuevas.splice(index, 1);
+    setNotiList(nuevas);
+    setNotificacion((previo) => previo - 1)
+    localStorage.setItem("notificaciones", JSON.stringify(nuevas));
+  }
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
@@ -234,18 +299,50 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         {sesionIniciada ?
           <div style={{ gridColumn: 3, justifySelf: "end" }}>
             <Space size={40}>
-              <Badge count={0} offset={[0, 0]}>
+              <Badge count={carrito} offset={[0, 0]}>
                 <FontAwesomeIcon size="xl" type="regular " icon={faCartShopping} />
               </Badge>
-              <Badge count={0} offset={[0, 0]}>
-                <FontAwesomeIcon size="xl" icon={faBell} />
+
+              <Badge count={notificaciones} offset={[0, 0]}>
+                <Popover
+                  trigger="hover"
+                  overlayStyle={{ width: "25%" }}
+                  content={
+                    <div >
+                      <List
+                        dataSource={notificacionesList}
+                        locale={locale}
+                        renderItem={item => (
+                          <Card style={{ display: "flex", flexDirection: "column" }} title={item.titulo + " | " + item.fecha}
+                            extra={<FontAwesomeIcon size="xl"
+                              onClick={() => quitarNotificacion(item)} role={"button"} style={{ cursor: "pointer" }} color="#ff4d4f" icon={faCircleXmark} />}>
+                            <Meta
+                              description={
+                                <Text
+                                  style={true ? { width: "100%" } : undefined}
+                                  ellipsis={true ? { tooltip: item.mensaje } : false} >
+                                  {item.mensaje}
+                                </Text>
+                              }
+                            />
+                          </Card>
+                        )} />
+
+                    </div>
+                  }
+                >
+                  <FontAwesomeIcon size="xl" icon={faBell} />
+                </Popover>
               </Badge>
+
               <Dropdown overlay={menuComprador} placement="bottomLeft" >
                 <Button type="text" >Hola, {infoUsuario.nombre} <FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
               </Dropdown>
-              <Dropdown overlay={menuVendedor} placement="bottomLeft" >
-                <Button type="text" >Opciones de vendedor<FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
-              </Dropdown>
+              {(infoUsuario.esVendedor) &&
+                <Dropdown overlay={menuVendedor} placement="bottomLeft" >
+                  <Button type="text" >Opciones de vendedor<FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                </Dropdown>
+              }
               <Link to="/profile">
                 <Avatar size="large" icon={<UserOutlined />} src={infoUsuario.imagen} style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
               </Link>
@@ -258,7 +355,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
               href="/signin"
               with="link"
               type="dark"
-              style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar sesión <FontAwesomeIcon icon={faRightToBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
+              style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar sesión<FontAwesomeIcon icon={faRightToBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
             </Button>
 
             <Button

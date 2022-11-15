@@ -68,7 +68,7 @@ root.render(
           <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false}></Reclamos>} />
           <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>
           <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
-          <Route path="/listarSolicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
+          <Route path="/solicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
         </Route>
       </Routes>
     </BrowserRouter>
