@@ -1,9 +1,13 @@
-import { Alert, Button, DatePicker, Form, Input } from "antd"
+import { Alert, DatePicker, Form, Input } from "antd"
 import { RuleObject } from "antd/lib/form";
 import { useState } from "react";
 import { differenceInYears, format } from "date-fns";
 import { UserService } from "shopit-shared"
 import { useNavigate } from "react-router";
+import Button from 'antd-button-color';
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
+
 type PasswordState = {
   password: string;
   repeatPassword: string;
@@ -47,22 +51,24 @@ const SignUpForm = () => {
           if (response.success && response.token && response.uuid) {
             localStorage.setItem("token", response.token!)
             localStorage.setItem("uuid", response.uuid)
+            localStorage.setItem("rol", response.rol?.toString()!)
             navigate("/")
           } else {
             setError({ error: true, message: response.error! })
           }
         })
       }}
+      layout="vertical"
     >
-      <Form.Item name="email" rules={[{
+      <Form.Item name="email" label="Correo" rules={[{
         required: true,
         type: "email",
-        message: "Debe ser un mail valido"
+        message: "Debe ser un correo valido"
       }]}>
         <Input placeholder="usuario@shopnow.com" />
       </Form.Item>
 
-      <Form.Item name="nombre" rules={[{
+      <Form.Item name="nombre" label="Nombre" rules={[{
         required: true,
         type: "string",
         message: "No puede ser vacío"
@@ -70,7 +76,7 @@ const SignUpForm = () => {
         <Input placeholder="Nombre" />
       </Form.Item>
 
-      <Form.Item name="apellido" rules={[{
+      <Form.Item name="apellido" label="Apellido" rules={[{
         required: true,
         type: "string",
         message: "No puede ser vacío"
@@ -79,6 +85,7 @@ const SignUpForm = () => {
       </Form.Item>
       <Form.Item
         name="password"
+        label="Contraseña"
         rules={[{
           required: true,
           message: "No puede ser vacío"
@@ -93,6 +100,7 @@ const SignUpForm = () => {
 
       <Form.Item
         name="repeatPassword"
+        label="Repetir contraseña"
         rules={[{
           required: true,
           message: "No puede ser vacío"
@@ -107,10 +115,11 @@ const SignUpForm = () => {
       </Form.Item>
       <Form.Item
         name="telefono"
+        label="Teléfono"
         rules={[{
           required: true,
           max: 9,
-          message: "Solo numeros, con un maximo de 9 caracteres",
+          message: "Solo números, con un máximo de 9 caracteres",
           pattern: new RegExp("^[0-9]{0,9}$")
         }
         ]}
@@ -121,6 +130,7 @@ const SignUpForm = () => {
         <Form.Item
           style={{ width: "100%" }}
           name="fechaNac"
+          label="Fecha de nacimiento"
           rules={[{
             required: true,
             validator: dateofbirthValidator,
@@ -130,7 +140,7 @@ const SignUpForm = () => {
           <DatePicker style={{ width: "100%" }} format={"DD/MM/yyyy"} placeholder="Seleccione una fecha" />
         </Form.Item>
         {error?.error && <Alert style={{ marginTop: 16, marginBottom: 16, width: "100%" }} message={error.message} type="error" showIcon={true} />}
-        <Button type="primary" htmlType="submit">Registrarse!</Button>
+        <Button type="success" htmlType="submit">Registrarse!</Button>
       </div>
     </Form>
   )

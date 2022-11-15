@@ -11,11 +11,11 @@ type otherInfoProp = {
   imagenGet: (src: string) => void
 }
 const useStyles = createUseStyles({
-  container : {
+  container: {
 
   },
 
-  colPequeño : {
+  colPequeño: {
 
   },
 
@@ -28,10 +28,10 @@ const useStyles = createUseStyles({
   '@media screen and (max-width: 897px)': {
     container: {
       width: "90% !important",
-      justifyContent:"center !important"
+      justifyContent: "center !important"
     },
-    colPequeño : {
-      width:"100% !important"
+    colPequeño: {
+      width: "100% !important"
     }
   }
 
@@ -91,7 +91,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             calificacion: infoUsuario.datosVendedor.calificacion
           })
         }
-        imagenGet(infoUsuario.imagen!);
+        imagenGet(infoUsuario.imagen?.data!);
         setInfoUsuario({
           uuid: uuid,
           apellido: (infoUsuario.apellido as string),
@@ -100,11 +100,10 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
           telefono: (infoUsuario.telefono as string),
           calificacion: (infoUsuario.calificacion as number)
         })
-        setImagen(infoUsuario.imagen as string);
+        setImagen(infoUsuario.imagen?.data as string);
 
       })
       .catch(() => console.log("Ocurrio un error al obtener la informacion del usuario"));
-
   }
 
 
@@ -196,7 +195,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
 
   return (
     <Row className={styles.container} justify='space-between' style={{ width: "60%" }}>
-      <Col className={styles.colPequeño}  style={{ width: "60%" }}>
+      <Col className={styles.colPequeño} style={{ width: "60%" }}>
         <div style={{ marginBottom: "50px" }}>
           <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
             <h3 style={{ marginBottom: "5px" }}>Información básica</h3>
@@ -263,7 +262,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                 <label>RUT:</label>
                 <input disabled={true} name='rut' type="text" className="usuarioInput" defaultValue={datosVendedor.rut} />
               </div>
-              
+
               <div>
                 <Tooltip title="Calificación obtenida de los compradores">
                   <div>
@@ -276,18 +275,18 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
               </div>
             </div>
             <div className='rigthValues'>
-            <div>
+              <div>
                 <label>Teléfono:</label>
                 <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={datosVendedor.telefonoEmpresa} onChange={(e) => onInputchangeEmpresa(e)} />
               </div>
-            
+
               {
-                editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf:"end" }}>
+                editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf: "end" }}>
                   <Button type='primary' onClick={onAcceptEditEmpresa}>Modificar</Button>
                 </div>
               }
             </div>
-          
+
           </div>
         </div>
       </Col >

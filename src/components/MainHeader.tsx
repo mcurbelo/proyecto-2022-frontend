@@ -1,4 +1,4 @@
-import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpen, faEnvelopeOpenText, faMapLocationDot, faMoneyBill, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRoute, faUserPlus, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpen, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBill, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faRoute, faSquare, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, Row, Divider, List, Empty } from "antd";
 import Search from "antd/lib/input/Search";
@@ -14,7 +14,7 @@ import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { Link } from "react-router-dom";
-import { EstadoSolicitud } from "shopit-shared/dist/user/UserService";
+import { EstadoSolicitud, Rol } from "shopit-shared/dist/user/UserService";
 import { info } from "console";
 import { UserOutlined } from "@ant-design/icons";
 import { getMessaging, onMessage } from "firebase/messaging";
@@ -27,7 +27,7 @@ type MainHeaderProps = {}
 const useStyles = createUseStyles({
   wrapper: {
     display: "grid",
-    background: "#FFFFA7",
+    background: "#fff159",
     height: 100,
     gridTemplateRows: "1fr 1fr 1fr ",
     marginBottom: "1%"
@@ -84,7 +84,8 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     nombre: "",
     estadoSolicitud: EstadoSolicitud.NoSolicitada,
     esVendedor: false,
-    imagen: ""
+    imagen: "",
+    rol: Rol.Usuario
   })
   const [carrito, setCarrito] = useState(0)
   const [notificaciones, setNotificacion] = useState(0)
@@ -146,37 +147,36 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
   const itemsAdministrador = [
     {
-      label: (<Link type="text" to="/usuarios" className="ant-btn ant-btn-text">Gestión usuarios<FontAwesomeIcon icon={faMoneyBillTrendUp} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/usuarios" className="ant-btn ant-btn-text">Gestión de usuarios<FontAwesomeIcon icon={faUsers} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-1'
     },
     {
-      label: (<Link type="text" to="/devoluciones" className="ant-btn ant-btn-text">Deshacer venta(PH)<FontAwesomeIcon icon={faWarehouse} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/administrador" className="ant-btn ant-btn-text">Crear nuevo administrador<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-2'
     },
     {
-      label: (<Link type="text" to="/administrador" className="ant-btn ant-btn-text">Crear nuevo administrador<FontAwesomeIcon icon={faCirclePlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/solicitudes" className="ant-btn ant-btn-text">Solicitudes de rol vendedor<FontAwesomeIcon icon={faIdCardClip} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-3'
     },
     {
-      label: (<Link type="text" to="/solicitudes" className="ant-btn ant-btn-text">Solicitudes de rol vendedor<FontAwesomeIcon icon={faEnvelopeOpenText} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/devoluciones" className="ant-btn ant-btn-text">Deshacer venta (PH)<FontAwesomeIcon icon={faRotateLeft} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-4'
     },
     {
-      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadisiticas(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadísticas (PH)<FontAwesomeIcon icon={faChartLine} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-5'
     },
     {
-      label: (<Link type="text" to="/categorias" className="ant-btn ant-btn-text">Crear categoria(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/categorias" className="ant-btn ant-btn-text">Crear categoria (PH)<FontAwesomeIcon icon={faSquarePlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-6'
     },
   ];
 
   const itemPerfil = [
-    {
+    infoUsuario.rol !== "ADM" ? {
       label: (<Link type="text" to="/profile" className="ant-btn ant-btn-text">Mi perfil<FontAwesomeIcon icon={faAddressCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-1'
-    },
-
+    } : null,
     {
       label: (<Button type="text"
         onClick={(_) => {
@@ -188,9 +188,8 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         }}
       >
         Cerrar sesión<FontAwesomeIcon icon={faRightFromBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
-      </Button>), key: 'item-7'
+      </Button>), key: 'item-2'
     }
-
   ]
 
   const menuPerfil = (<Menu items={itemPerfil}></Menu>)
@@ -249,19 +248,24 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
   useEffect(() => {
     if (sesionIniciada) {
+      const rol = localStorage.getItem("rol") as Rol
       UserService.obtenerInformacion(localStorage.getItem("token")!, localStorage.getItem("uuid")!)
-        .then((infoUsuario) => {
-          const { datosVendedor } = infoUsuario;
-          let nombre = infoUsuario.nombre;
-          let esVendedor = (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Aceptado) || false
-          let estadoSolicitud = EstadoSolicitud.NoSolicitada;
-          if (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Pendiente) {
-            estadoSolicitud = EstadoSolicitud.Pendiente;
+        .then((informacion) => {
+          ;
+          const { datosVendedor } = informacion;
+          if (rol === "ADM") {
+            setInfoUsuario({ ...infoUsuario, rol: rol, nombre: informacion.nombre! });
           }
-          setInfoUsuario({ nombre: nombre, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: infoUsuario.imagen });
+          else {
+            let nombre = informacion.nombre;
+            let esVendedor = (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Aceptado) || false
+            let estadoSolicitud = EstadoSolicitud.NoSolicitada;
+            if (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Pendiente) {
+              estadoSolicitud = EstadoSolicitud.Pendiente;
+            }
+            setInfoUsuario({ nombre: nombre!, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: informacion.imagen?.data!, rol: Rol.Usuario });
+          }
         })
-    } else {
-
     }
 
   }, [sesionIniciada])
@@ -309,10 +313,12 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         {sesionIniciada ?
           <div style={{ gridColumn: 3, justifySelf: "end" }}>
             <Space size={40}>
-              <Badge count={carrito} offset={[0, 0]}>
-                <FontAwesomeIcon size="xl" type="regular " icon={faCartShopping} />
-              </Badge>
-
+              {infoUsuario.rol !== "ADM" ? (
+                <Badge count={carrito} offset={[0, 0]}>
+                  <FontAwesomeIcon size="xl" type="regular " icon={faCartShopping} />
+                </Badge>)
+                : null
+              }
               <Badge count={notificaciones} offset={[0, 0]}>
                 <Popover
                   trigger="hover"
@@ -345,15 +351,14 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
                 </Popover>
               </Badge>
 
-              <Dropdown overlay={menuComprador} placement="bottomLeft" >
+              <Dropdown overlay={(infoUsuario.rol !== "ADM") ? menuComprador : menuAdministrador} placement="bottomLeft" >
                 <Button type="text" >Hola, {infoUsuario.nombre} <FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
               </Dropdown>
               {(infoUsuario.esVendedor) &&
                 <Dropdown overlay={menuVendedor} placement="bottomLeft" >
-                  <Button type="text" >Opciones de vendedor<FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                  <Button type="text">Opciones de vendedor<FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                 </Dropdown>
               }
-
 
               <Dropdown overlay={menuPerfil} placement="bottomLeft" >
                 <Avatar size="large" icon={<UserOutlined />} src={infoUsuario.imagen} style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }} />
@@ -394,7 +399,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           }
         </div>
       </div>
-    </div>
+    </div >
   )
 }
 

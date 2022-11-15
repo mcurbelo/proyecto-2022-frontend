@@ -41,6 +41,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
             console.log(result)
             localStorage.setItem("token", result.token)
             localStorage.setItem("uuid", result.uuid)
+            localStorage.setItem("rol", result.rol?.toString()!)
             navigate("/")
           } else {
             setState({

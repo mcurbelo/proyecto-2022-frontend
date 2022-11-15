@@ -1,7 +1,7 @@
 import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Popover, Space, Modal, Tooltip, Comment } from "antd";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { ProductoService } from "shopit-shared";
 import { DtProducto } from "shopit-shared/dist/user/ProductoService";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -74,6 +74,7 @@ export const InfoProducto = () => {
   const [ellipsis, setEllipsis] = useState(true);
   const [counter, setCounter] = useState(0);
   const [cantidadProducto, setCantidad] = useState(1);
+  const [usuarioLogueado, setLogeado] = useState(false);
 
   useEffect(() => {
     if (id) {
@@ -89,6 +90,9 @@ export const InfoProducto = () => {
         }
       })
     }
+    if (localStorage.getItem("token"))
+      setLogeado(true)
+
   }, [])
 
   const seleccionarImagen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
@@ -99,12 +103,12 @@ export const InfoProducto = () => {
       return <Text type="success">En stock<FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
     if (producto != undefined && producto?.stock < 30 && producto?.stock > 10)
-      return <Text type="warning">Stock medio <FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
+      return <Text type="warning">Stock medio<FontAwesomeIcon icon={faBoxesStacked} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
     if (producto != undefined && producto?.stock <= 10 && producto?.stock > 0)
-      return <Text type="danger">Últimas unidades  <FontAwesomeIcon icon={faBox} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
+      return <Text type="danger">Últimas unidades<FontAwesomeIcon icon={faBox} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
     else
-      return <Text mark>Sin stock <FontAwesomeIcon icon={faCircleXmark} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
+      return <Text mark>Sin stock<FontAwesomeIcon icon={faCircleXmark} style={{ display: "inline-block", marginLeft: "5px" }} /></Text>
 
   }
 
@@ -243,9 +247,17 @@ export const InfoProducto = () => {
             </div>
             <Divider />
             <div>
-              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0} onClick={realizarCompra}>
+              {
+                !usuarioLogueado ? (
+                  <div style={{ textAlign: "center" }}>
+                    <Text mark strong>Debes {<Link to={"/signin"}>iniciar sesión</Link>} o {<Link to={"/signiup"}>registrate</Link>} para comprar el producto.</Text>
+                    <Divider></Divider>
+                  </div>
+                ) : null
+              }
+              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado } onClick={realizarCompra}>
                 Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-              <Button block disabled={producto?.stock == 0}>
+              <Button block disabled={producto?.stock == 0 || !usuarioLogueado}>
                 Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
             </div>
           </Card>
