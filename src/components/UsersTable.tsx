@@ -5,6 +5,8 @@ import { createUseStyles } from "react-jss";
 import { AdministradorService } from "shopit-shared";
 import { EstadoUsuario } from "shopit-shared/dist/user/AdministradorService";
 import { DtUsuarioSlim } from "shopit-shared/dist/user/VendedorService";
+import { confirmAlert } from 'react-confirm-alert'; // Import
+import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 
 type UsersTableProps = {
   users: DtUsuarioSlim[];
@@ -22,9 +24,6 @@ const useStyles = createUseStyles({
     padding: 15
   }
 })
-
-
-
 
 
 const UsersTable: React.FC<UsersTableProps> = (props) => {
@@ -70,6 +69,15 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
           />
           <Table.Column<DtUsuarioSlim>
             sorter={(a, b) => {
+              if(a.correo > b.correo) return 1
+              if(a.correo < b.correo) return -1
+              return 0
+            }}
+            title="Estado"
+            render={(_, data) => data.estadoUsuario}
+          />
+          <Table.Column<DtUsuarioSlim>
+            sorter={(a, b) => {
               if(a.apellido > b.apellido) return 1
               if(a.apellido < b.apellido) return -1
               return 0
@@ -78,6 +86,7 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
             render={(_, data) => <PopOver data={data} reloadFunction={reload} />}
           />
         </Table>
+        
 
         <Pagination style={{paddingTop: 15}} defaultCurrent={1} total={props.totalUsers} onChange={onChange} pageSize={10}/>
       </div>
@@ -89,16 +98,20 @@ const PopOver: React.FC<{data: DtUsuarioSlim, reloadFunction: () => void}> = (pr
   const {data, reloadFunction} = props;
   const [isOpen, setIsOpen] = useState(false)
   const [modalBloqueoOpen, isModalBloqueoOpen] = useState(false);
+  const [modalEliminarCuenta, isModalEliminarCuentaOpen] = useState(false);
   const [motivo, setMotivo] =  useState("");
   const [loading, setLoading] = useState(false);
 
   const { TextArea } = Input;
 
-  const onBloquear = (id: string) => {
-    let token: string = localStorage.getItem("token") as string;
+  const onBloquear = () => {
     setIsOpen(false);
     isModalBloqueoOpen(true);
-    
+  }
+
+  const onEliminar = () => {
+    setIsOpen(false);
+    isModalEliminarCuentaOpen(true);
   }
 
   const acceptBlock = (id: string, motivo: string) => {
@@ -116,6 +129,7 @@ const PopOver: React.FC<{data: DtUsuarioSlim, reloadFunction: () => void}> = (pr
 
   const cerrarModal = () => {
     isModalBloqueoOpen(false);
+    isModalEliminarCuentaOpen(false);
   }
   
   const onDesbloquear = (id: string) => {
@@ -135,6 +149,34 @@ const PopOver: React.FC<{data: DtUsuarioSlim, reloadFunction: () => void}> = (pr
       setMotivo(e.target.value);
   }
 
+  const eliminarCuenta = (id: string, motivo: string) => {
+    isModalEliminarCuentaOpen(false);
+    confirmAlert({
+      title: 'Confirmacion accion',
+      message: 'Esta seguro que desea eliminar el usuario?',
+      buttons: [
+        {
+          label: 'Si',
+          onClick: () => {
+            let token: string = localStorage.getItem("token") as string;
+            AdministradorService.cambiarEstadoUsuario(id, token, {motivo: motivo}, EstadoUsuario.Eliminado).then((res)=>{
+              message.success("Usuario eliminado con exito");
+              reloadFunction();      
+            })
+          }
+        },
+        {
+          label: 'No',
+          onClick: () => {}
+        }
+      ]
+    });
+
+
+    
+     
+  }
+
   
   return (
     <Spin spinning={loading}>
@@ -148,7 +190,8 @@ const PopOver: React.FC<{data: DtUsuarioSlim, reloadFunction: () => void}> = (pr
           content={
             <div style={{ display: "flex", flexDirection: "column" }}>
               <Button type="text" disabled={!(data.estadoUsuario != "Activo")} onClick={() => onDesbloquear(data.id)}>Desbloquear</Button>
-              <Button danger type="text" disabled={!(data.estadoUsuario == "Activo")} onClick={() => onBloquear(data.id)}>Bloquear</Button>
+              <Button danger type="text" disabled={!(data.estadoUsuario == "Activo")} onClick={() => onBloquear()}>Bloquear</Button>
+              <Button danger type="text" onClick={() => onEliminar()}>Eliminar Cuenta</Button>
             </div>
           }
           onOpenChange={(open) => setIsOpen(open)}
@@ -156,7 +199,11 @@ const PopOver: React.FC<{data: DtUsuarioSlim, reloadFunction: () => void}> = (pr
           <MoreOutlined style={{ marginLeft: "auto" }} onClick={() => setIsOpen(true)} />
         </Popover>
       
-        <Modal title="Basic Modal" open={modalBloqueoOpen} onOk={() => acceptBlock(data.id, motivo)} onCancel={cerrarModal}>
+        <Modal title="Bloquear Usuario" open={modalBloqueoOpen} onOk={() => acceptBlock(data.id, motivo)} onCancel={cerrarModal}>
+          <TextArea rows={4} placeholder="Ingrese un motivo" onChange={(e) => loadMotivo(e)}/>
+        </Modal>
+
+        <Modal title="Eliminar Cuenta" open={modalEliminarCuenta} onOk={() => eliminarCuenta(data.id, motivo)} onCancel={cerrarModal}>
           <TextArea rows={4} placeholder="Ingrese un motivo" onChange={(e) => loadMotivo(e)}/>
         </Modal>
     </div>

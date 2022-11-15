@@ -21,6 +21,7 @@ import { Directions } from './components/Directions';
 import RealizarCompra from './components/RealizarCompra';
 import AddProductForm from './components/ProductForm';
 import { MisCompras } from './components/MisCompras';
+import AdminSignUpForm from './components/AdminSignUpForm'
 import { MisVentas } from './components/MisVentas';
 import { Reclamos } from './components/ListaReclamos';
 import { MisProductos } from './components/ListarMisProductos';
@@ -64,6 +65,7 @@ root.render(
         <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>
         <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
         <Route path="/listarSolicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
+        <Route path="/crearAdmin" element={<AdminSignUpForm></AdminSignUpForm>}  ></Route>
       </Routes>
     </BrowserRouter>
   </>
