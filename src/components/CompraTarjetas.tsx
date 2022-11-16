@@ -48,7 +48,7 @@ export const CompraTarjeta = (props: CompraTarjetaProps) => {
             return (
                 <>
                     <h1>Mis tarjetas:</h1>
-                    <div style={{ paddingLeft: "15px", display: "flex" }}>
+                    <div style={{ display: "flex" }}>
                         <Button with="link" type="success" onClick={onClick}><b>Agregar tarjeta <FontAwesomeIcon icon={faCirclePlus} style={{ display: "inline-block", marginLeft: "5px" }} /></b></Button>
                     </div>
                     <CardList onSelectCard={(id) => { if (id !== null) onSelectCard(id) }} selectedCard={idSeleccionPrevia} onSelectedCardInfo={(card) => { infoCard(card) }} />

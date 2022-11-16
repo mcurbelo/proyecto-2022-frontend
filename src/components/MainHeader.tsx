@@ -1,21 +1,19 @@
-import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpen, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBill, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faRoute, faSquare, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, Row, Divider, List, Empty } from "antd";
+import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, List, Empty } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useMitt } from "react-mitt";
-import { useNavigate } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { CategoriaService, UserService } from "shopit-shared";
 import { DtCategoria } from "shopit-shared/dist/user/CategoriaService";
-import { onMessageListener } from "../firebase";
 import logo from "./../images/logo192.png"
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { Link } from "react-router-dom";
 import { EstadoSolicitud, Rol } from "shopit-shared/dist/user/UserService";
-import { info } from "console";
 import { UserOutlined } from "@ant-design/icons";
 import { getMessaging, onMessage } from "firebase/messaging";
 import moment from "moment";
@@ -75,6 +73,7 @@ type Note = {
 
 
 const MainHeader: React.FC<MainHeaderProps> = (props) => {
+  const location = useLocation()
   const { emitter } = useMitt()
   const messaging = getMessaging();
   const styles = useStyles()
@@ -102,19 +101,19 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       label: (<Link type="text" to="/profile"
         className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
         Solcitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
-      key: 'item-3'
+      key: 'item-2'
     },
     {
       label: (<Link type="text" to="/tarjetas" className="ant-btn ant-btn-text">Mis tarjetas<FontAwesomeIcon icon={faCreditCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
-      key: 'item-4'
+      key: 'item-3'
     },
     {
       label: (<Link type="text" to="/direcciones" className="ant-btn ant-btn-text">Mis direcciones<FontAwesomeIcon icon={faMapLocationDot} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
-      key: 'item-5'
+      key: 'item-4'
     },
     {
       label: (<Link type="text" to="/misReclamos" className="ant-btn ant-btn-text">Mis reclamos<FontAwesomeIcon icon={faBullhorn} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
-      key: 'item-6'
+      key: 'item-5'
     },
 
   ];
@@ -216,7 +215,6 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     if (notificaciones > 0)
       localStorage.setItem("notificaciones", JSON.stringify(notificacionesList))
   }, [notificacionesList])
-
 
 
 

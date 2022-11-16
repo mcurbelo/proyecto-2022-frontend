@@ -150,7 +150,7 @@ export const CompraDireccion = (props: CompraDireccionProps) => {
                                         <Radio value={direccion.id!.toString()} onClick={() => onSelectDireccion(direccion)} >
                                             <div className={styles.cardData}>
                                                 <Typography>
-                                                    {(esEnvio) ? <FontAwesomeIcon icon={faLocationDot} /> : <FontAwesomeIcon icon={faShop} />}  {direccion.calle + " " + direccion.numero + ". " + direccion.localidad + ", " + direccion.departamento}
+                                                    {<FontAwesomeIcon icon={(esEnvio) ? faLocationDot : faShop} style={{ display: "inline-block", marginRight: "5px" }} />}  {direccion.calle + " " + direccion.numero + ". " + direccion.localidad + ", " + direccion.departamento}
                                                 </Typography>
                                             </div>
                                         </Radio>

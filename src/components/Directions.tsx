@@ -8,7 +8,7 @@ import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
 
 
 
-const token : string =  localStorage.getItem("token") as string;
+
 
 interface DirectionsProps {
   permiteSeleccion ?: boolean;
@@ -18,6 +18,7 @@ interface DirectionsProps {
 
 
 export const Directions: React.FC<DirectionsProps> = (props) => {
+  const token =  localStorage.getItem("token") as string;
   let { onSelectDirection } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idDireccion, setIdDireccion] = useState("");
