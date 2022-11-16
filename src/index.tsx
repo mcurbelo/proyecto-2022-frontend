@@ -47,18 +47,18 @@ root.render(
     <BrowserRouter>
       <Routes>
         <Route element={<WithoutNav />}>
-          <Route path="/signin" element={<SignInPage />} />
+          <Route path="/iniciarSesion" element={<SignInPage />} />
         </Route>
         <Route element={<WithNav />}>
           <Route path='/' element={<HomePage />} />
-          <Route path="/signup" element={<SignUpPage />} />
-          <Route path="/users" element={<UserList />} />
-          <Route path="/directions" element={<Directions />} />
+          <Route path="/registrarse" element={<SignUpPage />} />
+          <Route path="/usuarios" element={<UserList />} />
+          <Route path="/direcciones" element={<Directions />} />
           <Route path="/compras" element={<MisCompras />} />
           <Route path="/testNotifiacion" element={<NotificacionTest />} />
           <Route path="/addCard" element={<AddCardForm />} />
-          <Route path="/profile" element={<Perfil />} />
-          <Route path="/cards" element={<TarjetasPage />} />
+          <Route path="/perfil" element={<Perfil />} />
+          <Route path="/tarjetas" element={<TarjetasPage />} />
           <Route path="/productos/:id" element={<InfoProducto />} />
           <Route path="/compra" element={<RealizarCompra />} />
           <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
@@ -70,7 +70,7 @@ root.render(
           <Route path="/misProductos" element={<MisProductos></MisProductos>} ></Route>
           <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
           <Route path="/solicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
-		  <Route path="/crearAdmin" element={<AdminSignUpForm></AdminSignUpForm>}  ></Route>
+          <Route path="/nuevoAdministrador" element={<AdminSignUpForm></AdminSignUpForm>}  ></Route>
         </Route>
       </Routes>
     </BrowserRouter>

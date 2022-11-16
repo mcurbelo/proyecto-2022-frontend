@@ -1,6 +1,6 @@
 import { faCirclePlus, faLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Row, Typography } from "antd";
+import { message, Row, Typography } from "antd";
 import { useEffect, useState } from "react";
 import AddCard from "./AddCard";
 import CardList, { CreditCardData } from "./CardList";
@@ -60,7 +60,7 @@ export const CompraTarjeta = (props: CompraTarjetaProps) => {
                     <div style={{ display: "flex", cursor: "pointer" }} onClick={onClick}>
                         <Text> <FontAwesomeIcon icon={faLeftLong} /> Volver a la lista</Text>
                     </div>
-                    <AddCard onCardAdd={() => { setMostrar(true) }} />
+                    <AddCard onCardAdd={() => { setMostrar(true) ; message.success('Su tarjeta ha sido agregada correctamente');}} />
                 </>
             )
         }

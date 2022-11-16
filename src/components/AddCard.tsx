@@ -95,7 +95,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
         </Button>
       </Form>
 
-      {state.hasLoaded && !state.loading && state.success &&
+      {state.hasLoaded && !state.loading && state.success && 
         <Alert type="success" message="Su tarjeta ha sido agregada correctamente" />
       }
       {state.hasLoaded && !state.loading && !state.success &&

@@ -250,7 +250,7 @@ export const InfoProducto = () => {
               {
                 !usuarioLogueado ? (
                   <div style={{ textAlign: "center" }}>
-                    <Text mark strong>Debes {<Link to={"/signin"}>iniciar sesión</Link>} o {<Link to={"/signiup"}>registrate</Link>} para comprar el producto.</Text>
+                    <Text mark strong>Debes {<Link to={"/iniciarSesion"}>iniciar sesión</Link>} o {<Link to={"/registrarse"}>registrate</Link>} para comprar el producto.</Text>
                     <Divider></Divider>
                   </div>
                 ) : null

@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { BasicInfo } from './BasicInfo';
 import { OtherInfo } from './OtherInfo';
 import "../main.css"
-import { Button, Card, Col, Divider, Row } from 'antd';
+import { Col, Row } from 'antd';
 
 
 

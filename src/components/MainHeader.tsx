@@ -105,11 +105,11 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-3'
     },
     {
-      label: (<Link type="text" to="/cards" className="ant-btn ant-btn-text">Mis tarjetas<FontAwesomeIcon icon={faCreditCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/tarjetas" className="ant-btn ant-btn-text">Mis tarjetas<FontAwesomeIcon icon={faCreditCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-4'
     },
     {
-      label: (<Link type="text" to="/directions" className="ant-btn ant-btn-text">Mis direcciones<FontAwesomeIcon icon={faMapLocationDot} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/direcciones" className="ant-btn ant-btn-text">Mis direcciones<FontAwesomeIcon icon={faMapLocationDot} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-5'
     },
     {
@@ -151,7 +151,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-1'
     },
     {
-      label: (<Link type="text" to="/administrador" className="ant-btn ant-btn-text">Crear nuevo administrador<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/nuevoAdministrador" className="ant-btn ant-btn-text">Crear nuevo administrador<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-2'
     },
     {
@@ -174,7 +174,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
   const itemPerfil = [
     infoUsuario.rol !== "ADM" ? {
-      label: (<Link type="text" to="/profile" className="ant-btn ant-btn-text">Mi perfil<FontAwesomeIcon icon={faAddressCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/perfil" className="ant-btn ant-btn-text">Mi perfil<FontAwesomeIcon icon={faAddressCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-1'
     } : null,
     {
@@ -369,7 +369,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
           <>
             <Button
-              href="/signin"
+              href="/iniciarSesion"
               with="link"
               type="dark"
               style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar sesión<FontAwesomeIcon icon={faRightToBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
@@ -379,7 +379,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
               onClick={(_) => {
                 _.currentTarget.blur()
               }}
-              href="/signup"
+              href="/registrarse"
               with="link"
               type="dark"
               style={{ justifySelf: "end", gridColumn: 4, marginRight: 24 }}>Registrarse<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} />

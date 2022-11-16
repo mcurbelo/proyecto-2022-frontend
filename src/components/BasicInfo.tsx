@@ -60,6 +60,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
       title: 'Realmente quiere eliminar su cuenta?',
       icon: <ExclamationCircleOutlined />,
       content: 'Si confirma, su cuenta será eliminda y dejará de estar disponible. No puede tener compras ni ventas pendientes.',
+      cancelText:"Cancelar",
       onOk() {
         return UserService.eliminarCuenta(token, uuid).then((response) => {
           if (response.success) {
