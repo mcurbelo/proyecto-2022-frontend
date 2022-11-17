@@ -181,7 +181,7 @@ export const RealizarCompra = () => {
                 <div className={styles.stepsAction}>
                     <Space size={100} align="center">
                         {current === 0 && (
-                            <Button type='warning' size='large' style={{ width: "170px" }}
+                            <Button type='warning' size='large' style={{ width: "190px" }}
                                 onClick={() => { localStorage.removeItem("infoCompra"); navigate("/productos/" + datosCompra.idProducto) }}
                             ><FontAwesomeIcon style={{ display: "inline-block", marginRight: "10px" }} icon={faCircleLeft} />
                                 Volver al producto
@@ -189,19 +189,19 @@ export const RealizarCompra = () => {
                         )}
 
                         {current > 0 && (
-                            <Button type='info' size='large' style={{ width: "170px" }}
+                            <Button type='info' size='large' style={{ width: "190px" }}
                                 onClick={() => prev()}
                             ><FontAwesomeIcon style={{ display: "inline-block", marginRight: "10px" }} icon={faCircleLeft} />
                                 Anterior
                             </Button>
                         )}
                         {current < steps.length - 1 && (
-                            <Button type="success" size='large' onClick={() => next()} style={{ width: "170px" }} disabled={(current === 0 && !(datosCompra.idDireccionEnvio! !== -1 || datosCompra.idDireccionLocal! !== -1)) || (current === 1 && (datosCompra.idTarjeta === ""))}>
+                            <Button type="success" size='large' onClick={() => next()} style={{ width: "190px" }} disabled={(current === 0 && !(datosCompra.idDireccionEnvio! !== -1 || datosCompra.idDireccionLocal! !== -1)) || (current === 1 && (datosCompra.idTarjeta === ""))}>
                                 Continuar  <FontAwesomeIcon style={{ display: "inline-block", marginLeft: "10px" }} icon={faCircleRight} />
                             </Button>
                         )}
                         {current === steps.length - 1 && (
-                            <Button type="success" size='large' onClick={realizarPago} style={{ width: "170px" }}>
+                            <Button type="success" size='large' onClick={realizarPago} style={{ width: "190px" }}>
                                 Realizar pago <FontAwesomeIcon style={{ display: "inline-block", marginLeft: "10px" }} icon={faSackDollar} />
                             </Button>
                         )}

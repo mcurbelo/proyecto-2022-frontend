@@ -109,10 +109,6 @@ export const Solicitudes = () => {
         setSolicitudes(solicitudesReclamoNueva);
     }
 
-    //const handleBrokenImage = (e: ) => (e.currentTarget.src = placeholderLink);
-    const onErrorImage = ((e: any) => {
-        e.target.src = <StepBackwardOutlined />
-    })
 
     document.body.style.backgroundColor = "#F0F0F0"
     return (

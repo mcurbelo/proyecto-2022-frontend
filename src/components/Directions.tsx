@@ -8,7 +8,7 @@ import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
 
 
 
-const token : string =  localStorage.getItem("token") as string;
+
 
 interface DirectionsProps {
   permiteSeleccion ?: boolean;
@@ -16,7 +16,9 @@ interface DirectionsProps {
   onSelectDirection?: (id: string) => void;
 }
 
+
 export const Directions: React.FC<DirectionsProps> = (props) => {
+  const token =  localStorage.getItem("token") as string;
   let { onSelectDirection } = props;
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [idDireccion, setIdDireccion] = useState("");
@@ -105,11 +107,11 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
     })
   }
 
-
+  document.body.style.backgroundColor = "#F0F0F0"
   return (
     <div className="centerDiv">
       <div className="directions-flex-div">
-        <h3>Direcciones de envio</h3>
+        <h3>Direcciones de envío</h3>
         <List
           itemLayout="horizontal"
           dataSource={direcciones}
@@ -119,7 +121,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
               <List.Item.Meta
                 avatar={<EnvironmentOutlined /> }
                 title={<a>{item.calle + " " + item.numero}</a>}
-                description={item.localidad + " ," + item.departamento + " | " + item.notas}
+                description={item.localidad + ", " + item.departamento + " | " + item.notas}
               />
             </List.Item>
           )}
@@ -135,14 +137,14 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined /> }
                   title={<a>{item.calle + " " + item.numero}</a>}
-                  description={item.localidad + " ," + item.departamento + " | " + item.notas}
+                  description={item.localidad + ", " + item.departamento + " | " + item.notas}
                 />
               </List.Item>
             )}
           />
         </div>}
         
-        <Button style={{marginTop:"10px"}} type="ghost" onClick={onAddDirection}>Agregar Direccion</Button>
+        <Button style={{marginTop:"10px"}} type="ghost" onClick={onAddDirection}>Agregar dirección</Button>
         {props.permiteSeleccion && <Button style={{marginTop:"10px", display: siguienteVisible ? "block": "none"}} type="ghost" onClick={onSeleccionarDireccion}>Siguiente</Button>}
 
         <div style={{ margin: "20px"}}>

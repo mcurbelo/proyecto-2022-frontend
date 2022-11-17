@@ -1,3 +1,4 @@
+import { Row } from "antd";
 import { useEffect, useState } from "react";
 import { AdministradorService } from "shopit-shared";
 import { DtUsuarioSlim } from "shopit-shared/dist/user/VendedorService";
@@ -27,7 +28,15 @@ const UserList = () => {
   }, [currentPage, reload])
 
   return (
-    <UsersTable users={users} totalUsers={totalUsers} onReload={() => {reload ? setReload(false) : setReload(true)}} onPageChange={page => { debugger; setCurrentPage(page.toString()) }} />
+    <>
+      <Row justify="center">
+        <h1>Gestión de usuarios</h1>
+      </Row>
+      <Row justify="center">
+      <UsersTable users={users} totalUsers={totalUsers}
+        onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { debugger; setCurrentPage(page.toString()) }} />
+        </Row>
+    </>
   )
 }
 

@@ -1,9 +1,8 @@
 import React, { FC, useState } from 'react';
-import { CompradorService, UserService } from 'shopit-shared'
+import { UserService } from 'shopit-shared'
 import '../main.css';
-import userDefault from "../images/user.png"
-import { Button, Divider, Form, Modal, Row, Upload, UploadFile, UploadProps } from 'antd';
-import { ExclamationCircleOutlined, UploadOutlined } from '@ant-design/icons';
+import { Avatar, Button, Divider, Form, Modal, Row, Upload, UploadFile, UploadProps } from 'antd';
+import { ExclamationCircleOutlined, UploadOutlined, UserOutlined } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 
 
@@ -17,17 +16,12 @@ export const BasicInfo: FC<basicinfo> = (props) => {
   const navigate = useNavigate();
   const uuid: string = (localStorage.getItem("uuid") as string);
   const token: string = (localStorage.getItem("token") as string);
-  const { imagenPerfil } = props
+  let { imagenPerfil } = props
   const [isLoading, setLoading] = useState(false);
-  const [imageUrl, setImageUrl] = useState("");
   const [selectedFile, setSelectedFile] = React.useState<File>();
   const [fileList, setFileList] = useState<UploadFile[]>([]);
 
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files;
-    setSelectedFile(fileList![0]);
-  }
 
   const cambiarImagen = () => {
     UserService.updateImagen(token, uuid, selectedFile!).then((response) => {
@@ -36,6 +30,8 @@ export const BasicInfo: FC<basicinfo> = (props) => {
           title: "Edicion completada con éxito",
           content: 'Su imagen de perfil se han actualizado exitosamente',
         });
+        imagenPerfil = URL.createObjectURL(selectedFile!);
+        //Evento a la navbar
       }
       else {
         Modal.error({
@@ -64,6 +60,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
       title: 'Realmente quiere eliminar su cuenta?',
       icon: <ExclamationCircleOutlined />,
       content: 'Si confirma, su cuenta será eliminda y dejará de estar disponible. No puede tener compras ni ventas pendientes.',
+      cancelText:"Cancelar",
       onOk() {
         return UserService.eliminarCuenta(token, uuid).then((response) => {
           if (response.success) {
@@ -93,7 +90,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
 
     <div>
       <div style={{ display: "flex", justifyContent: "center" }}>
-        <img className="profilePic" alt='Avatar'{... (imagenPerfil !== "") ? { src: imagenPerfil } : { src: userDefault }}></img>
+        <Avatar className="profilePic" size={150} alt='Avatar' icon={<UserOutlined />} src={imagenPerfil}></Avatar>
       </div>
       <Row>
         <Form
@@ -101,9 +98,11 @@ export const BasicInfo: FC<basicinfo> = (props) => {
           layout='vertical'
           scrollToFirstError
           onFinish={cambiarImagen}
+
         >
           <Form.Item
             name="imagen"
+            valuePropName="fileList"
             rules={[{ required: true, message: 'Debe selecciona una imagen' }]}
           >
             <Upload {...propsUpload} maxCount={1} accept="image/png, image/jpeg">

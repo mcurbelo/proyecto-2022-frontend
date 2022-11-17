@@ -173,7 +173,6 @@ export const Reclamos = (props: propReclamo) => {
         }
         else {
             VendedorService.listarReclamosRecibidos(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
-                console.log(result);
                 if (result.reclamos !== undefined) {
                     setReclamos(result.reclamos);
                     setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })

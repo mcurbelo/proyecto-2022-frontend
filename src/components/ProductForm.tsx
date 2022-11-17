@@ -1,13 +1,15 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Button, Carousel, Checkbox, DatePicker, Form, Image, Input, InputNumber, Modal, Typography } from "antd";
+import { Carousel, Checkbox, DatePicker, Form, Image, Input, InputNumber, Modal, Typography } from "antd";
 import { format } from "date-fns";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
-import { Navigate, useNavigate } from "react-router";
+import { useNavigate } from "react-router";
 import { CompradorService, VendedorService } from "shopit-shared";
 import { Directions } from "./Directions";
 import PickerCategoria from "./PickerCategoria";
-
+import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
+import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
+import Button from "antd-button-color";
 
 const useStyles = createUseStyles({
   "@global": {
@@ -109,6 +111,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
             return (
               <div key={image.name} style={{ display: "flex", justifyItems: "center" }}>
                 <Image alt="Sin imagen" src={URL.createObjectURL(image)} />
+                <div>
                 <Button
                   danger
                   style={{ justifySelf: "center" }}
@@ -118,6 +121,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
                     setImage(selectedImages.filter(i => i != toDelete))
                   }}
                 >Eliminar</Button>
+                </div>
               </div>
             )
           })}
@@ -129,11 +133,12 @@ const AddProductForm = ({ esSolicitud = false }) => {
         type="primary"
         onClick={() => { document.getElementById("fileInput")?.click() }}
       >
-        Agregar Imagen
+        Agregar imagen
         <input
           style={{ display: "none" }}
           id="fileInput"
           type="file"
+          accept="image/*"
           name="myImage"
           onChange={(event) => { setImage(selectedImages.concat(event.target.files![0])); }}
         />
@@ -149,7 +154,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
               message: "El nombre del producto es obligatorio"
             }]}
             name="nombreProducto"
-            label="Nombre del producto"
+            label="Nombre:"
           >
             <Input placeholder="Bicicleta" />
           </Form.Item>
@@ -160,7 +165,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
               message: "El stock del producto es obligatorio"
             }]}
             name="stockProducto"
-            label="Stock del producto"
+            label="Stock inicial"
           >
             <Input placeholder="100" />
           </Form.Item>
@@ -172,13 +177,13 @@ const AddProductForm = ({ esSolicitud = false }) => {
               max: 255
             }]}
             name="descripcionProducto"
-            label="Descripcion del producto"
+            label="Descripción"
           >
             <Input.TextArea placeholder="Bicicleta rodado 20" size="large" />
           </Form.Item>
 
           <Form.Item
-            label="Precio del producto"
+            label="Precio (pesos uruguayos)"
             rules={[{
               required: true,
               message: "El precio del producto es obligatorio"
@@ -255,7 +260,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
           </Form.Item>}
 
           <Form.Item>
-            <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }} type="primary" htmlType="submit">Agregar Producto</Button>
+            <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }} type="success" htmlType="submit">Agregar producto</Button>
           </Form.Item>
         </Form></>)}
     </div>

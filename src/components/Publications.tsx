@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../main.css'
-import { Button, Card, List, Pagination, PaginationProps, Row, Select, Space } from 'antd';
+import { Button, Card, Col, List, Pagination, PaginationProps, Row, Select, Space } from 'antd';
 import { ItemPublication } from './ItemPublication';
 import { DtFiltros } from 'shopit-shared/dist/user/ProductoService';
 import { CategoriaService, ProductoService } from 'shopit-shared';
@@ -9,6 +9,9 @@ import { useMitt } from 'react-mitt';
 import { DtCategoria } from 'shopit-shared/dist/user/CategoriaService';
 import CheckableTag from 'antd/lib/tag/CheckableTag';
 import { createUseStyles } from 'react-jss';
+import { table } from 'console';
+import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
+import Meta from 'antd/lib/card/Meta';
 
 
 // @ts-check
@@ -33,11 +36,28 @@ const useStyles = createUseStyles({
     flexWrap: "wrap",
     flexDirection: "row",
   },
+  filtros: {
+    width: "18%"
+  },
   '@media screen and (max-width: 500px)': {
     container: {
       flexDirection: "column"
     }
+  },
+  '@media screen and (max-width: 1241px)': {
+    filtros: {
+      width: "30%"
+    }
+  },
+  '@media screen and (max-width: 833px)': {
+    filtros: {
+      width: "100%",
+    },
+    container: {
+      marginRight:"5%"
+    }
   }
+
 })
 
 //TODO Evento Promocional - Segun implementacion
@@ -56,7 +76,7 @@ function Publicactions() {
   const [paginaAbuscar, setPaginaAbuscar] = useState<AppState["paginaAbuscar"]>(0)
   const [valoresOrdenamiento, setValoresOrdenamiento] = useState({
     ordenamiento: "nombre",
-    dirOrdenamiento: "asc",
+    dirOrdenamiento: "dsc",
     cantidadItems: "20"
   })
   const [categorias, setCategorias] = useState<AppState["categorias"]>([])
@@ -133,33 +153,31 @@ function Publicactions() {
     }
     else {
       return <div>
-        <List
-          grid={{
-            gutter: 16,
-            xs: 1,
-            sm: 2,
-            md: 4,
-            lg: 4,
-            xl: 6,
-            xxl: 6,
-          }}
-          dataSource={productos}
-          renderItem={item => (
-            <List.Item>
-              <ItemPublication producto={item}></ItemPublication>
-            </List.Item>
-          )}
-        />
+        <div style={{ maxWidth: "100%", margin: " 0 auto", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }} >
+          {
+            productos.map((value, index) => {
+              return (
+                <Col key={index} style={{ display: 'flex', justifyContent:"center" }}>
+                  <ItemPublication key={index} producto={value}></ItemPublication>
+                </Col>
+              )
+            })
+          }
+
+
+        </div>
         <Pagination style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={paginaActual} total={paginasTotales} current={paginaActual} onChange={onChange} />
       </div>
     }
   }
 
+  document.body.style.backgroundColor = "#F0F0F0"
+
   return (
     <React.Fragment>
-      <div className={styles.container} style={{ display: 'flex', marginTop: '30px', marginLeft: "5%", marginRight: "5%", justifyContent: 'center', gap: "3%" }}>
-        <div id="filtros" style={{ display: 'flex', justifyContent: "center", marginBottom: '5%' }}>
-          <div>
+      <div className={styles.container} style={{ display: 'flex', marginTop: '30px', marginLeft: "5%", justifyContent: 'center', gap: "3%" }}>
+        <div className={styles.filtros} style={{ display: 'flex', justifyContent: "center", marginBottom: '5%' }}>
+          <div style={{ width: "100%", }}>
             <Card title="Filtros aplicados" bodyStyle={{ padding: "5%" }} >
               <Space direction="vertical" size={10} style={{ display: 'flex' }}>
                 <div>
@@ -168,7 +186,7 @@ function Publicactions() {
                     <Option value="nombre">Nombre</Option>
                     <Option value="fecha_inicio">Más nuevos</Option>
                     <Option value="precio">Precio</Option>
-                    <Option value="permite_envio">Permiten envio</Option>
+                    <Option value="permite_envio">Permite envío</Option>
                   </Select>
                 </div>
                 <hr />

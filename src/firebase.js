@@ -27,15 +27,15 @@ export const fetchToken = (setTokenFound) => {
         vapidKey: 'BPLkjIaHk6CD-4BM2cndPmdOeAxr6aI8SqusXqNNOsxihM4_tME4sOS5myxCS6YZFQHwWIhz0VV_X3rqYpM-0AQ'
     }).then((currentToken) => {
         if (currentToken) {
-            console.log('Token actual del cliente: ', currentToken);
             setTokenFound(true);
-            // Tracka el token
+            console.log('Token actual del cliente: ', currentToken);
+            // Trackeaa el token
             // Muestra en la UI que esta permitido recibir notificaciones.
         } else {
-            console.log('El token no esta habilitado. Se necesita permiso para generar uno.');
             setTokenFound(false);
             // Muestra en la UI que el permiso es requerido
         }
+        localStorage.setItem("tokenNotificacion", (currentToken) ? currentToken : "");
     }).catch((err) => {
         console.log('Error al crear el token. ', err);
         // Agarra el error cuando se esta creando el token del cliente.

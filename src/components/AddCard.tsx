@@ -35,7 +35,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
   const [state, setState] = useState({ success: false, loading: false } as AddCardState)
   return (
     <div className={styles.wrapper}>
-      <p>Agregar Tarjeta</p>
+      <h1>Agregar tarjeta</h1>
       <Form
         className={styles.form}
         disabled={state.loading}
@@ -95,7 +95,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
         </Button>
       </Form>
 
-      {state.hasLoaded && !state.loading && state.success &&
+      {state.hasLoaded && !state.loading && state.success && 
         <Alert type="success" message="Su tarjeta ha sido agregada correctamente" />
       }
       {state.hasLoaded && !state.loading && !state.success &&
