@@ -9,6 +9,7 @@ import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoney
 import tarjetas from '../images/tarjetas.jpg';
 import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
+import { Rol } from "shopit-shared/dist/user/UserService";
 
 interface AppState {
   producto: DtProducto
@@ -68,6 +69,7 @@ const { Text, Paragraph } = Typography;
 export const InfoProducto = () => {
   const navigate = useNavigate();
   let { id } = useParams();
+  const rol = localStorage.getItem("rol") as Rol
   const styles = useStyles();
   const [producto, setProducto] = useState<AppState["producto"]>();
   const [imangeSeleccionada, setImagen] = useState<AppState["imagen"]>();
@@ -92,6 +94,7 @@ export const InfoProducto = () => {
     }
     if (localStorage.getItem("token"))
       setLogeado(true)
+
 
   }, [])
 
@@ -255,9 +258,9 @@ export const InfoProducto = () => {
                   </div>
                 ) : null
               }
-              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado } onClick={realizarCompra}>
+              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || rol == Rol.ADM} onClick={realizarCompra}>
                 Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-              <Button block disabled={producto?.stock == 0 || !usuarioLogueado}>
+              <Button block disabled={producto?.stock == 0 || !usuarioLogueado || rol == Rol.ADM}>
                 Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
             </div>
           </Card>

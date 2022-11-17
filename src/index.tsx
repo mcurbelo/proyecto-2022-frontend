@@ -33,6 +33,7 @@ import WithoutNav from './withoutNav';
 import WithNav from './WithNav';
 import Perfil from './components/Perfil';
 import TarjetasPage from './pages/TarjetasPage';
+import AgregarProducto from './pages/AgregarProductoPage';
 
 export default () => <Outlet />
 
@@ -62,7 +63,7 @@ root.render(
           <Route path="/productos/:id" element={<InfoProducto />} />
           <Route path="/compra" element={<RealizarCompra />} />
           <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
-          <Route path="/agregarproducto" element={<AddProductForm esSolicitud={false} />} />
+          <Route path="/agregarproducto" element={<AgregarProducto/>} />
           <Route path="/ventas" element={<MisVentas />} />
           <Route path="/chat/:idchat" element={<Chat />} />
           <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />

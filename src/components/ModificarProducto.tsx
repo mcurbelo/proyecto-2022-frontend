@@ -432,13 +432,11 @@ export const ModificarProducto = () => {
                 </Collapse>
                 <div className={styles.containerFixedBotton} style={{ position: "fixed", bottom: "0", width: "59.9%", display: "flex", justifyContent: "end", paddingBottom: "1%", paddingRight: "0.5%" }}>
 
-                    <Button type="success" size="large" disabled={iguales} htmlType="submit">
-                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk} onClick={() => form.submit()} style={{ marginLeft: "5px" }} />
+                    <Button type="success" size="large" disabled={iguales} htmlType="submit"  onClick={() => form.submit()}>
+                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk}  style={{ marginLeft: "5px" }} />
                     </Button>
                 </div>
             </Row>
-
-
         </div >
 
     )

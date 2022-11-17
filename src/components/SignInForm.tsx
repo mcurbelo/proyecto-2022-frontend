@@ -60,7 +60,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
           message: "El nombre de usuario debe ser un email válido"
         }]}>
         <Input
-          placeholder="Usuario"
+          placeholder="Correo"
           style={{ marginBottom: 16 }}
           onChange={(event) => {
             setState({
