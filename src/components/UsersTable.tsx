@@ -1,5 +1,5 @@
 import { MoreOutlined } from "@ant-design/icons";
-import { Button, Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin, Row } from "antd";
+import { Button, Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin, Row, Select } from "antd";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
 import { AdministradorService } from "shopit-shared";
@@ -13,6 +13,7 @@ type UsersTableProps = {
   totalUsers: number;
   onPageChange: (page: number) => void;
   onReload: () => void;
+  buscar: (nombre: string, correo: string, estado: EstadoUsuario, campoOrden: string, orden: string) => void;
 }
 
 const useStyles = createUseStyles({
@@ -22,11 +23,31 @@ const useStyles = createUseStyles({
     justifyContent: "center",
     width: "100%",
     padding: 15
+  },
+  filtroUsuarios: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    width:"40%",
+    marginBottom: "2%"
+  },
+  sort: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "start",
+    width:"40%",
+    marginBottom: "2%"
   }
 })
 
 
 const UsersTable: React.FC<UsersTableProps> = (props) => {
+  const {Option} = Select;
+  const [nombrefiltro, setnombrefiltro] = useState("");
+  const [correo, setCorreo] = useState("");
+  const [estado, setEstado] = useState(EstadoUsuario.Activo);
+  const [campoOrden, setCampoOrden] = useState("");
+  const [orden, setOrden] = useState("desc");
 
   const onChange: PaginationProps['onChange'] = page => {
     console.log(page);
@@ -37,11 +58,44 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
     props.onReload();
   };
 
+  
+  const buscar = () => {
+      props.buscar(nombrefiltro, correo, estado, campoOrden, orden);
+  }
+
   const { users } = props;
   const styles = useStyles();
   return (
     <div style={{width:"80%"}}>
       <div className={styles.wrapper}>
+        <div className={styles.filtroUsuarios}>
+          <Input style={{marginLeft:"5px"}} placeholder="Buscar por nombre y apellido" value={nombrefiltro} onChange={(evt) => {setnombrefiltro(evt.target.value)}}></Input>
+          <Input style={{marginLeft:"5px"}} placeholder="Correo" value={correo} onChange={(evt) => {setCorreo(evt.target.value)}}></Input>
+          <Select style={{marginLeft:"5px"}} defaultValue={EstadoUsuario.Activo} onChange={(valor) => { setEstado(valor)}}>
+            <Option value={EstadoUsuario.Activo}>Activo</Option>
+            <Option value={EstadoUsuario.Eliminado}>Eliminado</Option>
+            <Option value={EstadoUsuario.Bloqueado}>Bloqueado</Option>
+          </Select>
+          <Button style={{marginLeft:"10px"}} type="primary" onClick={buscar}>Buscar</Button>
+        </div>
+        <div className={styles.sort}>
+          <div>
+            <label>Ordenar por:</label>
+            <Select style={{marginLeft:"5px"}} defaultValue="Nombre" onChange={(valor) => { setCampoOrden(valor)}}>
+              <Option value="nombre">Nombre</Option>
+              <Option value="apellido">Apellido</Option>
+              <Option value="correo">Correo</Option>
+            </Select>
+          </div>
+          <div style={{marginLeft: "5px"}}>
+            <label>Orden</label>
+            <Select style={{marginLeft:"5px"}} defaultValue="desc" onChange={(valor) => { setOrden(valor)}}>
+              <Option value="desc">Descendiente</Option>
+              <Option value="asc">Ascendiente</Option>
+            </Select>
+          </div>
+          
+        </div>
         <Table<DtUsuarioSlim>
           style={{ width: "100%" }}
           bordered={true}

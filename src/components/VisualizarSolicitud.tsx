@@ -152,7 +152,7 @@ export const Solicitud = (props: solcitudProps) => {
                 onOk() {
                     disableButton()
                     setLoading(true)
-                    return AdministradorService.revisarSolicitudNuevoVendedor(solicitud.idSolicitante, token!, true).then((result) => {
+                    return AdministradorService.revisarSolicitudNuevoVendedor(solicitud.idSolicitante, token!, true, {motivo:""}).then((result) => {
                         if (result == "200") {
 
                             Modal.success({

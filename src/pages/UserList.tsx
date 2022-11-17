@@ -1,6 +1,7 @@
 import { Row } from "antd";
 import { useEffect, useState } from "react";
 import { AdministradorService } from "shopit-shared";
+import { EstadoUsuario } from "shopit-shared/dist/user/AdministradorService";
 import { DtUsuarioSlim } from "shopit-shared/dist/user/VendedorService";
 import UsersTable from "../components/UsersTable";
 
@@ -27,6 +28,27 @@ const UserList = () => {
     })
   }, [currentPage, reload])
 
+
+  const buscar= (nombre: string, correo:string, estado: EstadoUsuario, campoOrden: string, orden: string) => {
+    let token = localStorage.getItem("token")!
+    AdministradorService.listadoUsuarios(
+      token,
+      currentPage,
+      "10",
+      campoOrden,
+      orden,
+      {nombre: nombre, correo, estado: estado}
+    ).then((response) => {
+      console.log(response)
+      if (response.usuarios) {
+        setUsers(response.usuarios)
+        setTotalUsers(response.totalItems)
+      }
+    }).catch((error) => {
+      console.log(error)
+    })
+  }
+
   return (
     <>
       <Row justify="center">
@@ -34,7 +56,7 @@ const UserList = () => {
       </Row>
       <Row justify="center">
       <UsersTable users={users} totalUsers={totalUsers}
-        onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { debugger; setCurrentPage(page.toString()) }} />
+        buscar={(nombre, correo, estado, campoOrden, orden) => { buscar(nombre, correo, estado, campoOrden, orden)}} onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { setCurrentPage(page.toString()) }} />
         </Row>
     </>
   )
