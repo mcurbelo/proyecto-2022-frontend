@@ -33,7 +33,7 @@ const UserList = () => {
     let token = localStorage.getItem("token")!
     AdministradorService.listadoUsuarios(
       token,
-      currentPage,
+      "0",
       "10",
       campoOrden,
       orden,
