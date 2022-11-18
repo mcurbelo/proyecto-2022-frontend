@@ -33,6 +33,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
 
   const editarDireccion = (event:any, local:boolean, key?:string ) => {
     if(!key) return;
+    
     let direccion = {id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: ""};
     if(local){
       direccionesLocales.forEach(e => { debugger; if(e.id === key){
@@ -43,6 +44,9 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
         setDireccionEditar({id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal});
       }})
     }
+
+    setIdDireccion(key);
+    setIsModalOpen(true);
   }
 
   const borrarDireccion = (event:any, local:boolean, key:string ) => {
