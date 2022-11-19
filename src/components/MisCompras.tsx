@@ -462,7 +462,7 @@ export const MisCompras: React.FC<{}> = () => {
                 }
 
                 {
-                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={""} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "" }) }}></RealizarCalificacion> : null
+                    (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "" }) }}></RealizarCalificacion> : null
                 }
             </div >
         </div>

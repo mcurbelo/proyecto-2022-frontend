@@ -1,5 +1,4 @@
 
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import reportWebVitals from './reportWebVitals';
 
@@ -8,14 +7,12 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import "./main.css"
 import 'antd/dist/antd.css';
 import SignInPage from './pages/SignInPage';
-import MainHeader from './components/MainHeader';
 import HomePage from './pages/Home';
 import UserList from './pages/UserList';
 import NotificacionTest from './test/Notification'
 import SignUpPage from './pages/SignUpPage';
 import { Auth } from "shopit-shared";
 import AddCardForm from './components/AddCard';
-import CardList from './components/CardList';
 import InfoProducto from './components/InfoProducto';
 import { Directions } from './components/Directions';
 import RealizarCompra from './components/RealizarCompra';
@@ -34,6 +31,8 @@ import WithNav from './WithNav';
 import Perfil from './components/Perfil';
 import TarjetasPage from './pages/TarjetasPage';
 import AgregarProducto from './pages/AgregarProductoPage';
+import EstadisiticasVendedor from './pages/EstadisiticasVendedorPage';
+import { EstVendedorTop10Vendidos } from './components/EstVendedorTop10Vendidos';
 
 export default () => <Outlet />
 
@@ -63,7 +62,7 @@ root.render(
           <Route path="/productos/:id" element={<InfoProducto />} />
           <Route path="/compra" element={<RealizarCompra />} />
           <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
-          <Route path="/agregarproducto" element={<AgregarProducto/>} />
+          <Route path="/agregarproducto" element={<AgregarProducto />} />
           <Route path="/ventas" element={<MisVentas />} />
           <Route path="/chat/:idchat" element={<Chat />} />
           <Route path="/misReclamos" element={<Reclamos listarRealizados={true}></Reclamos>} />
@@ -72,6 +71,7 @@ root.render(
           <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
           <Route path="/solicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
           <Route path="/nuevoAdministrador" element={<AdminSignUpForm></AdminSignUpForm>}  ></Route>
+          <Route path='/estadisticas' element={<EstadisiticasVendedor />}> </Route>
         </Route>
       </Routes>
     </BrowserRouter>

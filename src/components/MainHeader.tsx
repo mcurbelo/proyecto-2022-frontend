@@ -137,7 +137,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-4'
     },
     {
-      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadisiticas(PH)<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadisiticas<FontAwesomeIcon icon={faChartPie} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-5'
     },
 

@@ -17,6 +17,7 @@
     "@types/node": "^16.11.59",
     "@types/react": "^18.0.21",
     "@types/react-dom": "^18.0.6",
+    "@types/recharts": "^1.8.24",
     "antd": "4.23.2",
     "antd-button-color": "^1.0.4",
     "date-fns": "^2.29.3",
@@ -33,6 +34,7 @@
     "react-router": "^6.4.1",
     "react-router-dom": "^6.4.1",
     "react-scripts": "4.0.3",
+    "recharts": "^2.1.16",
     "shopit-shared": "file:../proyecto-2022-shared",
     "typescript": "^4.8.3",
     "web-vitals": "^2.1.4"
