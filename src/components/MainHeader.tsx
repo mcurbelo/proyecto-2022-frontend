@@ -86,7 +86,6 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     imagen: "",
     rol: Rol.Usuario
   })
-  const [carrito, setCarrito] = useState(0)
   const [notificaciones, setNotificacion] = useState(0)
   const [notificacionesList, setNotiList] = useState<Note[]>([])
   const navigate = useNavigate();
@@ -162,7 +161,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-4'
     },
     {
-      label: (<Link type="text" to="/estadisticas" className="ant-btn ant-btn-text">Estadísticas (PH)<FontAwesomeIcon icon={faChartLine} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/estadisticas/sistema" className="ant-btn ant-btn-text">Estadísticas<FontAwesomeIcon icon={faChartLine} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-5'
     },
     {
@@ -311,12 +310,6 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         {sesionIniciada ?
           <div style={{ gridColumn: 3, justifySelf: "end" }}>
             <Space size={40}>
-              {infoUsuario.rol !== "ADM" ? (
-                <Badge count={carrito} offset={[0, 0]}>
-                  <FontAwesomeIcon size="xl" type="regular " icon={faCartShopping} />
-                </Badge>)
-                : null
-              }
               <Badge count={notificaciones} offset={[0, 0]}>
                 <Popover
                   trigger="hover"

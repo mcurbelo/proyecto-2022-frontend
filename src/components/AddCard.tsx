@@ -7,6 +7,7 @@ type AddCardState = {
   success: boolean;
   loading: boolean;
   hasLoaded: boolean;
+  mensaje?: string;
 }
 
 interface AddCardProp {
@@ -32,7 +33,7 @@ const useStyles = createUseStyles({
 })
 const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
   const styles = useStyles();
-  const [state, setState] = useState({ success: false, loading: false } as AddCardState)
+  const [state, setState] = useState({ success: false, loading: false, mensaje: "" } as AddCardState)
   return (
     <div className={styles.wrapper}>
       <h1>Agregar tarjeta</h1>
@@ -55,7 +56,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
             if (onCardAdd !== undefined)
               onCardAdd()
           }).catch((error) => {
-            setState({ success: false, loading: false, hasLoaded: true })
+            setState({ success: false, loading: false, hasLoaded: true, mensaje: (error.response.status == "409") ? error.response.data.message : "Ha ocurrido un error al agregar la tarjeta" })
           })
         }}
       >
@@ -95,11 +96,11 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
         </Button>
       </Form>
 
-      {state.hasLoaded && !state.loading && state.success && 
+      {state.hasLoaded && !state.loading && state.success &&
         <Alert type="success" message="Su tarjeta ha sido agregada correctamente" />
       }
       {state.hasLoaded && !state.loading && !state.success &&
-        <Alert type="error" message="Ha ocurrido un error al agregar la tarjeta" />
+        <Alert type="error" message={state.mensaje} />
       }
     </div>
   )

@@ -31,9 +31,9 @@ import WithNav from './WithNav';
 import Perfil from './components/Perfil';
 import TarjetasPage from './pages/TarjetasPage';
 import AgregarProducto from './pages/AgregarProductoPage';
-import EstadisiticasVendedor from './pages/EstadisiticasVendedorPage';
-import { EstVendedorTop10Vendidos } from './components/EstVendedorTop10Vendidos';
+import EstadisticasVendedor from './pages/EstadisiticasVendedorPage';
 import RecuperarContrasena from './pages/RecuperarContrasena';
+import EstadisticasAdm from './pages/EstadisiticasAdminPage';
 
 export default () => <Outlet />
 
@@ -73,7 +73,8 @@ root.render(
           <Route path="/modificarProducto" element={<ModificarProducto></ModificarProducto>}  ></Route>
           <Route path="/solicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
           <Route path="/nuevoAdministrador" element={<AdminSignUpForm></AdminSignUpForm>}  ></Route>
-          <Route path='/estadisticas' element={<EstadisiticasVendedor />}> </Route>
+          <Route path='/estadisticas' element={<EstadisticasVendedor />}> </Route>
+          <Route path='/estadisticas/sistema' element ={<EstadisticasAdm/>}> </Route> 
         </Route>
       </Routes>
     </BrowserRouter>
