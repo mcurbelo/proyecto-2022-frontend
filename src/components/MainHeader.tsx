@@ -165,7 +165,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-5'
     },
     {
-      label: (<Link type="text" to="/categorias" className="ant-btn ant-btn-text">Crear categoria (PH)<FontAwesomeIcon icon={faSquarePlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/categoria" className="ant-btn ant-btn-text">Crear categoría<FontAwesomeIcon icon={faSquarePlus} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-6'
     },
   ];

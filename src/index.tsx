@@ -34,6 +34,7 @@ import AgregarProducto from './pages/AgregarProductoPage';
 import EstadisticasVendedor from './pages/EstadisiticasVendedorPage';
 import RecuperarContrasena from './pages/RecuperarContrasena';
 import EstadisticasAdm from './pages/EstadisiticasAdminPage';
+import { NuevaCategoria } from './components/NuevaCategoria';
 
 export default () => <Outlet />
 
@@ -74,7 +75,8 @@ root.render(
           <Route path="/solicitudes" element={<Solicitudes></Solicitudes>}  ></Route>
           <Route path="/nuevoAdministrador" element={<AdminSignUpForm></AdminSignUpForm>}  ></Route>
           <Route path='/estadisticas' element={<EstadisticasVendedor />}> </Route>
-          <Route path='/estadisticas/sistema' element ={<EstadisticasAdm/>}> </Route> 
+          <Route path='/estadisticas/sistema' element={<EstadisticasAdm />}> </Route>
+          <Route path="/categoria" element={<NuevaCategoria />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

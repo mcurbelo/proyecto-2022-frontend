@@ -1,16 +1,15 @@
-import { faCoins, faSackDollar, faShop, faTruckFast, faUser, faUserCheck, faUserLock, faUsersViewfinder, faUserTie, faUserXmark } from "@fortawesome/free-solid-svg-icons";
+import { faUser, faUserCheck, faUserLock, faUserTie, faUserXmark } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, Checkbox, Col, DatePicker, Divider, Form, Radio, Row, Statistic } from "antd"
+import { Card, DatePicker, Divider, Form, Radio, Row, Statistic } from "antd"
 import { RangePickerProps } from "antd/lib/date-picker";
 import { useEffect, useState } from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
-import { AdministradorService, VendedorService } from "shopit-shared";
-import { DtBalance, EstVendedor } from "shopit-shared/dist/user/VendedorService";
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from 'recharts';
+import { AdministradorService } from "shopit-shared";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { SearchOutlined } from "@ant-design/icons";
-import { EstAdm, UsuariosEst, UsuariosEstAll } from "shopit-shared/dist/user/AdministradorService";
+import { EstAdm, UsuariosEstAll } from "shopit-shared/dist/user/AdministradorService";
 
 const { RangePicker } = DatePicker;
 

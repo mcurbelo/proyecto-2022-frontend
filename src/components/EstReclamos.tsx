@@ -1,15 +1,15 @@
-import { faBagShopping, faBullhorn, faCheck, faCircleCheck, faCircleXmark, faClock, faMoneyBillTransfer } from "@fortawesome/free-solid-svg-icons";
+import { faBullhorn } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Card, DatePicker, Divider, Form, Radio, Row, Statistic } from "antd"
 import { RangePickerProps } from "antd/lib/date-picker";
 import { useEffect, useState } from "react";
-import { ResponsiveContainer, Tooltip, RadarChart, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
+import { ResponsiveContainer, Tooltip, Bar, BarChart, CartesianGrid, XAxis, YAxis } from 'recharts';
 import { AdministradorService } from "shopit-shared";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { SearchOutlined } from "@ant-design/icons";
-import { EstAdm, ReclamosEst, VentasEst } from "shopit-shared/dist/user/AdministradorService";
+import { EstAdm, ReclamosEst } from "shopit-shared/dist/user/AdministradorService";
 
 const { RangePicker } = DatePicker;
 
