@@ -91,7 +91,7 @@ const SignInForm: React.FC<SignInFormProps> = (props) => {
       <Button htmlType="submit" type="primary" style={{ marginTop: state.error ? 16 : 0 }}>Iniciar sesión</Button>
       <label style={{ marginLeft: "auto", marginRight: "auto", marginTop: 16 }}>¿No tienes una cuenta?</label>
       <Button style={{ marginTop: 16 }} type="ghost" onClick={() => navigate("/signup")}>Registrate</Button>
-      <Button type="link" style={{ marginTop: 16 }}>¿Olvidaste tu contraseña?</Button>
+      <Button type="link" style={{ marginTop: 16 }} onClick={() => {navigate("/recuperarContrasena")}}>¿Olvidaste tu contraseña?</Button>
     </Form>
   )
 }

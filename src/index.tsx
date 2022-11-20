@@ -33,6 +33,7 @@ import TarjetasPage from './pages/TarjetasPage';
 import AgregarProducto from './pages/AgregarProductoPage';
 import EstadisiticasVendedor from './pages/EstadisiticasVendedorPage';
 import { EstVendedorTop10Vendidos } from './components/EstVendedorTop10Vendidos';
+import RecuperarContrasena from './pages/RecuperarContrasena';
 
 export default () => <Outlet />
 
@@ -52,6 +53,7 @@ root.render(
         <Route element={<WithNav />}>
           <Route path='/' element={<HomePage />} />
           <Route path="/registrarse" element={<SignUpPage />} />
+          <Route path="/recuperarContrasena" element={<RecuperarContrasena />} />
           <Route path="/usuarios" element={<UserList />} />
           <Route path="/direcciones" element={<Directions />} />
           <Route path="/compras" element={<MisCompras />} />
