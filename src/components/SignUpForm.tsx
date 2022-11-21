@@ -46,13 +46,14 @@ const SignUpForm = () => {
           correo: values.email,
           password: values.password,
           telefono: values.telefono,
-          fechaNac: formatted
+          fechaNac: formatted,
+          tokenWeb: localStorage.getItem("tokenNotificacion")!
         }).then((response) => {
           if (response.success && response.token && response.uuid) {
             localStorage.setItem("token", response.token!)
             localStorage.setItem("uuid", response.uuid)
             localStorage.setItem("rol", response.rol?.toString()!)
-            navigate("/")
+            window.location.href = "/"
           } else {
             setError({ error: true, message: response.error! })
           }

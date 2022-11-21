@@ -111,13 +111,20 @@ export const ModificarProducto = () => {
     }, [key]);
 
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
+
     const modificarProducto = () => {
         confirm({
             title: 'Realmente desea guardar los cambios?',
             icon: <ExclamationCircleOutlined />,
             content: 'Los cambios serán permanentes una vez confirmados.',
             cancelText: "Cancelar",
+            cancelButtonProps: { id: "cancelButton" },
             onOk() {
+                disableButton();
                 let productoInfoNuevo = producto;
                 let imagenesEnviar = new Array<File>();
                 let imagenesNuevas = new Array<string>();
@@ -227,6 +234,7 @@ export const ModificarProducto = () => {
     }
 
     useEffect(() => { setIguales(igualesFuncion()) }, [datosModificar, fileList]);
+
 
     const restablecer = () => {
         confirm({
@@ -432,8 +440,8 @@ export const ModificarProducto = () => {
                 </Collapse>
                 <div className={styles.containerFixedBotton} style={{ position: "fixed", bottom: "0", width: "59.9%", display: "flex", justifyContent: "end", paddingBottom: "1%", paddingRight: "0.5%" }}>
 
-                    <Button type="success" size="large" disabled={iguales} htmlType="submit"  onClick={() => form.submit()}>
-                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk}  style={{ marginLeft: "5px" }} />
+                    <Button type="success" size="large" disabled={iguales} htmlType="submit" onClick={() => form.submit()}>
+                        Terminar edición <FontAwesomeIcon icon={faFloppyDisk} style={{ marginLeft: "5px" }} />
                     </Button>
                 </div>
             </Row>

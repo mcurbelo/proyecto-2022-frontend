@@ -88,6 +88,8 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
   })
   const [notificaciones, setNotificacion] = useState(0)
   const [notificacionesList, setNotiList] = useState<Note[]>([])
+  const [actualizar, setActualizar] = useState(true);
+  const [key, setKey] = useState(1);
   const navigate = useNavigate();
   const { Paragraph, Text } = Typography;
 
@@ -97,7 +99,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-1'
     },
     {
-      label: (<Link type="text" to="/profile"
+      label: (<Link type="text" to="/nuevaSolicitud"
         className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
         Solcitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-2'
@@ -157,7 +159,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       key: 'item-3'
     },
     {
-      label: (<Link type="text" to="/devoluciones" className="ant-btn ant-btn-text">Deshacer venta (PH)<FontAwesomeIcon icon={faRotateLeft} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+      label: (<Link type="text" to="/devoluciones" className="ant-btn ant-btn-text">Deshacer compra/venta<FontAwesomeIcon icon={faRotateLeft} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-4'
     },
     {
@@ -241,6 +243,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       setNotiList(notificaciones)
       setNotificacion(notificaciones.length)
     }
+    emitter.on('actualizarInfo', event => { setActualizar(!actualizar) });
   }, [])
 
   useEffect(() => {
@@ -248,7 +251,6 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       const rol = localStorage.getItem("rol") as Rol
       UserService.obtenerInformacion(localStorage.getItem("token")!, localStorage.getItem("uuid")!)
         .then((informacion) => {
-          ;
           const { datosVendedor } = informacion;
           if (rol === "ADM") {
             setInfoUsuario({ ...infoUsuario, rol: rol, nombre: informacion.nombre! });
@@ -265,7 +267,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
         })
     }
 
-  }, [sesionIniciada])
+  }, [sesionIniciada, actualizar])
 
 
   useEffect(() => {

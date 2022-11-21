@@ -1,5 +1,5 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Carousel, Checkbox, DatePicker, Form, Image, Input, InputNumber, Modal, Typography } from "antd";
+import { Checkbox, DatePicker, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Typography } from "antd";
 import { format } from "date-fns";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
@@ -44,6 +44,12 @@ const AddProductForm = ({ esSolicitud = false }) => {
     })
   }
 
+  const successModalSolicitud = () => {
+    Modal.success({
+      title: "Solicitud enviada exitosamente!"
+    })
+  }
+
   const errorModal = (mensaje: string) => {
     Modal.error({
       title: "Ha ocurrido un error",
@@ -79,7 +85,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         producto: datosProducto,
         idDireccion: idDireccion
       }, selectedImages, token!).then((response) => {
-        successModal()
+        successModalSolicitud()
         setTimeout(() => {
           navigate("/")
         }, 2000)
@@ -100,33 +106,54 @@ const AddProductForm = ({ esSolicitud = false }) => {
 
   return (
     <div className={styles.wrapper}>
-
-      {(idDireccion.length == 0 && esSolicitud) && <Directions permiteSeleccion={true} onSelectDirection={(id) => {
-        setIdDireccion(id)
-      }} />}
+      {(idDireccion.length == 0 && esSolicitud) &&
+        <Row justify="center">
+          <div style={{ width: "70%" }}>
+            <Directions permiteSeleccion={true} onSelectDirection={(id) => {
+              setIdDireccion(id)
+            }} />
+          </div>
+        </Row>
+      }
 
       {(selectedImages.length > 0) && (
-        <Carousel autoplay style={{ background: "#f9f9f9" }}>
-          {selectedImages.map((image) => {
-            return (
-              <div key={image.name} style={{ display: "flex", justifyItems: "center" }}>
-                <Image alt="Sin imagen" src={URL.createObjectURL(image)} />
-                <div>
-                <Button
-                  danger
-                  style={{ justifySelf: "center" }}
-                  onClick={() => {
-                    (document.getElementById("fileInput") as HTMLInputElement).value = ""
-                    let toDelete = selectedImages.find(e => e.name == image.name)
-                    setImage(selectedImages.filter(i => i != toDelete))
-                  }}
-                >Eliminar</Button>
-                </div>
-              </div>
-            )
-          })}
-        </Carousel>
+        <>
+          <h2>Imagenes</h2>
+          <Image.PreviewGroup>
+            <>
+              <List
+                grid={{
+                  xs: 1,
+                  sm: 2,
+                  md: 2,
+                  lg: 3,
+                  xl: 5,
+                  xxl: 5,
+                }}
+                dataSource={selectedImages}
+                renderItem={(item, index) => (
+                  <List.Item style={{ textAlign: "center" }}>
+                    <Image alt="Sin imagen" width={150} height={150} src={URL.createObjectURL(item)} />
+                    <Divider></Divider>
+                    <div>
+                      <Button
+                        danger
+                        style={{ justifySelf: "center" }}
+                        onClick={() => {
+                          (document.getElementById("fileInput") as HTMLInputElement).value = ""
+                          let toDelete = selectedImages.find(e => e.name == item.name)
+                          setImage(selectedImages.filter(i => i != toDelete))
+                        }}
+                      >Eliminar</Button>
+                    </div>
+                  </List.Item>
+                )}
+              />
+            </>
+          </Image.PreviewGroup>
+        </>
       )}
+
       {(idDireccion.length != 0 || !esSolicitud) && (<><Button
         disabled={selectedImages.length == 5}
         icon={<UploadOutlined />}
@@ -143,6 +170,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
           onChange={(event) => { setImage(selectedImages.concat(event.target.files![0])); }}
         />
       </Button>
+        <Divider></Divider>
+        <h2>Información sobre el producto</h2>
         <Form
           layout="vertical"
           style={{ marginTop: 15 }}
@@ -203,7 +232,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
 
           <Form.Item
             name="fechaFinProducto"
-            label="Fecha fin de la publicación"
+            label="Fecha fin de la publicación (opcional)"
           >
             <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} />
           </Form.Item>
@@ -220,14 +249,25 @@ const AddProductForm = ({ esSolicitud = false }) => {
           <Form.Item name="permiteEnvio">
             <Checkbox checked={permiteEnvios} onChange={() => setPermiteEnvios(!permiteEnvios)}>Permite envio</Checkbox>
           </Form.Item>
+          {
+            esSolicitud ?
+              <>
+                <Divider></Divider>
+                <h2>Datos extras</h2>
 
+              </>
+              : null
+
+          }
           <Checkbox
             style={{ visibility: esSolicitud ? "visible" : "hidden" }}
             checked={esEmpresa}
             onChange={() => setEsEmpresa(!esEmpresa)}
           >Tengo una empresa</Checkbox>
 
-          {esEmpresa && <Typography.Title level={5}>Información de vendedor</Typography.Title>}
+          {esEmpresa &&
+
+            <Divider>Información de la empresa</Divider>}
 
           {esEmpresa && <Form.Item
             rules={[{
@@ -258,9 +298,10 @@ const AddProductForm = ({ esSolicitud = false }) => {
             label="Numero de teléfono">
             <Input placeholder="1234567891012162" />
           </Form.Item>}
-
+          <Divider></Divider>
           <Form.Item>
-            <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }} type="success" htmlType="submit">Agregar producto</Button>
+            <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }}
+              type="success" htmlType="submit">{(esSolicitud) ? "Enviar solicitud" : "Agregar producto"}</Button>
           </Form.Item>
         </Form></>)}
     </div>

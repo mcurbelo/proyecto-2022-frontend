@@ -1,13 +1,12 @@
-import React, { FC, useEffect, useState, useRef } from "react";
-import { useNavigate, useParams } from "react-router-dom";
-import { ChatFeed, Message, ChatBubble } from "react-chat-ui";
-import { Input, Button, Form, Spin } from "antd";
+import { FC, useEffect, useState, useRef } from "react";
+import { useParams } from "react-router-dom";
+import { ChatFeed, Message } from "react-chat-ui";
+import { Input, Button, Spin } from "antd";
 import { SendOutlined } from "@ant-design/icons";
-import { CompradorService } from "shopit-shared";
 import "react-chat-widget/lib/styles.css";
 
-import firebase, {initializeApp, getApps, getApp} from 'firebase/app';
-import { getFirestore, collection, doc, getDoc, getDocs, orderBy, limit, query, setDoc, Timestamp, addDoc, deleteDoc} from 'firebase/firestore';
+import {initializeApp, getApp} from 'firebase/app';
+import { getFirestore, collection, orderBy, query, Timestamp, addDoc} from 'firebase/firestore';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import '../main.css';
 

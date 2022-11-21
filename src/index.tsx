@@ -9,14 +9,11 @@ import 'antd/dist/antd.css';
 import SignInPage from './pages/SignInPage';
 import HomePage from './pages/Home';
 import UserList from './pages/UserList';
-import NotificacionTest from './test/Notification'
 import SignUpPage from './pages/SignUpPage';
 import { Auth } from "shopit-shared";
 import AddCardForm from './components/AddCard';
 import InfoProducto from './components/InfoProducto';
-import { Directions } from './components/Directions';
 import RealizarCompra from './components/RealizarCompra';
-import AddProductForm from './components/ProductForm';
 import { MisCompras } from './components/MisCompras';
 import AdminSignUpForm from './components/AdminSignUpForm'
 import { MisVentas } from './components/MisVentas';
@@ -35,6 +32,9 @@ import EstadisticasVendedor from './pages/EstadisiticasVendedorPage';
 import RecuperarContrasena from './pages/RecuperarContrasena';
 import EstadisticasAdm from './pages/EstadisiticasAdminPage';
 import { NuevaCategoria } from './components/NuevaCategoria';
+import { DeshacerCompra } from './components/DeshacerCompra';
+import NuevaSolicitudPage from './pages/SolicitudPage';
+import DireccionesPage from './pages/DireccionesPage';
 
 export default () => <Outlet />
 
@@ -56,15 +56,14 @@ root.render(
           <Route path="/registrarse" element={<SignUpPage />} />
           <Route path="/recuperarContrasena" element={<RecuperarContrasena />} />
           <Route path="/usuarios" element={<UserList />} />
-          <Route path="/direcciones" element={<Directions />} />
+          <Route path="/direcciones" element={<DireccionesPage />} />
           <Route path="/compras" element={<MisCompras />} />
-          <Route path="/testNotifiacion" element={<NotificacionTest />} />
           <Route path="/addCard" element={<AddCardForm />} />
           <Route path="/perfil" element={<Perfil />} />
           <Route path="/tarjetas" element={<TarjetasPage />} />
           <Route path="/productos/:id" element={<InfoProducto />} />
           <Route path="/compra" element={<RealizarCompra />} />
-          <Route path="/image" element={<AddProductForm esSolicitud={true} />} />
+          <Route path="/nuevaSolicitud" element={<NuevaSolicitudPage />} />
           <Route path="/agregarproducto" element={<AgregarProducto />} />
           <Route path="/ventas" element={<MisVentas />} />
           <Route path="/chat/:idchat" element={<Chat />} />
@@ -77,6 +76,7 @@ root.render(
           <Route path='/estadisticas' element={<EstadisticasVendedor />}> </Route>
           <Route path='/estadisticas/sistema' element={<EstadisticasAdm />}> </Route>
           <Route path="/categoria" element={<NuevaCategoria />}></Route>
+          <Route path="/devoluciones" element={<DeshacerCompra/>}> </Route>
         </Route>
       </Routes>
     </BrowserRouter>

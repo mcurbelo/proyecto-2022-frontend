@@ -1,6 +1,6 @@
 import { FC, useState, useEffect, ChangeEvent } from 'react';
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input } from 'antd';
+import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input, Card } from 'antd';
 import '../main.css';
 import { UserService } from "shopit-shared";
 import { DtCambioContrasena, UpdateInfoEmpresa } from 'shopit-shared/dist/user/UserService';
@@ -48,6 +48,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   const token: string = (localStorage.getItem("token") as string);
   const [infoUsuario, setInfoUsuario] = useState({ uuid: uuid, apellido: "", correo: "", nombre: "", telefono: "", calificacion: 0 });
 
+  const [infoUsuarioMod, setInfoUsuarioMod] = useState({ apellido: "", correo: "", nombre: "", telefono: "" });
   const [datosVendedor, setDatosVendedor] = useState({
     nombreEmpresa: "",
     rut: "",
@@ -55,19 +56,22 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
     estadoSolicitud: "",
     calificacion: 0
   })
+
+  const [datosVendedorMod, setDatosVendedorMod] = useState({
+    nombreEmpresa: undefined,
+    telefonoEmpresa: undefined,
+  })
   const [imagen, setImagen] = useState("")
   const [editando, setEditando] = useState(false);
   const [editandoEmpresa, setEditandoEmpresa] = useState(false);
-  const [datosEmpresaNuevos, setNuevoDatosEmpresa] = useState<UpdateInfoEmpresa>({
-    nombreEmpresa: undefined,
-    telefonoEmpresa: undefined
-  })
+
   const [datosCambioContrasena, setCambioContrasena] = useState<DtCambioContrasena>({
     contrasenaVieja: "",
     contrasenaNueva: ""
   })
   const [isLoading, setLoading] = useState(false);
-  //const [datos, setDatos] =  useState(props);
+  const [form] = Form.useForm();
+  const [form2] = Form.useForm();
 
   const onEdit = function (): void {
     setEditando(!editando);
@@ -103,7 +107,6 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
         setImagen(infoUsuario.imagen?.data as string);
 
       })
-      .catch(() => console.log("Ocurrio un error al obtener la informacion del usuario"));
   }
 
 
@@ -111,10 +114,10 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
 
     let body = {
       uuid: uuid,
-      apellido: infoUsuario.apellido,
-      correo: infoUsuario.correo,
-      nombre: infoUsuario.nombre,
-      telefono: infoUsuario.telefono,
+      apellido: (infoUsuarioMod.apellido != "") ? infoUsuarioMod.apellido : infoUsuario.apellido,
+      correo: (infoUsuarioMod.correo != "" && infoUsuarioMod.correo != infoUsuario.correo) ? infoUsuarioMod.correo : infoUsuario.correo,
+      nombre: (infoUsuarioMod.nombre != "") ? infoUsuarioMod.nombre : infoUsuario.nombre,
+      telefono: (infoUsuarioMod.telefono != infoUsuario.telefono) ? infoUsuarioMod.telefono : infoUsuario.telefono,
       imagen: {
         data: imagen
       }
@@ -139,7 +142,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
 
   const onAcceptEditEmpresa = () => {
 
-    UserService.updateDatosEmpresa(token, uuid, datosEmpresaNuevos).then((response) => {
+    UserService.updateDatosEmpresa(token, uuid, datosVendedorMod).then((response) => {
       if (response.success) {
         Modal.success({
           title: "Edición completada con éxito",
@@ -158,7 +161,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   }
 
   const onInputchange = (e: any) => {
-    setInfoUsuario(prevState => ({
+    setInfoUsuarioMod(prevState => ({
       ...prevState,
       [e.target.name]: e.target.value
     }
@@ -166,7 +169,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   }
 
   const onInputchangeEmpresa = (e: ChangeEvent<HTMLInputElement>) => {
-    setNuevoDatosEmpresa({ ...datosEmpresaNuevos, [e.target.name]: e.target.value })
+    setDatosVendedorMod({ ...datosVendedorMod, [e.target.name]: e.target.value })
   }
 
   const cambiarContrasena = () => {
@@ -193,8 +196,16 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
     loadInfoUser();
   }, []);
 
+  useEffect(() => {
+    form.resetFields();
+  }, [infoUsuario]);
+
+  useEffect(() => {
+    form2.resetFields();
+  }, [datosVendedor]);
+
   return (
-    <Row className={styles.container} justify='space-between' style={{ width: "60%" }}>
+    <Row className={styles.container} justify='space-between' style={{ width: "60%", backgroundColor: "white", padding: "24px" }}>
       <Col className={styles.colPequeño} style={{ width: "60%" }}>
         <div style={{ marginBottom: "50px" }}>
           <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
@@ -204,90 +215,156 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             </Button>
           </div>
 
-          <div className="wrapper">
-            <div className='leftValues'>
-              <div>
-                <label>Nombre:</label>
-                <input disabled={!editando} name='nombre' style={{ borderBottom: (editando) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={infoUsuario.nombre} onChange={(e) => onInputchange(e)} />
-              </div>
-              <div>
-                <label>Telefono:</label>
-                <input disabled={!editando} name='telefono' style={{ borderBottom: (editando) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={infoUsuario.telefono} onChange={(e) => onInputchange(e)} />
-              </div>
+          <Form
+            name="editarDatosBásicos"
+            layout='vertical'
+            form={form}
+            onFinish={onAcceptEdit}
+            requiredMark={false}
+            initialValues={{ nombre: infoUsuario.nombre, telefono: infoUsuario.telefono, apellido: infoUsuario.apellido, correo: infoUsuario.correo }}>
 
-              <div>
-                <Tooltip title="Calificación obtenida de los vendedores ">
-                  <div>
-                    <label>Calificación:</label>
-                    <Form.Item>
-                      <Rate allowHalf disabled value={infoUsuario.calificacion} />
-                    </Form.Item>
-                  </div>
-                </Tooltip>
-              </div>
-            </div>
-            <div className='rigthValues'>
-              <div>
-                <label>Apellido:</label>
-                <input disabled={!editando} name='apellido' type="text" style={{ borderBottom: (editando) ? "2px solid green" : "" }} className="usuarioInput" defaultValue={infoUsuario.apellido} onChange={(e) => onInputchange(e)} />
-              </div>
-              <div>
-                <label>Correo:</label>
-                <input disabled={!editando} name='correo' type="text" style={{ borderBottom: (editando) ? "2px solid green" : "" }} className="usuarioInput" defaultValue={infoUsuario.correo} onChange={(e) => onInputchange(e)} />
-              </div>
+            <div className="wrapper">
 
-              {
-                editando && <div style={{ display: 'flex', justifyContent: 'end' }}>
-                  <Button type='primary' onClick={onAcceptEdit}>Modificar</Button>
+              <div className='leftValues'>
+                <div>
+                  <Form.Item
+                    name="nombre"
+                    label="Nombre:"
+                    rules={[{ required: true, message: 'El nombre no puede estar vacío' }]}
+                  >
+                    <input disabled={!editando} name='nombre' style={{ borderBottom: (editando) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchange(e)} />
+                  </Form.Item>
                 </div>
-              }
+                <div>
+                  <Form.Item
+                    name="telefono"
+                    label="Teléfono:"
+                    rules={[{
+                      max: 9,
+                      message: "Solo números, con un máximo de 9 caracteres",
+                      pattern: new RegExp("^[0-9]{0,9}$")
+                    }
+                    ]}
+                  >
+                    <input disabled={!editando} type="text" name='telefono' style={{ borderBottom: (editando) ? "2px solid green" : "" }} className="usuarioInput" onChange={(e) => onInputchange(e)} />
+                  </Form.Item>
+                </div>
 
+                <div>
+                  <Tooltip title="Calificación obtenida de los vendedores ">
+                    <div>
+                      <label>Calificación:</label>
+                      <Form.Item>
+                        <Rate allowHalf disabled value={infoUsuario.calificacion} />
+                      </Form.Item>
+                    </div>
+                  </Tooltip>
+                </div>
+              </div>
+
+              <div className='rigthValues'>
+                <div>
+                  <Form.Item
+                    name="apellido"
+                    label="Apellido:"
+                    rules={[{ required: true, message: 'El apellido no puede estar vacío' }]}
+                  >
+                    <input disabled={!editando} name='apellido' type="text" style={{ borderBottom: (editando) ? "2px solid green" : "" }} className="usuarioInput" onChange={(e) => onInputchange(e)} />
+                  </Form.Item>
+                </div>
+                <div>
+                  <Form.Item
+                    name="correo"
+                    label="Correo:"
+                    rules={[{ required: true, message: 'El correo no puede estar vacío', type: "email" }]}
+                  >
+                    <input disabled={!editando} name='correo' type="text" style={{ borderBottom: (editando) ? "2px solid green" : "" }} className="usuarioInput" onChange={(e) => onInputchange(e)} />
+                  </Form.Item>
+                </div>
+
+                {
+                  editando &&
+
+                  <div style={{ display: 'flex', justifyContent: 'end' }}>
+                    <Button type='primary' htmlType='submit'>Modificar</Button>
+                  </div>
+                }
+
+              </div>
             </div>
-          </div>
+          </Form>
 
           <Divider></Divider>
-          <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
-            <h3>Información vendedor</h3>
-            <Button style={{ fontSize: "25px", justifyContent: 'center', display: 'flex', border: 0 }} onClick={onEditEmpresa}>
-              <EditOutlined onClick={onEditEmpresa} />
-            </Button>
-          </div>
-          <div className="wrapper" style={esVendedor ? { display: "grid" } : { display: "none" }}>
-            <div className='leftValues'>
-              <div>
-                <label>Nombre empresa:</label>
-                <input disabled={!editandoEmpresa} name='nombreEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={datosVendedor.nombreEmpresa} onChange={(e) => onInputchangeEmpresa(e)} />
-              </div>
-              <div>
-                <label>RUT:</label>
-                <input disabled={true} name='rut' type="text" className="usuarioInput" defaultValue={datosVendedor.rut} />
-              </div>
 
-              <div>
-                <Tooltip title="Calificación obtenida de los compradores">
-                  <div>
-                    <label>Calificación:</label>
-                    <Form.Item>
-                      <Rate allowHalf disabled value={datosVendedor.calificacion} />
-                    </Form.Item>
-                  </div>
-                </Tooltip>
-              </div>
+          <Form
+            name="editarDatosVendedor"
+            layout='vertical'
+            form={form2}
+            onFinish={onAcceptEditEmpresa}
+            requiredMark={false}
+            initialValues={{ nombreEmpresa: datosVendedor.nombreEmpresa, telefonoEmp: datosVendedor.telefonoEmpresa, rut: datosVendedor.rut }}>
+
+            <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
+              <h3>Información vendedor</h3>
+              <Button style={{ fontSize: "25px", justifyContent: 'center', display: 'flex', border: 0 }} onClick={onEditEmpresa}>
+                <EditOutlined onClick={onEditEmpresa} />
+              </Button>
             </div>
-            <div className='rigthValues'>
-              <div>
-                <label>Teléfono:</label>
-                <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" defaultValue={datosVendedor.telefonoEmpresa} onChange={(e) => onInputchangeEmpresa(e)} />
-              </div>
-
-              {
-                editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf: "end" }}>
-                  <Button type='primary' onClick={onAcceptEditEmpresa}>Modificar</Button>
+            <div className="wrapper" style={esVendedor ? { display: "grid" } : { display: "none" }}>
+              <div className='leftValues'>
+                <div>
+                  <Form.Item
+                    name="nombreEmpresa"
+                    label="Nombre empresa:"
+                    rules={[{ required: true, message: 'El nombre de la empresa no puede estar vacío' }]}
+                  >
+                    <input disabled={!editandoEmpresa} name='nombreEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchangeEmpresa(e)} />
+                  </Form.Item>
                 </div>
-              }
-            </div>
+                <div>
+                  <Form.Item
+                    name="rut"
+                    label="RUT:">
+                    <input disabled={true} name='rut' type="text" className="usuarioInput" />
+                  </Form.Item>
+                </div>
 
-          </div>
+                <div>
+                  <Tooltip title="Calificación obtenida de los compradores">
+                    <div>
+                      <label>Calificación:</label>
+                      <Form.Item>
+                        <Rate allowHalf disabled value={datosVendedor.calificacion} />
+                      </Form.Item>
+                    </div>
+                  </Tooltip>
+                </div>
+              </div>
+              <div className='rigthValues'>
+                <div>
+                  <Form.Item
+                    name="telefonoEmp"
+                    label="Teléfono empresa:"
+                    rules={[{
+                      max: 9,
+                      message: "Solo números, con un máximo de 9 caracteres",
+                      pattern: new RegExp("^[0-9]{0,9}$")
+                    }
+                    ]}
+                  >
+                    <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchangeEmpresa(e)} />
+                  </Form.Item>
+                </div>
+
+                {
+                  editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf: "end" }}>
+                    <Button type='primary' htmlType='submit'>Modificar</Button>
+                  </div>
+                }
+              </div>
+
+            </div>
+          </Form>
         </div>
       </Col >
       <Col className={styles.colPequeño} style={{ width: "30%" }}>
@@ -351,6 +428,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
         </Form>
       </Col>
     </Row>
+
   );
 }
 export default OtherInfo;

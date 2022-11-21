@@ -2,7 +2,7 @@ import { FC, useState } from 'react'
 import { BasicInfo } from './BasicInfo';
 import { OtherInfo } from './OtherInfo';
 import "../main.css"
-import { Col, Row } from 'antd';
+import { Card, Col, Row } from 'antd';
 
 
 
@@ -21,13 +21,17 @@ const Perfil: FC<{}> = () => {
   }
   document.body.style.backgroundColor = "#FFFFFF"
   return (
-
-      <Row style={{ justifyContent: "center", gap: "5%"}}>
+    <>
+      <h1 style={{textAlign:"center"}}>Mi perfil</h1>
+      <Row style={{ justifyContent: "center", gap: "5%" }}>
         <Col>
-          <BasicInfo nombre={infoUsuario.nombre} imagenPerfil={infoUsuario.imagen} />
+          <Card>
+            <BasicInfo nombre={infoUsuario.nombre} imagenPerfil={infoUsuario.imagen} />
+          </Card>
         </Col>
         <OtherInfo imagenGet={(src) => onGetImagen(src)} />
       </Row>
+    </>
 
   )
 }

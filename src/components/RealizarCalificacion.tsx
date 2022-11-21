@@ -34,7 +34,7 @@ export const Calificar = (props: reclamoProps) => {
             if (result == "200") {
                 califico()
                 Modal.success({
-                    title: "Calificacion realizada",
+                    title: "Calificación realizada",
                     content: "Se ha enviado exitosamente la calificación al usuario.",
                 });
             } else {

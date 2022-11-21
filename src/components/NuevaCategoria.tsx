@@ -38,7 +38,6 @@ export const NuevaCategoria = () => {
     document.body.style.backgroundColor = "#F0F0F0"
     return (
         <div style={{
-            height: "70%",
             display: "flex",
             alignItems: "center",
             justifyContent: "center"
