@@ -182,7 +182,7 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
           localStorage.removeItem("token")
           localStorage.removeItem("uuid")
           localStorage.removeItem("notificaciones")
-          localStorage.removeItem("rol")
+          setRol(false);
           setSesionIniciada(false);
           navigate("/")
         }}
@@ -235,6 +235,12 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
 
   };
 
+  const setRol = (esInicio: boolean, rol?: string) => {
+    emitter.emit('estadoSesion', { login: esInicio, rol: rol });
+
+  }
+
+
   const obtenerCategorias = () => {
     CategoriaService.listarCategorias().then((result) => {
       if (result) {
@@ -267,22 +273,25 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
 
   useEffect(() => {
     if (sesionIniciada) {
-      const rol = localStorage.getItem("rol") as Rol
       UserService.obtenerInformacion(localStorage.getItem("token")!, localStorage.getItem("uuid")!)
         .then((informacion) => {
+          let rol = undefined;
           const { datosVendedor } = informacion;
-          if (rol === "ADM") {
+          if (informacion.rol && informacion.rol === "ADM") {
+            rol = Rol.ADM
             setInfoUsuario({ ...infoUsuario, rol: rol, nombre: informacion.nombre! });
           }
           else {
             let nombre = informacion.nombre;
-            let esVendedor = (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Aceptado) || false
+            let esVendedor = (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Aceptado) || false;
+            (esVendedor) ? rol = Rol.Vendedor : rol = Rol.Comprador
             let estadoSolicitud = EstadoSolicitud.NoSolicitada;
             if (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Pendiente) {
               estadoSolicitud = EstadoSolicitud.Pendiente;
             }
-            setInfoUsuario({ nombre: nombre!, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: informacion.imagen?.data!, rol: rol });
+            setInfoUsuario({ nombre: nombre!, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: informacion.imagen?.data!, rol: (esVendedor) ? Rol.Vendedor : Rol.Comprador });
           }
+          setRol(true, rol);
         })
     }
 
