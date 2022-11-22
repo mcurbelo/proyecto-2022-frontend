@@ -12,6 +12,7 @@ import { createUseStyles } from 'react-jss';
 import { table } from 'console';
 import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
 import Meta from 'antd/lib/card/Meta';
+import { useLocation } from 'react-router';
 
 
 // @ts-check
@@ -54,7 +55,7 @@ const useStyles = createUseStyles({
       width: "100%",
     },
     container: {
-      marginRight:"5%"
+      marginRight: "5%"
     }
   }
 
@@ -63,6 +64,7 @@ const useStyles = createUseStyles({
 //TODO Evento Promocional - Segun implementacion
 
 function Publicactions() {
+  const { state } = useLocation();
   const styles = useStyles();
   const [productos, setProductos] = useState<AppState["productos"]>([]);
   const [valoresFiltros, setValoresFiltro] = useState<AppState["filtros"]>({
@@ -85,13 +87,26 @@ function Publicactions() {
   const { Option } = Select;
 
   useEffect(() => {
-    emitter.on('busquedaProducto', event => { setValoresFiltro({ ...valoresFiltros, "nombre": event.data }); setPaginaAbuscar(0) });
-    emitter.on('busquedaCategoria', event => { setValoresFiltro({ ...valoresFiltros, "categorias": [event.data] }); setPaginaAbuscar(0) });
     busqueda();
     if (categorias.length === 0) {
       obtenerCategorias();
     }
   }, [valoresFiltros, paginaAbuscar, valoresOrdenamiento])
+
+  useEffect(() => {
+    if (state) {
+      if (state.categoria) {
+        setValoresFiltro({ ...valoresFiltros, categorias: [state.categoria] }); setPaginaAbuscar(0);
+      }
+      if (state.producto) {
+        setValoresFiltro({ ...valoresFiltros, nombre: state.producto }); setPaginaAbuscar(0);
+      }
+    }
+
+    emitter.on('busquedaProducto', event => { setValoresFiltro({ ...valoresFiltros, nombre: event.data }); setPaginaAbuscar(0); });
+    emitter.on('busquedaCategoria', event => { setValoresFiltro({ ...valoresFiltros, categorias: [event.data] }); setPaginaAbuscar(0); });
+  }, [])
+
 
 
   const busqueda = () => {
@@ -157,7 +172,7 @@ function Publicactions() {
           {
             productos.map((value, index) => {
               return (
-                <Col key={index} style={{ display: 'flex', justifyContent:"center" }}>
+                <Col key={index} style={{ display: 'flex', justifyContent: "center" }}>
                   <ItemPublication key={index} producto={value}></ItemPublication>
                 </Col>
               )

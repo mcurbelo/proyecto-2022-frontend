@@ -10,6 +10,7 @@ import PickerCategoria from "./PickerCategoria";
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import Button from "antd-button-color";
+import { useMitt } from "react-mitt";
 
 const useStyles = createUseStyles({
   "@global": {
@@ -30,6 +31,7 @@ const useStyles = createUseStyles({
 
 })
 const AddProductForm = ({ esSolicitud = false }) => {
+  const { emitter } = useMitt()
   const [selectedImages, setImage] = useState([] as File[])
   const [permiteEnvios, setPermiteEnvios] = useState(false)
   const [esEmpresa, setEsEmpresa] = useState(false)
@@ -48,6 +50,10 @@ const AddProductForm = ({ esSolicitud = false }) => {
     Modal.success({
       title: "Solicitud enviada exitosamente!"
     })
+  }
+
+  const bloquearOtraSolicitud = () => {
+    emitter.emit('bloquearSolicitud', {});
   }
 
   const errorModal = (mensaje: string) => {
@@ -89,6 +95,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         setTimeout(() => {
           navigate("/")
         }, 2000)
+        bloquearOtraSolicitud();
       }).catch((error) => {
         errorModal(error.response.data.message)
       })
@@ -109,7 +116,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
       {(idDireccion.length == 0 && esSolicitud) &&
         <Row justify="center">
           <div style={{ width: "70%" }}>
-            <Directions permiteSeleccion={true} onSelectDirection={(id) => {
+            <Directions permiteSeleccion={true} esVendedor={false} onSelectDirection={(id) => {
               setIdDireccion(id)
             }} />
           </div>
@@ -241,7 +248,6 @@ const AddProductForm = ({ esSolicitud = false }) => {
 
           <PickerCategoria onSelect={categorias => {
             setCategorias(categorias)
-            console.log(categorias)
           }} />
 
           <div style={{ height: 15 }} />

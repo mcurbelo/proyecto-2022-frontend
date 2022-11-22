@@ -39,7 +39,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
 
 
   const actualizarInformacion = () => {
-    emitter.emit('actualizarInfo', {});
+    emitter.emit('actualizarInfo', { data: URL.createObjectURL(selectedFile!) } );
   };
 
   const cambiarImagen = () => {

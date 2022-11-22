@@ -5,6 +5,7 @@ import '../main.css';
 import { UserService } from "shopit-shared";
 import { DtCambioContrasena, UpdateInfoEmpresa } from 'shopit-shared/dist/user/UserService';
 import { createUseStyles } from 'react-jss';
+import { useMitt } from 'react-mitt';
 
 const { Option } = Select;
 type otherInfoProp = {
@@ -41,6 +42,7 @@ const useStyles = createUseStyles({
 
 
 export const OtherInfo: FC<otherInfoProp> = (props) => {
+  const { emitter } = useMitt()
   const styles = useStyles();
   const [esVendedor, setEsVendedor] = useState(false);
   const { imagenGet } = props;
@@ -130,6 +132,10 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
           content: 'Sus datos se han actualizado exitosamente',
         });
         setEditando(!editando);
+        if (infoUsuarioMod.nombre !== "" && (infoUsuario.nombre !== infoUsuarioMod.nombre)) {
+          setInfoUsuario({ ...infoUsuario, nombre: infoUsuarioMod.nombre })
+          actualizarInformacion(body.nombre)
+        }
       }
       else {
         Modal.error({
@@ -203,6 +209,10 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   useEffect(() => {
     form2.resetFields();
   }, [datosVendedor]);
+
+  const actualizarInformacion = (nombre: string) => {
+    emitter.emit('actualizarInfoNombre', { data: nombre });
+  };
 
   return (
     <Row className={styles.container} justify='space-between' style={{ width: "60%", backgroundColor: "white", padding: "24px" }}>

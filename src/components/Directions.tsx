@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { List, Button, Checkbox, Modal, Alert, } from "antd";
+import { List, Button, Checkbox, Modal, Alert, Empty, } from "antd";
 import { EnvironmentOutlined, EditOutlined, DeleteOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import AddDirection from "./AddDirection";
 import { CompradorService } from "shopit-shared";
@@ -132,11 +132,18 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
     })
   }
 
+  let locale = {
+    emptyText: (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: "black" }} description="No se encontraron direcciones :(" />
+    )
+}
+
   return (
     <div>
       <div className="directions-flex-div">
         <h3>Direcciones de envío</h3>
         <List
+        locale={locale}
           itemLayout="horizontal"
           dataSource={direcciones}
           renderItem={(item) => (

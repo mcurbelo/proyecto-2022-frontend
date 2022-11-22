@@ -363,13 +363,13 @@ export const MisVentas: React.FC<{}> = () => {
 
 
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            <p style={{textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "13%" }}>
                                             <Space direction="vertical">
                                                 <div>
-                                                    <p style={{ font: "revert-layer" }}>{item.nombreComprador}</p>
+                                                    <p>{item.nombreComprador}</p>
                                                 </div>
                                                 <Tooltip title={"Calificación: " + item.calificacionComprador + "/5"} placement="bottom">
                                                     <div>
@@ -434,7 +434,7 @@ export const MisVentas: React.FC<{}> = () => {
                 />
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
                 {
-                    (mostrarGestionVenta.mostrar) ? <GestionarVenta realizoAccion={(idVenta, aceptar) => cambiarEstadoVenta(idVenta, (aceptar) ? EstadoCompra.Confirmada : EstadoCompra.Cancelada)} informacion={mostrarGestionVenta} showModal={() => { setGestionVenta({ ...mostrarGestionVenta, mostrar: false }) }}></GestionarVenta> : null
+                    (mostrarGestionVenta.mostrar) ? <GestionarVenta realizoAccion={(idVenta, aceptar, fechaEntrega) => cambiarEstadoVenta(idVenta, (aceptar) ? EstadoCompra.Confirmada : EstadoCompra.Cancelada, fechaEntrega)} informacion={mostrarGestionVenta} showModal={() => { setGestionVenta({ ...mostrarGestionVenta, mostrar: false }) }}></GestionarVenta> : null
                 }
 
                 {

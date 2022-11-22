@@ -417,13 +417,13 @@ export const Reclamos = (props: propReclamo) => {
                                         </div>
 
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.datosCompra.nombreProducto}</p>
+                                            <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.datosCompra.nombreProducto}</p>
                                         </div>
 
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                             <Space direction="vertical">
                                                 <div>
-                                                    <p style={{ font: "revert-layer" }}>{(listarRealizados) ? "Reclamando a: " + item.datosCompra.nombreVendedor : "Reclamo de: " + item.autor}</p>
+                                                    <p>{(listarRealizados) ? "Reclamando a: " + item.datosCompra.nombreVendedor : "Reclamo de: " + item.autor}</p>
                                                     <div style={{ display: "flex", justifyContent: "center" }}>
                                                         {
                                                             listarRealizados && <Avatar size="large" {... (item.datosCompra.avatarVendedor !== "") ? { src: item.datosCompra.avatarVendedor } : { icon: <UserOutlined /> }} />

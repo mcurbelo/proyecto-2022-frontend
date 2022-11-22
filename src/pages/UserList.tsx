@@ -1,4 +1,4 @@
-import { Row } from "antd";
+import { Card, Row } from "antd";
 import { useEffect, useState } from "react";
 import { AdministradorService } from "shopit-shared";
 import { EstadoUsuario } from "shopit-shared/dist/user/AdministradorService";
@@ -18,7 +18,6 @@ const UserList = () => {
       currentPage,
       "10"
     ).then((response) => {
-      console.log(response)
       if (response.usuarios) {
         setUsers(response.usuarios)
         setTotalUsers(response.totalItems)
@@ -29,7 +28,7 @@ const UserList = () => {
   }, [currentPage, reload])
 
 
-  const buscar= (nombre: string, correo:string, estado: EstadoUsuario, campoOrden: string, orden: string) => {
+  const buscar = (nombre: string, correo: string, estado: EstadoUsuario, campoOrden: string, orden: string) => {
     let token = localStorage.getItem("token")!
     AdministradorService.listadoUsuarios(
       token,
@@ -37,7 +36,7 @@ const UserList = () => {
       "10",
       campoOrden,
       orden,
-      {nombre: nombre, correo, estado: estado}
+      { nombre: nombre, correo, estado: estado }
     ).then((response) => {
       console.log(response)
       if (response.usuarios) {
@@ -55,9 +54,9 @@ const UserList = () => {
         <h1>Gestión de usuarios</h1>
       </Row>
       <Row justify="center">
-      <UsersTable users={users} totalUsers={totalUsers}
-        buscar={(nombre, correo, estado, campoOrden, orden) => { buscar(nombre, correo, estado, campoOrden, orden)}} onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { setCurrentPage(page.toString()) }} />
-        </Row>
+          <UsersTable users={users} totalUsers={totalUsers}
+            buscar={(nombre, correo, estado, campoOrden, orden) => { buscar(nombre, correo, estado, campoOrden, orden) }} onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { setCurrentPage(page.toString()) }} />
+      </Row>
     </>
   )
 }

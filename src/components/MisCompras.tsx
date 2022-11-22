@@ -395,12 +395,12 @@ export const MisCompras: React.FC<{}> = () => {
                                         </div>
                                 
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ font: "menu", textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            <p style={{  textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
                                         
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                             <div>
-                                                <p style={{ font: "revert-layer", textAlign:"center" }}>{item.nombreVendedor}</p>
+                                                <p style={{ textAlign:"center" }}>{item.nombreVendedor}</p>
                                                 <a onClick={e => iniciarChat(item.idCompra, item.idVendedor)}>Iniciar chat</a>
                                             </div>
                                         </div>

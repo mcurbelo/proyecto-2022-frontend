@@ -19,7 +19,7 @@ type acciones = {
         direccion: string
     },
     showModal: () => void,
-    realizoAccion: (idVenta: string, aceptar: boolean) => void
+    realizoAccion: (idVenta: string, aceptar: boolean, fechaEntrega: string) => void
 
 }
 
@@ -44,8 +44,8 @@ export const GestionarVenta = (props: acciones) => {
     const contenido = () => {
         return (
             <>
-                <p>Forma de entrega por: <b> {tipo} </b></p>
-                <p>Dirección: <b>{direccion}</b></p>
+                <p><b>Forma de entrega por</b>: {tipo}</p>
+                <p><b>Dirección</b>: {direccion}</p>
             </>
         )
     }
@@ -67,7 +67,7 @@ export const GestionarVenta = (props: acciones) => {
                     title: "Estado de venta cambiado con éxito",
                     content: "Se ha notificado al comprador el nuevo estado de su compra.",
                 });
-                realizoAccion(idVenta, aceptar)
+                realizoAccion(idVenta, aceptar, (datosGestion.fechayHoraEntrega) ? datosGestion.fechayHoraEntrega : datosGestion.fechayHoraRetiro!)
             } else {
                 const mensaje = result;
                 Modal.error({

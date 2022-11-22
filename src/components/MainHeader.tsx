@@ -1,4 +1,4 @@
-import { faAddressCard, faBagShopping, faBell, faBullhorn, faCartShopping, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard, faBagShopping, faBell, faBullhorn, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, List, Empty } from "antd";
 import Search from "antd/lib/input/Search";
@@ -72,8 +72,8 @@ type Note = {
 
 
 
-const MainHeader: React.FC<MainHeaderProps> = (props) => {
-  const location = useLocation()
+const MainHeader: React.FC<MainHeaderProps> = () => {
+  let location = useLocation()
   const { emitter } = useMitt()
   const messaging = getMessaging();
   const styles = useStyles()
@@ -84,14 +84,13 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
     estadoSolicitud: EstadoSolicitud.NoSolicitada,
     esVendedor: false,
     imagen: "",
-    rol: Rol.Usuario
+    rol: Rol.Comprador
   })
   const [notificaciones, setNotificacion] = useState(0)
   const [notificacionesList, setNotiList] = useState<Note[]>([])
-  const [actualizar, setActualizar] = useState(true);
-  const [key, setKey] = useState(1);
   const navigate = useNavigate();
-  const { Paragraph, Text } = Typography;
+
+  const { Text } = Typography;
 
   const itemsComprador = [
     {
@@ -183,6 +182,7 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
           localStorage.removeItem("token")
           localStorage.removeItem("uuid")
           localStorage.removeItem("notificaciones")
+          localStorage.removeItem("rol")
           setSesionIniciada(false);
           navigate("/")
         }}
@@ -220,11 +220,19 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
 
 
   const buscarProducto = (value: string) => {
-    emitter.emit('busquedaProducto', { data: value });
+    if (location.pathname != "/")
+      navigate("/", { state: { producto: value } })
+    else
+      emitter.emit('busquedaProducto', { data: value });
   };
 
+
   const buscarCategoria = (nombre: string) => {
-    emitter.emit('busquedaCategoria', { data: nombre });
+    if (location.pathname != "/")
+      navigate("/", { state: { categoria: nombre } })
+    else
+      emitter.emit('busquedaCategoria', { data: nombre });
+
   };
 
   const obtenerCategorias = () => {
@@ -243,7 +251,18 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
       setNotiList(notificaciones)
       setNotificacion(notificaciones.length)
     }
-    emitter.on('actualizarInfo', event => { setActualizar(!actualizar) });
+    emitter.on('actualizarInfo', event => {
+      setInfoUsuario(prevstate => ({ ...prevstate, imagen: event.data }))
+    });
+
+    emitter.on('actualizarInfoNombre', event => {
+      setInfoUsuario(prevstate => ({ ...prevstate, nombre: event.data }))
+    });
+
+    emitter.on('bloquearSolicitud', event => {
+      setInfoUsuario(prevstate => ({ ...prevstate, estadoSolicitud: EstadoSolicitud.Pendiente }))
+    });
+
   }, [])
 
   useEffect(() => {
@@ -262,12 +281,12 @@ const MainHeader: React.FC<MainHeaderProps> = (props) => {
             if (datosVendedor && datosVendedor.estadoSolicitud === EstadoSolicitud.Pendiente) {
               estadoSolicitud = EstadoSolicitud.Pendiente;
             }
-            setInfoUsuario({ nombre: nombre!, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: informacion.imagen?.data!, rol: Rol.Usuario });
+            setInfoUsuario({ nombre: nombre!, estadoSolicitud: estadoSolicitud, esVendedor: esVendedor, imagen: informacion.imagen?.data!, rol: rol });
           }
         })
     }
 
-  }, [sesionIniciada, actualizar])
+  }, [sesionIniciada])
 
 
   useEffect(() => {
