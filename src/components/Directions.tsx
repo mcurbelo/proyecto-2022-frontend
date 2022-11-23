@@ -152,7 +152,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
               <List.Item.Meta
                 avatar={<EnvironmentOutlined />}
                 title={<a>{item.calle + " " + item.numero}</a>}
-                description={item.localidad + ", " + item.departamento + " | " + item.notas}
+                description={item.localidad + ", " + item.departamento + (item.notas ? " | " + item.notas : "")}
               />
             </List.Item>
           )}
@@ -168,7 +168,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined />}
                   title={<a>{item.calle + " " + item.numero}</a>}
-                  description={item.localidad + ", " + item.departamento + " | " + item.notas}
+                  description={item.localidad + ", " + item.departamento + (item.notas ? " | " + item.notas : "")}
                 />
               </List.Item>
             )}
