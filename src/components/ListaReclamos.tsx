@@ -10,6 +10,8 @@ import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { faCircleQuestion, faComments } from "@fortawesome/free-regular-svg-icons";
+import { crearChat } from "../firebase";
+import { useNavigate } from "react-router";
 
 
 interface AppState {
@@ -131,6 +133,7 @@ const useStyles = createUseStyles({
 })
 
 export const Reclamos = (props: propReclamo) => {
+    const navigate = useNavigate();
     const styles = useStyles();
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
@@ -284,9 +287,19 @@ export const Reclamos = (props: propReclamo) => {
 
     }
 
-    const iniciarChat = () => {
-
+    const iniciarChat = (idCompra: string, nombre: string) => {
+        let token = localStorage.getItem("token");
+        CompradorService.obtenerChat(idCompra, token!).then(res => {
+            if (res === "") {
+                crearChat(idCompra).then(idChat => {
+                    navigate("/chat/" + idChat, { state: { receptor: nombre } });
+                })
+            } else {
+                navigate("/chat/" + res, { state: { receptor: nombre } });
+            }
+        })
     }
+
 
     const cambiarEstadoReclamo = (idReclamo: string, resolucion: TipoResolucion) => {
         const reclamosActualzados = reclamos!.map(reclamo => {
@@ -402,12 +415,20 @@ export const Reclamos = (props: propReclamo) => {
                         <List.Item>
                             <Card title={titulo(item)} extra={
                                 listarRealizados &&
-                                <div style={{ display: "flex", alignItems: "center" }} >
-                                    <Tooltip title="Solo se pueden marcar como resueltos reclamos que aún no hayan sidos resueltos."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
-                                    <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }} type="success"
-                                        onClick={() => resolverReclamo(item.idReclamo, item.datosCompra.idCompra)}> <b>Marcar como resuelto</b>
-                                        <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
-                                    </Button>
+                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-around" }} >
+                                    <Space>
+                                        <Tooltip title="Solo se pueden marcar como resueltos reclamos que aún no hayan sidos resueltos."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                        <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }} type="success"
+                                            onClick={() => resolverReclamo(item.idReclamo, item.datosCompra.idCompra)}> <b>Marcar como resuelto</b>
+                                            <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                        </Button>
+
+                                        <Button type="primary"
+                                            style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto && item.tieneChat) ? "0 0 2px black" : "" }}
+                                            disabled={!item.tieneChat || item.estado !== TipoResolucion.NoResuelto}
+                                            onClick={() => iniciarChat(item.datosCompra.idCompra, item.datosCompra.nombreVendedor)}><b>Ir al chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                        <Tooltip title="Solo se puede ir al chat si ya existe una instancia de este creada por usted o por el vendedor."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                    </Space>
                                 </div>
                             }>
                                 <Row className={styles.reclamosContainer} >
@@ -464,7 +485,7 @@ export const Reclamos = (props: propReclamo) => {
                                                     <div style={{ display: "flex", alignItems: "center" }}>
                                                         <Tooltip title="Inicia el chat con el vendedor, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
                                                         <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
-                                                            type="primary" onClick={() => iniciarChat()}> <b>Iniciar chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                            type="primary" onClick={() => iniciarChat(item.datosCompra.idCompra, item.autor)}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                         </Button>
 
                                                     </div>

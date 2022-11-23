@@ -14,9 +14,8 @@ import RealizarCalificacion from "./RealizarCalificacion";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
-import { getFirestore, collection, doc, getDoc, getDocs, orderBy, limit, query, setDoc, Timestamp, addDoc, deleteDoc} from 'firebase/firestore';
-import firebase, {initializeApp, getApps, getApp} from 'firebase/app';
-import { useCollectionData } from 'react-firebase-hooks/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
+import { initializeApp, getApp } from 'firebase/app';
 
 
 const firebaseConfig = {
@@ -27,15 +26,15 @@ const firebaseConfig = {
     messagingSenderId: "319527562925",
     appId: "1:319527562925:web:2f6681c9cc98e1eb95a024",
     measurementId: "G-2S8M3F9J9J"
-  };
+};
 
 const createFirebaseApp = (config = {}) => {
     try {
-      return getApp();
+        return getApp();
     } catch (e) {
-      return initializeApp(config);
+        return initializeApp(config);
     }
-  };
+};
 
 
 
@@ -125,12 +124,11 @@ const useStyles = createUseStyles({
 const crearChat = async (idcompra: string) => {
     let collectionRef = collection(db, "mensajes");
     return addDoc(collectionRef, {}).then(referece => {
-      let id = referece.id;
-      console.log("Chat id: " + id);
-      CompradorService.iniciarChat(idcompra, id);
-      return id;
-    }).catch(e =>{})
-  };
+        let id = referece.id;
+        CompradorService.iniciarChat(idcompra, id, localStorage.getItem("token")!);
+        return id;
+    }).catch(e => { })
+};
 
 
 export const MisCompras: React.FC<{}> = () => {
@@ -172,8 +170,8 @@ export const MisCompras: React.FC<{}> = () => {
         busqueda()
     }, [paginaAbuscar])
 
-    const busqueda = () => {
-        CompradorService.listarCompras(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
+    const busqueda = (inicio?: boolean) => {
+        CompradorService.listarCompras(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
             if (result.compras !== undefined) {
                 setCompras(result.compras);
                 setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -182,18 +180,19 @@ export const MisCompras: React.FC<{}> = () => {
     }
 
 
-    const iniciarChat = (idCompra:string, idVendedor:string) => {
+    const iniciarChat = (idCompra: string, nombreVendedor: string) => {
         let uuid = localStorage.getItem("uuid");
-        CompradorService.obtenerChat(idCompra).then(res => {
-            if(res === ""){
-                crearChat(idCompra).then(idChat =>{
-                    navigate("/chat/"+idChat);
+        let token = localStorage.getItem("token");
+        CompradorService.obtenerChat(idCompra, token!).then(res => {
+            if (res === "") {
+                crearChat(idCompra).then(idChat => {
+                    navigate("/chat/" + idChat, { state: { receptor: nombreVendedor } });
                 })
-            }else{
-                navigate("/chat/"+res);
+            } else {
+                navigate("/chat/" + res, { state: { receptor: nombreVendedor } });
             }
         })
-     }
+    }
 
     const handleChange = (value: string) => {
         if (value === "fechaAsc")
@@ -348,13 +347,13 @@ export const MisCompras: React.FC<{}> = () => {
                             </div>
                         </Row>
                         <Divider></Divider>
-                        <Row style={{ gap: "10px", marginTop: "2%", justifyContent:"space-evenly" }}>
+                        <Row style={{ gap: "10px", marginTop: "2%", justifyContent: "space-evenly" }}>
 
                             <div style={{ fontSize: "12px", display: "flex", alignItems: "center" }}>
                                 <span>Resultados: {infoPaginacion.totalItems}</span>
                             </div>
                             <div style={{ minWidth: "150px" }}>
-                                <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
+                                <Button type="primary" size="large" icon={<SearchOutlined />} onClick={() => busqueda(true)} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                             </div>
                         </Row>
                     </Card>
@@ -393,15 +392,19 @@ export const MisCompras: React.FC<{}> = () => {
                                         <div style={{ display: "flex", alignItems: "center" }}>
                                             <Image width={150} src={item.imagenURL} />
                                         </div>
-                                
+
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{  textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
-                                        
+
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                             <div>
-                                                <p style={{ textAlign:"center" }}>{item.nombreVendedor}</p>
-                                                <a onClick={e => iniciarChat(item.idCompra, item.idVendedor)}>Iniciar chat</a>
+                                                <p style={{ textAlign: "center" }}>{item.nombreVendedor}</p>
+
+                                                <Button type="link" onClick={e => iniciarChat(item.idCompra, item.nombreVendedor)}
+                                                    disabled={(item.estadoCompra !== EstadoCompra.Confirmada && item.estadoCompra !== EstadoCompra.Completada) || (item.estadoCompra !== EstadoCompra.Confirmada && !item.garantiaActiva)}
+                                                >{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</Button>
+                                                <Tooltip title="Solo se puede iniciar o acceder al chat cuando la compra haya sido confirmada y se esté dentro de la garantía del producto"> <FontAwesomeIcon type="regular" icon={faQuestionCircle} /></Tooltip>
                                             </div>
                                         </div>
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>

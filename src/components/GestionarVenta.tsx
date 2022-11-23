@@ -108,7 +108,7 @@ export const GestionarVenta = (props: acciones) => {
             {aceptar && <Modal title={titulo} open={open} onCancel={() => { showModal() }} footer={null} afterClose={() => { showModal() }}>
                 {contenido()}
                 <Divider></Divider>
-                <h3 style={{ textAlign: "center", marginBottom: "8%" }}>Selecciona la fecha y hora de retiro:</h3>
+                <h3 style={{ textAlign: "center", marginBottom: "8%" }}>{(esEnvio)?"Selecciona la fecha y hora de entrega":"Selecciona la fecha y hora de retiro:"}</h3>
                 <Form ref={formRef} name="control-ref" layout="vertical" onFinish={cambiarEstadoVenta}>
                     <Row style={{ justifyContent: "space-around" }}>
                         <Form.Item name="tipo" label="Calendario:" rules={[{ required: true, message: "La fecha y hora es obligatoria" }]} >

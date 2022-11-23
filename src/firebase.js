@@ -2,6 +2,8 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging"
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
+import { getFirestore, collection, doc, getDoc, getDocs, orderBy, limit, query, setDoc, Timestamp, addDoc, deleteDoc } from 'firebase/firestore';
+import { CompradorService } from "shopit-shared";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 
@@ -21,6 +23,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const messaging = getMessaging(app);
 const analytics = getAnalytics(app);
+const db = getFirestore(app);
 
 export const fetchToken = (setTokenFound) => {
     return getToken(messaging, {
@@ -48,3 +51,24 @@ export const onMessageListener = () =>
             resolve(payload);
         });
     });
+
+export const iniciarChat = (idCompra, token) => {
+    CompradorService.obtenerChat(idCompra, token).then(res => {
+        if (res === "") {
+            crearChat(idCompra).then(idChat => {
+                return ("/chat/" + idChat)
+            })
+        } else {
+            return ("/chat/" + res)
+        }
+    })
+}
+
+export const crearChat = async (idcompra, token) => {
+    let collectionRef = collection(db, "mensajes");
+    return addDoc(collectionRef, {}).then(referece => {
+        let id = referece.id;
+        CompradorService.iniciarChat(idcompra, id, token);
+        return id;
+    }).catch(e => { })
+};

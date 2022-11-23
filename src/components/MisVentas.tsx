@@ -139,8 +139,6 @@ export const MisVentas: React.FC<{}> = () => {
     }
 
 
-    const iniciarChat = () => { }
-
     const handleChange = (value: string) => {
         if (value === "fechaAsc")
             setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": "asc", "ordenamiento": "fecha" })

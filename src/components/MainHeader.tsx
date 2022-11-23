@@ -1,6 +1,6 @@
 import { faAddressCard, faBagShopping, faBell, faBullhorn, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, List, Empty } from "antd";
+import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, List, Empty, Row } from "antd";
 import Search from "antd/lib/input/Search";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
@@ -67,7 +67,12 @@ const useStyles = createUseStyles({
 })
 
 type Note = {
-  id: string; titulo: string; mensaje: string; fecha: string;
+  id: string,
+  titulo: string,
+  mensaje: string,
+  fecha: string,
+  data?: string,
+  receptor?: string,
 }
 
 
@@ -201,14 +206,33 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
   const menuAdministrador = (<Menu items={itemsAdministrador}></Menu>)
 
 
+  const notiChat = (texto: string, idChat: string, nombre: string) => {
+    return (
+      <div>
+        <span>{texto}</span>
+        <Row justify="center">
+          <Button type="primary" onClick={() => navigate("/chat/" + idChat, { state: { receptor: nombre } })}>Ir al chat</Button>
+        </Row>
+      </div>
+    )
+  }
 
+   
   onMessage(messaging, (payload) => {
     setNotificacion((previo) => previo + 1)
-    notification.open({
-      message: payload.notification!.title,
-      description: payload.notification!.body,
-    });
-    setNotiList(actuales => [...actuales, { titulo: payload.notification!.title!, mensaje: payload.notification!.body!, fecha: moment().format("HH:mm"), id: payload.messageId }])
+    if (payload.data) {
+      notification.open({
+        message: payload.notification!.title,
+        description: notiChat(payload.notification!.body!, payload.data!.idChat, payload.data!.receptor),
+      });
+      setNotiList(actuales => [...actuales, { titulo: payload.notification!.title!, mensaje: payload.notification!.body!, fecha: moment().format("HH:mm"), id: payload.messageId, data: payload.data!.idChat, receptor: payload.data!.receptor }])
+    } else {
+      notification.open({
+        message: payload.notification!.title,
+        description: payload.notification!.body,
+      });
+      setNotiList(actuales => [...actuales, { titulo: payload.notification!.title!, mensaje: payload.notification!.body!, fecha: moment().format("HH:mm"), id: payload.messageId }])
+    }
   });
 
 
@@ -352,7 +376,8 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
                         renderItem={item => (
                           <Card style={{ display: "flex", flexDirection: "column" }} title={item.titulo + " | " + item.fecha}
                             extra={<FontAwesomeIcon size="xl"
-                              onClick={() => quitarNotificacion(item)} role={"button"} style={{ cursor: "pointer" }} color="#ff4d4f" icon={faCircleXmark} />}>
+                              onClick={() => quitarNotificacion(item)} role={"button"} style={{ cursor: "pointer" }} color="#ff4d4f" icon={faCircleXmark} />}
+                          >
                             <Meta
                               description={
                                 <Text
@@ -361,7 +386,13 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
                                   {item.mensaje}
                                 </Text>
                               }
+
                             />
+                            {item.data &&
+                              <Row justify="center" style={{ marginTop: "20px" }}>
+                                <Button type="primary" onClick={() => navigate("/chat/" + item.data, { state: { receptor: item.receptor } })}>Ir al chat</Button>
+                              </Row>
+                            }
                           </Card>
                         )} />
 
