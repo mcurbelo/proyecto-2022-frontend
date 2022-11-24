@@ -58,16 +58,16 @@ function App() {
                     <Route path="/registrarse" element={rol === null ? <SignUpPage /> : <Navigate to="/" replace />} />
                     <Route path="/recuperarContrasena" element={rol === null ? <RecuperarContrasena /> : <Navigate to="/" replace />} />
                     <Route path="/productos/:id" element={<InfoProducto />} />
-
                     {/* Comprador/Vendedor */}
-                    <Route path="/direcciones" element={rol !== "ADM" ? <DireccionesPage /> : <Navigate to="/" replace />} />
-                    <Route path="/compras" element={rol !== "ADM" ? <MisCompras /> : <Navigate to="/" replace />} />
-                    <Route path="/perfil" element={rol !== "ADM" ? <Perfil /> : <Navigate to="/" replace />} />
-                    <Route path="/tarjetas" element={rol !== "ADM" ? <TarjetasPage /> : <Navigate to="/" replace />} />
-                    <Route path="/compra" element={rol !== "ADM" ? <RealizarCompra /> : <Navigate to="/" replace />} />
-                    <Route path="/nuevaSolicitud" element={rol !== "ADM" ? <NuevaSolicitudPage /> : <Navigate to="/" replace />} /> {/* Ojo aca */}
-                    <Route path="/chat/:idchat" element={rol !== "ADM" ? <Chat /> : <Navigate to="/" replace />} />
-                    <Route path="/misReclamos" element={rol !== "ADM" ? <Reclamos listarRealizados={true} /> : <Navigate to="/" replace />} />
+
+                    <Route path="/direcciones" element={rol !== "ADM" && rol !== null ? <DireccionesPage /> : <Navigate to="/" replace />} />
+                    <Route path="/compras" element={rol !== "ADM" && rol !== null ? <MisCompras /> : <Navigate to="/" replace />} />
+                    <Route path="/perfil" element={rol !== "ADM" && rol !== null ? <Perfil /> : <Navigate to="/" replace />} />
+                    <Route path="/tarjetas" element={rol !== "ADM" && rol !== null ? <TarjetasPage /> : <Navigate to="/" replace />} />
+                    <Route path="/compra" element={rol !== "ADM" && rol !== null ? <RealizarCompra /> : <Navigate to="/" replace />} />
+                    <Route path="/nuevaSolicitud" element={rol !== "ADM" && rol !== null ? <NuevaSolicitudPage /> : <Navigate to="/" replace />} /> {/* Ojo aca */}
+                    <Route path="/chat/:idchat" element={rol !== "ADM" && rol !== null ? <Chat /> : <Navigate to="/" replace />} />
+                    <Route path="/misReclamos" element={rol !== "ADM" && rol !== null ? <Reclamos listarRealizados={true} /> : <Navigate to="/" replace />} />
 
                     {/* Solo vendedor */}
                     <Route path="/agregarproducto" element={rol === "Vendedor" ? <AgregarProducto /> : <Navigate to="/" replace />} />

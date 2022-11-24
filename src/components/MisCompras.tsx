@@ -181,7 +181,6 @@ export const MisCompras: React.FC<{}> = () => {
 
 
     const iniciarChat = (idCompra: string, nombreVendedor: string) => {
-        let uuid = localStorage.getItem("uuid");
         let token = localStorage.getItem("token");
         CompradorService.obtenerChat(idCompra, token!).then(res => {
             if (res === "") {

@@ -108,8 +108,8 @@ export const MisProductos = () => {
         obtenerCategorias()
     }, [paginaAbuscar])
 
-    const busqueda = () => {
-        VendedorService.listarMisProductos(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
+    const busqueda = (inicio?: boolean) => {
+        VendedorService.listarMisProductos(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
             if (result.misProductos !== undefined) {
                 setProductos(result.misProductos);
                 setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -262,7 +262,7 @@ export const MisProductos = () => {
                                 </div>
 
                                 <div style={{ minWidth: "150px" }}>
-                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
+                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={() => busqueda(true)} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                                 </div>
                             </Row>
                         </div>
@@ -331,7 +331,7 @@ export const MisProductos = () => {
                 />
 
 
-                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }}
+                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }}
                     defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual}
                     onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
             </div >

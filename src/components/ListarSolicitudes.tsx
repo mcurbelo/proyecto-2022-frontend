@@ -78,7 +78,7 @@ export const Solicitudes = () => {
 
     useEffect(() => {
         busqueda()
-    }, [paginaAbuscar, valoresOrdenamiento.dirOrdenamiento])
+    }, [paginaAbuscar])
 
     const busqueda = () => {
         AdministradorService.listadoSolicitudes(token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento).then((result) => {
@@ -90,7 +90,6 @@ export const Solicitudes = () => {
     }
 
 
-    const { Option } = Select;
 
     let locale = {
         emptyText: (
@@ -100,6 +99,7 @@ export const Solicitudes = () => {
 
     const onChange = (e: RadioChangeEvent) => {
         setValoresOrdenamiento({ ...valoresOrdenamiento, "dirOrdenamiento": e.target.value })
+        setPaginaAbuscar(0);
     };
 
     const quitarSolicitud = (solicitud: DtSolicitudPendiente) => {
@@ -155,7 +155,8 @@ export const Solicitudes = () => {
                                         <Col style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
                                             <Avatar
                                                 size={100}
-                                                src={(item.imagenPerfil != "") ? item.imagenPerfil : userDefault}
+                                                icon={<UserOutlined />}
+                                                src={item.imagenPerfil}
                                             />
                                         </Col>
 
@@ -187,7 +188,7 @@ export const Solicitudes = () => {
                         </List.Item>
                     )}
                 />
-                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
+                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
                 {
                     (mostrarVisualizarSolicitud!.mostrar) ? <Solicitud solicitud={mostrarVisualizarSolicitud?.solicitud!} quitar={() => quitarSolicitud(mostrarVisualizarSolicitud?.solicitud!)} showModal={() => { setVisualizarSolicitud({ solicitud: undefined, mostrar: false }) }} ></Solicitud> : null
                 }

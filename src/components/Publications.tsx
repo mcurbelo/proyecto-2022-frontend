@@ -168,11 +168,11 @@ function Publicactions() {
     }
     else {
       return <div>
-        <div style={{ maxWidth: "100%", margin: " 0 auto", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))" }} >
+        <div style={{ maxWidth: "100%", margin: " 0 auto", display: "grid", gap: "1rem", gridTemplateColumns: "repeat(auto-fill, minmax(300px, 1fr))" }} >
           {
             productos.map((value, index) => {
               return (
-                <Col key={index} style={{ display: 'flex', justifyContent: "center" }}>
+                <Col key={index} style={{ display: 'flex'}}>
                   <ItemPublication key={index} producto={value}></ItemPublication>
                 </Col>
               )
@@ -181,7 +181,7 @@ function Publicactions() {
 
 
         </div>
-        <Pagination style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={paginaActual} total={paginasTotales} current={paginaActual} onChange={onChange} />
+        <Pagination style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }} defaultCurrent={paginaActual} total={paginasTotales} current={paginaActual} onChange={onChange} />
       </div>
     }
   }

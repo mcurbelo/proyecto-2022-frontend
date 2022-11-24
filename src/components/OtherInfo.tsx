@@ -303,78 +303,81 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
               </div>
             </div>
           </Form>
+          {esVendedor ?
+            <>
+              <Divider></Divider>
+              <Form
+                name="editarDatosVendedor"
+                layout='vertical'
+                form={form2}
+                onFinish={onAcceptEditEmpresa}
+                requiredMark={false}
+                initialValues={{ nombreEmpresa: datosVendedor.nombreEmpresa, telefonoEmp: datosVendedor.telefonoEmpresa, rut: datosVendedor.rut }}>
 
-          <Divider></Divider>
-
-          <Form
-            name="editarDatosVendedor"
-            layout='vertical'
-            form={form2}
-            onFinish={onAcceptEditEmpresa}
-            requiredMark={false}
-            initialValues={{ nombreEmpresa: datosVendedor.nombreEmpresa, telefonoEmp: datosVendedor.telefonoEmpresa, rut: datosVendedor.rut }}>
-
-            <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
-              <h3>Información vendedor</h3>
-              <Button style={{ fontSize: "25px", justifyContent: 'center', display: 'flex', border: 0 }} onClick={onEditEmpresa}>
-                <EditOutlined onClick={onEditEmpresa} />
-              </Button>
-            </div>
-            <div className="wrapper" style={esVendedor ? { display: "grid" } : { display: "none" }}>
-              <div className='leftValues'>
-                <div>
-                  <Form.Item
-                    name="nombreEmpresa"
-                    label="Nombre empresa:"
-                    rules={[{ required: true, message: 'El nombre de la empresa no puede estar vacío' }]}
-                  >
-                    <input disabled={!editandoEmpresa} name='nombreEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchangeEmpresa(e)} />
-                  </Form.Item>
+                <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
+                  <h3>Información vendedor</h3>
+                  <Button style={{ fontSize: "25px", justifyContent: 'center', display: 'flex', border: 0 }} onClick={onEditEmpresa}>
+                    <EditOutlined onClick={onEditEmpresa} />
+                  </Button>
                 </div>
-                <div>
-                  <Form.Item
-                    name="rut"
-                    label="RUT:">
-                    <input disabled={true} name='rut' type="text" className="usuarioInput" />
-                  </Form.Item>
-                </div>
-
-                <div>
-                  <Tooltip title="Calificación obtenida de los compradores">
+                <div className="wrapper" style={esVendedor ? { display: "grid" } : { display: "none" }}>
+                  <div className='leftValues'>
                     <div>
-                      <label>Calificación:</label>
-                      <Form.Item>
-                        <Rate allowHalf disabled value={datosVendedor.calificacion} />
+                      <Form.Item
+                        name="nombreEmpresa"
+                        label="Nombre empresa:"
+                        rules={[{ required: true, message: 'El nombre de la empresa no puede estar vacío' }]}
+                      >
+                        <input disabled={!editandoEmpresa} name='nombreEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchangeEmpresa(e)} />
                       </Form.Item>
                     </div>
-                  </Tooltip>
-                </div>
-              </div>
-              <div className='rigthValues'>
-                <div>
-                  <Form.Item
-                    name="telefonoEmp"
-                    label="Teléfono empresa:"
-                    rules={[{
-                      max: 9,
-                      message: "Solo números, con un máximo de 9 caracteres",
-                      pattern: new RegExp("^[0-9]{0,9}$")
-                    }
-                    ]}
-                  >
-                    <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchangeEmpresa(e)} />
-                  </Form.Item>
-                </div>
+                    <div>
+                      <Form.Item
+                        name="rut"
+                        label="RUT:">
+                        <input disabled={true} name='rut' type="text" className="usuarioInput" />
+                      </Form.Item>
+                    </div>
 
-                {
-                  editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf: "end" }}>
-                    <Button type='primary' htmlType='submit'>Modificar</Button>
+                    <div>
+                      <Tooltip title="Calificación obtenida de los compradores">
+                        <div>
+                          <label>Calificación:</label>
+                          <Form.Item>
+                            <Rate allowHalf disabled value={datosVendedor.calificacion} />
+                          </Form.Item>
+                        </div>
+                      </Tooltip>
+                    </div>
                   </div>
-                }
-              </div>
+                  <div className='rigthValues'>
+                    <div>
+                      <Form.Item
+                        name="telefonoEmp"
+                        label="Teléfono empresa:"
+                        rules={[{
+                          max: 9,
+                          message: "Solo números, con un máximo de 9 caracteres",
+                          pattern: new RegExp("^[0-9]{0,9}$")
+                        }
+                        ]}
+                      >
+                        <input disabled={!editandoEmpresa} name='telefonoEmpresa' style={{ borderBottom: (editandoEmpresa) ? "2px solid green" : "" }} type="text" className="usuarioInput" onChange={(e) => onInputchangeEmpresa(e)} />
+                      </Form.Item>
+                    </div>
 
-            </div>
-          </Form>
+                    {
+                      editandoEmpresa && <div style={{ display: 'flex', justifyContent: 'end', alignSelf: "end" }}>
+                        <Button type='primary' htmlType='submit'>Modificar</Button>
+                      </div>
+                    }
+                  </div>
+
+                </div>
+              </Form>
+            </>
+            : null
+          }
         </div>
       </Col >
       <Col className={styles.colPequeño} style={{ width: "30%" }}>

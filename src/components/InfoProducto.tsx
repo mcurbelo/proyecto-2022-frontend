@@ -10,6 +10,7 @@ import tarjetas from '../images/tarjetas.jpg';
 import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { Rol } from "shopit-shared/dist/user/UserService";
+import { UserOutlined } from "@ant-design/icons";
 
 interface AppState {
   producto: DtProducto
@@ -209,7 +210,7 @@ export const InfoProducto = () => {
           <Card>
             <h2> {producto?.nombre}</h2>
             <hr />
-            <Text><Avatar size="large" src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
+            <Text><Avatar size="large" icon={<UserOutlined />} src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
             <hr />
             <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
             <hr />

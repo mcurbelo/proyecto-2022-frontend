@@ -20,9 +20,11 @@ export const DeshacerCompra = () => {
     const [isLoading, setLoading] = useState(false)
     const [datosCompra, setDatosCompra] = useState<InfoCompra>();
     const [mostrar, setMostrar] = useState(false);
+
     const onFinish = () => {
         setLoading(true);
         AdministradorService.infoCompraDeshacer(token!, idCompra).then((response) => {
+            console.log(response);
             if (response.idCompra) {
                 setDatosCompra(response);
                 setMostrar(true);
@@ -42,6 +44,14 @@ export const DeshacerCompra = () => {
     const disableButton = () => {
         const buttonCancel = document.getElementById("cancelButton")
         buttonCancel?.setAttribute("disabled", "true");
+    }
+
+    const formatoEstadoCompra = (estado: EstadoCompra) => {
+        if (estado === EstadoCompra.EsperandoConfirmacion)
+            return ("Esperando confirmación")
+        if (estado === EstadoCompra.Devolucion)
+            return ("Devolución")
+       return estado;
     }
     
     const deshacerVenta = () => {
@@ -125,7 +135,7 @@ export const DeshacerCompra = () => {
                             <Descriptions.Item label="Cantidad">{datosCompra?.cantidad}</Descriptions.Item>
                             <Descriptions.Item label="Precio total">$ {datosCompra?.montoTotal}</Descriptions.Item>
                             <Descriptions.Item label="Fecha realización">{datosCompra?.fecha}</Descriptions.Item>
-                            <Descriptions.Item label="Estado">{datosCompra?.estadoCompra}</Descriptions.Item>
+                            <Descriptions.Item label="Estado">{formatoEstadoCompra(datosCompra?.estadoCompra!)}</Descriptions.Item>
                             <Descriptions.Item label="Es envío">{(datosCompra?.esEnvio) ? "Sí" : "No"}</Descriptions.Item>
                             <Descriptions.Item label="Fecha entrega">{datosCompra?.fechaEntrega}</Descriptions.Item>
                             <Descriptions.Item label="Dirección de entrega">{datosCompra?.direccionEntrega}</Descriptions.Item>

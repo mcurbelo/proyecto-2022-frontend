@@ -37,6 +37,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
   const [esEmpresa, setEsEmpresa] = useState(false)
   const [categorias, setCategorias] = useState([] as string[])
   const [idDireccion, setIdDireccion] = useState("")
+  const [isLoading, setLoading] = useState(false)
   const styles = useStyles()
   const navigate = useNavigate()
 
@@ -63,6 +64,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
     })
   }
   const handleFormSubmition = (values: any) => {
+    setLoading(true)
     let token = localStorage.getItem("token")
     let formatted = ""
     if (values.fechaFinProducto) {
@@ -109,6 +111,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         errorModal(error.response.data.message)
       })
     }
+    setLoading(false);
   }
 
   return (
@@ -307,7 +310,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
           <Divider></Divider>
           <Form.Item>
             <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }}
-              type="success" htmlType="submit">{(esSolicitud) ? "Enviar solicitud" : "Agregar producto"}</Button>
+              type="success" htmlType="submit" loading={isLoading}>{(esSolicitud) ? "Enviar solicitud" : "Agregar producto"}</Button>
           </Form.Item>
         </Form></>)}
     </div>

@@ -165,9 +165,9 @@ export const Reclamos = (props: propReclamo) => {
         busqueda()
     }, [paginaAbuscar])
 
-    const busqueda = () => {
+    const busqueda = (inicio?: boolean) => {
         if (listarRealizados) {
-            CompradorService.reclamosHechos(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
+            CompradorService.reclamosHechos(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
                 if (result.reclamos !== undefined) {
                     setReclamos(result.reclamos);
                     setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -175,7 +175,7 @@ export const Reclamos = (props: propReclamo) => {
             })
         }
         else {
-            VendedorService.listarReclamosRecibidos(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
+            VendedorService.listarReclamosRecibidos(id!, token!,  (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
                 if (result.reclamos !== undefined) {
                     setReclamos(result.reclamos);
                     setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -393,7 +393,7 @@ export const Reclamos = (props: propReclamo) => {
                                 </div>
 
                                 <div style={{ minWidth: "150px" }}>
-                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
+                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={()=> busqueda(true)} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                                 </div>
                             </Row>
                         </div>
@@ -514,7 +514,7 @@ export const Reclamos = (props: propReclamo) => {
                         </List.Item>
                     )}
                 />
-                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
+                <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
             </div >
         </div>
     )

@@ -129,8 +129,8 @@ export const MisVentas: React.FC<{}> = () => {
         busqueda()
     }, [paginaAbuscar])
 
-    const busqueda = () => {
-        VendedorService.listarMisVentas(id!, token!, paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
+    const busqueda = (inicio?: boolean) => {
+        VendedorService.listarMisVentas(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
             if (result.ventas !== undefined) {
                 setVentas(result.ventas);
                 setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -316,7 +316,7 @@ export const MisVentas: React.FC<{}> = () => {
                                 </Select>
                             </div>
                             <div style={{ minWidth: "150px" }}>
-                                <Button type="primary" size="large" icon={<SearchOutlined />} onClick={busqueda} style={{ width: '150px', height: "47px" }}>Buscar</Button>
+                                <Button type="primary" size="large" icon={<SearchOutlined />} onClick={() => busqueda(true)} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                             </div>
 
                             <div style={{ fontSize: "12px", display: "flex", alignItems: "center" }}>
@@ -361,7 +361,7 @@ export const MisVentas: React.FC<{}> = () => {
 
 
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minWidth: "13%" }}>

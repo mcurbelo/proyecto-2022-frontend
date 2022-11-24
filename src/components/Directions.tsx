@@ -134,16 +134,16 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
 
   let locale = {
     emptyText: (
-        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: "black" }} description="No se encontraron direcciones :(" />
+      <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: "black" }} description="No se encontraron direcciones :(" />
     )
-}
+  }
 
   return (
     <div>
       <div className="directions-flex-div">
         <h3>Direcciones de envío</h3>
         <List
-        locale={locale}
+          locale={locale}
           itemLayout="horizontal"
           dataSource={direcciones}
           renderItem={(item) => (
