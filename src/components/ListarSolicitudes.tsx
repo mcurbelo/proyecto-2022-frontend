@@ -1,6 +1,6 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Card, Col, Empty, List, Pagination, Radio, RadioChangeEvent, Rate, Row, Select, Space, Tooltip } from "antd";
-import { useState, useEffect, SyntheticEvent } from "react";
+import { Avatar, Card, Col, Empty, List, Pagination, Radio, RadioChangeEvent, Rate, Row, Space, Tooltip } from "antd";
+import { useState, useEffect } from "react";
 import { createUseStyles } from "react-jss";
 import { AdministradorService } from "shopit-shared";
 import { DtSolicitudPendiente } from "shopit-shared/dist/user/VendedorService";
@@ -9,8 +9,7 @@ import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { faEye } from "@fortawesome/free-regular-svg-icons";
 import Solicitud from "./VisualizarSolicitud";
-import { StepBackwardOutlined, UserOutlined } from "@ant-design/icons";
-import userDefault from "../images/user.png"
+import { UserOutlined } from "@ant-design/icons";
 
 
 

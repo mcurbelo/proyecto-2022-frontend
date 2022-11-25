@@ -81,22 +81,28 @@ export const InfoProducto = () => {
 
   useEffect(() => {
     if (id) {
-      ProductoService.infoProducto(id).then((result) => {
-        if (typeof result !== 'string') {
-          setProducto(result);
-          setImagen(result.imagenes.at(0))
-        } else {
-          Modal.error({
-            content: result + ".",
-          });
-          navigate("/");
-        }
-      })
+      if (new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{3}-[0-9A-F]{12}$/i).test(id)) {
+        ProductoService.infoProducto(id).then((result) => {
+          if (typeof result !== 'string') {
+            setProducto(result);
+            setImagen(result.imagenes.at(0))
+          } else {
+            Modal.error({
+              content: result + ".",
+            });
+            navigate("/");
+          }
+        })
+      }else{
+        Modal.error({
+          content: "El producto no existe.",
+        });
+        navigate("/");
+      }
     }
+
     if (localStorage.getItem("token"))
       setLogeado(true)
-
-
   }, [])
 
   const seleccionarImagen = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {

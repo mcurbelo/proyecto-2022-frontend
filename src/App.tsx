@@ -28,19 +28,24 @@ import AgregarProducto from './pages/AgregarProductoPage';
 import EstadisticasVendedor from './pages/EstadisiticasVendedorPage';
 import EstadisticasAdm from './pages/EstadisiticasAdminPage';
 import { useMitt } from "react-mitt";
+import { ProtectedRoute } from "./ProtectedRoute";
 
 
 function App() {
+    const [existeToken, setExiste] = useState(!!localStorage.getItem("token"));
     const [rol, setRol] = useState<string | null>(null);
     const { emitter } = useMitt()
 
     useEffect(() => {
         emitter.on('estadoSesion', event => {
-            console.log(event);
-            if (event.login = true)
+            if (event.login = true) {
                 setRol(event.rol);
-            else
+                setExiste(true)
+            }
+            else {
                 setRol(null);
+                setExiste(false);
+            }
         });
 
     }, [])
@@ -50,40 +55,55 @@ function App() {
         <BrowserRouter>
             <Routes>
                 <Route element={<WithoutNav />}>
-                    <Route path="/iniciarSesion" element={rol === null ? <SignInPage /> : <Navigate to="/" replace />} />
+                    <Route path="/iniciarSesion" element={!existeToken ? <SignInPage /> : <Navigate to="/" replace />} />
                 </Route>
                 <Route element={<WithNav />}>
-                    {/* Invitado/Comprador/Vendedor */}
-                    <Route path='/' element={<HomePage />} />
+                    {/* Invitado*/}
                     <Route path="/registrarse" element={rol === null ? <SignUpPage /> : <Navigate to="/" replace />} />
                     <Route path="/recuperarContrasena" element={rol === null ? <RecuperarContrasena /> : <Navigate to="/" replace />} />
-                    <Route path="/productos/:id" element={<InfoProducto />} />
-                    {/* Comprador/Vendedor */}
 
-                    <Route path="/direcciones" element={rol !== "ADM" && rol !== null ? <DireccionesPage /> : <Navigate to="/" replace />} />
-                    <Route path="/compras" element={rol !== "ADM" && rol !== null ? <MisCompras /> : <Navigate to="/" replace />} />
-                    <Route path="/perfil" element={rol !== "ADM" && rol !== null ? <Perfil /> : <Navigate to="/" replace />} />
-                    <Route path="/tarjetas" element={rol !== "ADM" && rol !== null ? <TarjetasPage /> : <Navigate to="/" replace />} />
-                    <Route path="/compra" element={rol !== "ADM" && rol !== null ? <RealizarCompra /> : <Navigate to="/" replace />} />
-                    <Route path="/nuevaSolicitud" element={rol !== "ADM" && rol !== null ? <NuevaSolicitudPage /> : <Navigate to="/" replace />} /> {/* Ojo aca */}
-                    <Route path="/chat/:idchat" element={rol !== "ADM" && rol !== null ? <Chat /> : <Navigate to="/" replace />} />
-                    <Route path="/misReclamos" element={rol !== "ADM" && rol !== null ? <Reclamos listarRealizados={true} /> : <Navigate to="/" replace />} />
+                    {/* Todos */}
+                    <Route path="/productos/:id" element={<InfoProducto />} />
+                    <Route path='/' index element={<HomePage />} />
+
+                    {/* Comprador/Vendedor */}
+                    <Route element={<ProtectedRoute rol={rol} rolPermitido={["Comprador", "Vendedor"]} existeToken={existeToken} />}>
+                        <Route path="/direcciones" element={<DireccionesPage />} />
+                        <Route path="/compras" element={<MisCompras />} />
+                        <Route path="/perfil" element={<Perfil />} />
+                        <Route path="/tarjetas" element={<TarjetasPage />} />
+                        <Route path="/compra" element={<RealizarCompra />} />
+                        <Route path="/chat/:idchat" element={<Chat />} />
+                        <Route path="/misReclamos" element={<Reclamos listarRealizados={true} />} />
+                    </Route>
+                    {/* Solo comprador */}
+                    <Route element={<ProtectedRoute rol={rol} rolPermitido={["Comprador"]} existeToken={existeToken} />}>
+                        <Route path="/nuevaSolicitud" element={<NuevaSolicitudPage />} />
+                    </Route>
 
                     {/* Solo vendedor */}
-                    <Route path="/agregarproducto" element={rol === "Vendedor" ? <AgregarProducto /> : <Navigate to="/" replace />} />
-                    <Route path="/ventas" element={rol === "Vendedor" ? <MisVentas /> : <Navigate to="/" replace />} />
-                    <Route path="/misReclamosRecibidos" element={rol === "Vendedor" ? <Reclamos listarRealizados={false} /> : <Navigate to="/" replace />} />
-                    <Route path="/misProductos" element={rol === "Vendedor" ? <MisProductos /> : <Navigate to="/" replace />} ></Route>
-                    <Route path="/modificarProducto" element={rol === "Vendedor" ? <ModificarProducto /> : <Navigate to="/" replace />}  ></Route>
-                    <Route path='/estadisticas' element={rol === "Vendedor" ? <EstadisticasVendedor /> : <Navigate to="/" replace />}> </Route>
+                    <Route element={<ProtectedRoute rol={rol} rolPermitido={["Vendedor"]} existeToken={existeToken} />}>
+                        <Route path="/agregarproducto" element={<AgregarProducto />} />
+                        <Route path="/ventas" element={<MisVentas />} />
+                        <Route path="/misReclamosRecibidos" element={<Reclamos listarRealizados={false} />} />
+                        <Route path="/misProductos" element={<MisProductos />} ></Route>
+                        <Route path="/modificarProducto" element={<ModificarProducto />}></Route>
+                        <Route path='/estadisticas' element={<EstadisticasVendedor />}> </Route>
+                    </Route>
 
                     {/* Administrador */}
-                    <Route path="/usuarios" element={rol === "ADM" ? <UserList /> : <Navigate to="/" replace />} />
-                    <Route path="/solicitudes" element={rol === "ADM" ? <Solicitudes></Solicitudes> : <Navigate to="/" replace />}  ></Route>
-                    <Route path="/nuevoAdministrador" element={rol === "ADM" ? <AdminSignUpForm /> : <Navigate to="/" replace />}  ></Route>
-                    <Route path='/estadisticas/sistema' element={rol === "ADM" ? <EstadisticasAdm /> : <Navigate to="/" replace />}> </Route>
-                    <Route path="/categoria" element={rol === "ADM" ? <NuevaCategoria /> : <Navigate to="/" replace />}></Route>
-                    <Route path="/devoluciones" element={rol === "ADM" ? <DeshacerCompra /> : <Navigate to="/" replace />}> </Route>
+                    <Route element={<ProtectedRoute rol={rol} rolPermitido={["ADM"]} existeToken={existeToken} />}>
+                        <Route path="/usuarios" element={<UserList />} />
+                        <Route path="/solicitudes" element={<Solicitudes />}></Route>
+                        <Route path="/nuevoAdministrador" element={<AdminSignUpForm />}></Route>
+                        <Route path='/estadisticas/sistema' element={<EstadisticasAdm />}></Route>
+                        <Route path="/categoria" element={<NuevaCategoria />}></Route>
+                        <Route path="/devoluciones" element={<DeshacerCompra />}> </Route>
+                    </Route>
+
+                    {/* Ruta equivocada */}
+                    <Route path="*" element={<Navigate to="/" replace />} />
+                 
                 </Route>
             </Routes>
         </BrowserRouter>

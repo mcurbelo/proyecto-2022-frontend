@@ -201,12 +201,13 @@ const AddProductForm = ({ esSolicitud = false }) => {
           <Form.Item
             rules={[{
               required: true,
-              message: "El stock del producto es obligatorio"
+              message: "El stock del producto es obligatorio",
+
             }]}
             name="stockProducto"
             label="Stock inicial"
           >
-            <Input placeholder="100" />
+            <InputNumber placeholder="100" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
@@ -244,7 +245,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
             name="fechaFinProducto"
             label="Fecha fin de la publicación (opcional)"
           >
-            <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} />
+            <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
           </Form.Item>
 
           <Typography.Text>Categorias</Typography.Text>

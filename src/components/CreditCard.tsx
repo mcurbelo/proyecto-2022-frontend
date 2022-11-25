@@ -45,8 +45,6 @@ const CreditCard: React.FC<CreditCardProps> = (props) => {
         </Typography>
         <Typography>Vencimiento: <b>{expiration}</b></Typography>
       </div>
-
-      <Button danger type="primary" style={{ marginLeft: "auto" }}>Eliminar</Button>
     </div>
   )
 }

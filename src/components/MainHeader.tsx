@@ -97,15 +97,19 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
 
   const { Text } = Typography;
 
+  const validarHacerSolicitud = () => {
+    navigate("/nuevaSolicitud", { state: { valido: true } })
+  }
+
   const itemsComprador = [
     {
       label: (<Link type="text" to="/compras" className="ant-btn ant-btn-text">Mis compras<FontAwesomeIcon icon={faBagShopping} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-1'
     },
     {
-      label: (<Link type="text" to="/nuevaSolicitud"
+      label: (<Link type="text" to={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "/nuevaSolicitud" : "#"}
         className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
-        Solcitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
+        Solicitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} onClick={validarHacerSolicitud} /></Link>),
       key: 'item-2'
     },
     {
@@ -217,7 +221,7 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
     )
   }
 
-   
+
   onMessage(messaging, (payload) => {
     setNotificacion((previo) => previo + 1)
     if (payload.data) {
@@ -263,7 +267,6 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
     emitter.emit('estadoSesion', { login: esInicio, rol: rol });
 
   }
-
 
   const obtenerCategorias = () => {
     CategoriaService.listarCategorias().then((result) => {

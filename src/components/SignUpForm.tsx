@@ -89,10 +89,6 @@ const SignUpForm = () => {
         rules={[{
           required: true,
           message: "No puede ser vacío"
-        },
-        {
-          validator: passwordValidator,
-          message: "Las contraseñas no coinciden o se encuentran vacías"
         }]}
       >
         <Input.Password placeholder="Contraseña" onChange={(event) => setState({ ...state, password: event.target.value })} />
