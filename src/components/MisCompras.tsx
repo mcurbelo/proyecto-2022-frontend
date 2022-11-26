@@ -393,7 +393,7 @@ export const MisCompras: React.FC<{}> = () => {
                                         </div>
 
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            <p style={{textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
