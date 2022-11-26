@@ -392,7 +392,7 @@ export const MisVentas: React.FC<{}> = () => {
                                         </div>
 
 
-                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center" }}>
                                             <Space direction="vertical" size={15}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <Tooltip title="Solo se puede realizar acciones en ventas en esperando confirmación."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>

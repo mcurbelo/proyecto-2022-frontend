@@ -5,7 +5,6 @@ import reportWebVitals from './reportWebVitals';
 import "./main.css"
 import 'antd/dist/antd.css';
 import { Auth } from "shopit-shared";
-import { Outlet } from 'react-router';
 import App from './App'
 
 

@@ -11,6 +11,7 @@ import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 import { Rol } from "shopit-shared/dist/user/UserService";
 import { UserOutlined } from "@ant-design/icons";
+import { useMitt } from "react-mitt";
 
 interface AppState {
   producto: DtProducto
@@ -68,9 +69,10 @@ const { Text, Paragraph } = Typography;
 
 
 export const InfoProducto = () => {
+  const { emitter } = useMitt()
   const navigate = useNavigate();
   let { id } = useParams();
-  const rol = localStorage.getItem("rol") as Rol
+  const [rol, setRol] = useState("");
   const styles = useStyles();
   const [producto, setProducto] = useState<AppState["producto"]>();
   const [imangeSeleccionada, setImagen] = useState<AppState["imagen"]>();
@@ -93,7 +95,7 @@ export const InfoProducto = () => {
             navigate("/");
           }
         })
-      }else{
+      } else {
         Modal.error({
           content: "El producto no existe.",
         });
@@ -265,9 +267,9 @@ export const InfoProducto = () => {
                   </div>
                 ) : null
               }
-              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || rol == Rol.ADM} onClick={realizarCompra}>
+              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || rol === "ADM"} onClick={realizarCompra}>
                 Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-              <Button block disabled={producto?.stock == 0 || !usuarioLogueado || rol == Rol.ADM}>
+              <Button block disabled={producto?.stock == 0 || !usuarioLogueado || rol === "ADM"}>
                 Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
             </div>
           </Card>

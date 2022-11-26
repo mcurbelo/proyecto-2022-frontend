@@ -1,5 +1,4 @@
-import { Card, Form, Input, message, Row } from "antd"
-import { useState } from "react";
+import { Card, Form, Input, message, Modal, Row } from "antd"
 import { AdministradorService } from "shopit-shared"
 import { useNavigate } from "react-router";
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
@@ -7,19 +6,7 @@ import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css
 import Button from "antd-button-color";
 
 
-type PasswordState = {
-  password: string;
-  repeatPassword: string;
-}
-
-
-type Error = {
-  error: boolean;
-  message: string;
-}
 const AdminSingUpForm = () => {
-  const [state, setState] = useState({} as PasswordState)
-  const [error, setError] = useState({} as Error)
   const navigate = useNavigate();
 
 
@@ -39,9 +26,15 @@ const AdminSingUpForm = () => {
                 apellido: values.apellido,
                 correo: values.email
               }).then((response) => {
-                debugger;
-                message.success("Usuario administrador creado con exito. Dirigirse al correo para continuar con los siguientes pasos...")
-                navigate("/")
+                if (response.success) {
+                  message.success("Usuario administrador creado con exito. Dirigirse al correo para continuar con los siguientes pasos...")
+                  navigate("/")
+                } else {
+                  Modal.error({
+                    title: 'Error',
+                    content: response.message,
+                  });
+                }
               })
             }}
           >

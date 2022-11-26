@@ -57,7 +57,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
     buttonCancel?.setAttribute("disabled", "true");
   }
 
-  const borrarDireccion = (event: any, local: boolean, key: string) => {
+  const borrarDireccion = (event: any, local: boolean, key: string, esLocal: boolean) => {
     confirm({
       title: 'Realmente quieres eliminar esta dirección?',
       icon: <ExclamationCircleOutlined />,
@@ -66,7 +66,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
       cancelText: "Cancelar",
       onOk() {
         disableButton()
-        return CompradorService.borrarDireccion(token, key).then(res => {
+        return CompradorService.borrarDireccion(token, key, esLocal).then(res => {
           updateDirecciones();
         })
       },
@@ -147,7 +147,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
           itemLayout="horizontal"
           dataSource={direcciones}
           renderItem={(item) => (
-            <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, false, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} />]}>
+            <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, false, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id, false)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} />]}>
               {props.permiteSeleccion && <Checkbox checked={item.id === idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{ margin: '20px' }}></Checkbox>}
               <List.Item.Meta
                 avatar={<EnvironmentOutlined />}
@@ -163,7 +163,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
-              <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, true, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} />]}>
+              <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, true, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id, true)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} />]}>
                 {props.permiteSeleccion && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{ margin: '20px' }}></Checkbox>}
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined />}

@@ -139,6 +139,11 @@ export const RealizarCompra = () => {
     ];
     const { confirm } = Modal;
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
+
     const realizarPago = () => {
         let token = localStorage.getItem("token");
         let idUsuarios = localStorage.getItem("uuid");
@@ -147,11 +152,14 @@ export const RealizarCompra = () => {
             icon: <ExclamationCircleOutlined />,
             content: 'Este proceso de pago puede tomar unos segundos.',
             okText: 'Confirmar',
+            closeIcon: false,
+            cancelButtonProps: { id: "cancelButton" },
             cancelText: "Cancelar",
             onOk() {
                 return CompradorService.nuevaCompra(idUsuarios!, token!, datosCompra).then((result) => {
                     if (result === "200") {
                         Modal.success({
+                            title:"Compra realizada!!!",
                             content: 'Compra finalizada con éxito!!! Recuerde que tiene que esperar la confirmación del vendedor. Puede ser hasta 48 hrs.',
                         });
                         localStorage.removeItem("infoCompra");

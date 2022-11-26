@@ -260,12 +260,10 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
       navigate("/", { state: { categoria: nombre } })
     else
       emitter.emit('busquedaCategoria', { data: nombre });
-
   };
 
   const setRol = (esInicio: boolean, rol?: string) => {
     emitter.emit('estadoSesion', { login: esInicio, rol: rol });
-
   }
 
   const obtenerCategorias = () => {
@@ -360,13 +358,13 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
 
         <Search
 
-          placeholder="Buscar productos"
+          placeholder="Buscar productos..."
           onSearch={buscarProducto}
         />
 
         {sesionIniciada ?
           <div style={{ gridColumn: 3, justifySelf: "end" }}>
-            <Space size={40}>
+            <Space size={"middle"}>
               <Badge count={notificaciones} offset={[0, 0]}>
                 <Popover
                   trigger="hover"
@@ -402,7 +400,9 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
                     </div>
                   }
                 >
-                  <FontAwesomeIcon size="xl" icon={faBell} />
+                  <div style={{padding:10, marginLeft:26}}>
+                    <FontAwesomeIcon size="xl" icon={faBell} />
+                  </div>
                 </Popover>
               </Badge>
 

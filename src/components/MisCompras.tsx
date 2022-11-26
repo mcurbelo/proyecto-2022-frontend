@@ -424,7 +424,7 @@ export const MisCompras: React.FC<{}> = () => {
                                         </div>
 
 
-                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "flex-end" }}>
+                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center" }}>
                                             <Space direction="vertical" size={15}>
                                                 <div style={{ display: "flex", alignItems: "center" }}>
                                                     <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía. Solo se puede tener un reclamo activo por compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>

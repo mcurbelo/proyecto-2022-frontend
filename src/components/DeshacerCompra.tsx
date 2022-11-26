@@ -24,16 +24,20 @@ export const DeshacerCompra = () => {
     const onFinish = () => {
         setLoading(true);
         AdministradorService.infoCompraDeshacer(token!, idCompra).then((response) => {
-            console.log(response);
-            if (response.idCompra) {
+            if (typeof response != "string") {
                 setDatosCompra(response);
                 setMostrar(true);
+                setLoading(false);
             }
             else {
-                alert(response)
+                Modal.error({
+                    title: 'Error',
+                    content: response,
+                });
+                setLoading(false);
             }
-            setLoading(false);
         })
+
     };
 
     const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -51,9 +55,9 @@ export const DeshacerCompra = () => {
             return ("Esperando confirmación")
         if (estado === EstadoCompra.Devolucion)
             return ("Devolución")
-       return estado;
+        return estado;
     }
-    
+
     const deshacerVenta = () => {
         Modal.confirm({
             title: '¿Seguro desea deshacer esta compra/venta?',
@@ -67,7 +71,7 @@ export const DeshacerCompra = () => {
                 return AdministradorService.deshacerCompra(token!, idCompra).then((result) => {
                     if (result == "200") {
                         Modal.success({
-                            title:"Acción exitosa",
+                            title: "Acción exitosa",
                             content: 'Compra/venta reembolsada con éxito',
                         });
                         navigate("/");
@@ -145,7 +149,7 @@ export const DeshacerCompra = () => {
                         <Divider></Divider>
                         <Row justify="center" >
                             <Button type="warning" disabled={!datosCompra?.tieneReclamoNoResuelto || datosCompra.estadoCompra === EstadoCompra.Cancelada || datosCompra.estadoCompra === EstadoCompra.Devolucion}
-                                onClick={deshacerVenta}>Deshacer compra/venta<FontAwesomeIcon style={{ display: "inline-block", marginLeft: "10px" }} icon={faRotateLeft}/></Button>
+                                onClick={deshacerVenta}>Deshacer compra/venta<FontAwesomeIcon style={{ display: "inline-block", marginLeft: "10px" }} icon={faRotateLeft} /></Button>
                             <div style={{ display: "flex", alignItems: "center" }}>
                                 <Tooltip title="Solo se puede realizar esta acción cuando haya un reclamo no resuelto. Y la compra no haya sido cancelada o tenido una devolución"> <FontAwesomeIcon type="regular" style={{ marginLeft: "5px" }} icon={faCircleQuestion} /> </Tooltip>
                             </div>

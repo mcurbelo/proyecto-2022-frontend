@@ -9,6 +9,7 @@ import { initializeApp, getApp } from 'firebase/app';
 import { getFirestore, collection, orderBy, query, Timestamp, addDoc } from 'firebase/firestore';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import '../main.css';
+import { CompradorService } from "shopit-shared";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpBoAHC1LdQijNpCLt9UfNGKHkjbKs3Bs",
@@ -69,6 +70,7 @@ const Chat: FC<Props> = () => {
     setNewMessage("");
     await addDoc(collection(db, "/mensajes/" + idchat + "/chat"), data);
     executeScroll();
+    CompradorService.notificarRespuesta(idchat!, userUuid!, localStorage.getItem("token")!)
   };
 
 

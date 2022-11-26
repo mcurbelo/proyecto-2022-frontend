@@ -1,5 +1,5 @@
 import { UploadOutlined } from "@ant-design/icons";
-import { Checkbox, DatePicker, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Typography } from "antd";
+import { Checkbox, DatePicker, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Spin, Typography } from "antd";
 import { format } from "date-fns";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
@@ -38,6 +38,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
   const [categorias, setCategorias] = useState([] as string[])
   const [idDireccion, setIdDireccion] = useState("")
   const [isLoading, setLoading] = useState(false)
+
   const styles = useStyles()
   const navigate = useNavigate()
 
@@ -64,7 +65,6 @@ const AddProductForm = ({ esSolicitud = false }) => {
     })
   }
   const handleFormSubmition = (values: any) => {
-    setLoading(true)
     let token = localStorage.getItem("token")
     let formatted = ""
     if (values.fechaFinProducto) {
@@ -94,6 +94,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         idDireccion: idDireccion
       }, selectedImages, token!).then((response) => {
         successModalSolicitud()
+        setLoading(false);
         setTimeout(() => {
           navigate("/")
         }, 2000)
@@ -104,6 +105,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
     } else {
       VendedorService.altaProducto(datosProducto, selectedImages, token!).then((response) => {
         successModal()
+        setLoading(false);
         setTimeout(() => {
           navigate("/")
         }, 2000)
@@ -111,7 +113,6 @@ const AddProductForm = ({ esSolicitud = false }) => {
         errorModal(error.response.data.message)
       })
     }
-    setLoading(false);
   }
 
   return (
@@ -125,43 +126,41 @@ const AddProductForm = ({ esSolicitud = false }) => {
           </div>
         </Row>
       }
-
+      <h2>Imagenes</h2>
       {(selectedImages.length > 0) && (
-        <>
-          <h2>Imagenes</h2>
-          <Image.PreviewGroup>
-            <>
-              <List
-                grid={{
-                  xs: 1,
-                  sm: 2,
-                  md: 2,
-                  lg: 3,
-                  xl: 5,
-                  xxl: 5,
-                }}
-                dataSource={selectedImages}
-                renderItem={(item, index) => (
-                  <List.Item style={{ textAlign: "center" }}>
-                    <Image alt="Sin imagen" width={150} height={150} src={URL.createObjectURL(item)} />
-                    <Divider></Divider>
-                    <div>
-                      <Button
-                        danger
-                        style={{ justifySelf: "center" }}
-                        onClick={() => {
-                          (document.getElementById("fileInput") as HTMLInputElement).value = ""
-                          let toDelete = selectedImages.find(e => e.name == item.name)
-                          setImage(selectedImages.filter(i => i != toDelete))
-                        }}
-                      >Eliminar</Button>
-                    </div>
-                  </List.Item>
-                )}
-              />
-            </>
-          </Image.PreviewGroup>
-        </>
+        <Image.PreviewGroup>
+          <>
+            <List
+              grid={{
+                xs: 1,
+                sm: 2,
+                md: 2,
+                lg: 3,
+                xl: 5,
+                xxl: 5,
+              }}
+              dataSource={selectedImages}
+              renderItem={(item, index) => (
+                <List.Item style={{ textAlign: "center" }}>
+                  <Image alt="Sin imagen" width={150} height={150} src={URL.createObjectURL(item)} />
+                  <Divider></Divider>
+                  <div>
+                    <Button
+                      danger
+                      style={{ justifySelf: "center" }}
+                      onClick={() => {
+                        (document.getElementById("fileInput") as HTMLInputElement).value = ""
+                        let toDelete = selectedImages.find(e => e.name == item.name)
+                        setImage(selectedImages.filter(i => i != toDelete))
+                      }}
+                    >Eliminar</Button>
+                  </div>
+                </List.Item>
+              )}
+            />
+          </>
+        </Image.PreviewGroup>
+
       )}
 
       {(idDireccion.length != 0 || !esSolicitud) && (<><Button
@@ -185,7 +184,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         <Form
           layout="vertical"
           style={{ marginTop: 15 }}
-          onFinish={(values) => { handleFormSubmition(values) }}
+          onFinish={(values) => { setLoading(true); handleFormSubmition(values) }}
         >
           <Form.Item
             rules={[{
@@ -237,6 +236,10 @@ const AddProductForm = ({ esSolicitud = false }) => {
           <Form.Item
             name="garantiaProducto"
             label="Días de garantía"
+            rules={[{
+              required: true,
+              message: "La garantía no puede quedar vacía",
+            }]}
           >
             <InputNumber placeholder="180" style={{ width: "100%" }} />
           </Form.Item>
@@ -310,10 +313,15 @@ const AddProductForm = ({ esSolicitud = false }) => {
           </Form.Item>}
           <Divider></Divider>
           <Form.Item>
-            <Button disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }}
-              type="success" htmlType="submit" loading={isLoading}>{(esSolicitud) ? "Enviar solicitud" : "Agregar producto"}</Button>
+
+            <Button htmlType="submit" loading={isLoading} disabled={selectedImages.length == 0 || categorias.length == 0} style={{ width: "100%" }}
+              type="success">{(esSolicitud) ? "Enviar solicitud" : "Agregar producto"}</Button>
+
           </Form.Item>
-        </Form></>)}
+        </Form>
+      </>)
+
+      }
     </div>
   );
 }

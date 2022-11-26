@@ -1,7 +1,7 @@
 import { SearchOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
 import { faPause } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, DatePicker, DatePickerProps, Divider, Empty, Input, List, Pagination, Row, Select, Image, Carousel, Modal } from "antd";
+import { Card, DatePicker, DatePickerProps, Divider, Empty, Input, List, Pagination, Row, Select, Image, Carousel, Modal, Typography } from "antd";
 import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { CategoriaService, VendedorService } from "shopit-shared";
@@ -76,6 +76,7 @@ const useStyles = createUseStyles({
 
 const { Option } = Select;
 const { confirm } = Modal;
+const { Paragraph } = Typography;
 
 export const MisProductos = () => {
     const styles = useStyles();
@@ -298,7 +299,7 @@ export const MisProductos = () => {
                                 </div>
                                 <Divider></Divider>
                                 <div >
-                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.nombre}</p>
+                                    <Paragraph style={{ textAlign: "justify", textJustify: "inter-word" }} ellipsis={true ? { tooltip: item.nombre } : false}>{item.nombre}</Paragraph>
 
                                     <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{"Fecha ingresado: " + item.fechaInicio}</p>
 
@@ -329,8 +330,6 @@ export const MisProductos = () => {
                         </List.Item>
                     )}
                 />
-
-
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }}
                     defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual}
                     onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />

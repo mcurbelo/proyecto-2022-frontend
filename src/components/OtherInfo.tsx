@@ -207,7 +207,8 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   }, [infoUsuario]);
 
   useEffect(() => {
-    form2.resetFields();
+    if (datosVendedor && datosVendedor.nombreEmpresa!)
+      form2.resetFields();
   }, [datosVendedor]);
 
   const actualizarInformacion = (nombre: string) => {
@@ -303,7 +304,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
               </div>
             </div>
           </Form>
-          {esVendedor ?
+          {esVendedor && datosVendedor.nombreEmpresa ?
             <>
               <Divider></Divider>
               <Form
@@ -378,6 +379,15 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             </>
             : null
           }
+          {esVendedor && !datosVendedor.nombreEmpresa ?
+            <>
+              <Divider></Divider>
+              <h3>Eres un vendedor independiente.</h3>
+            </>
+            : null
+
+          }
+
         </div>
       </Col >
       <Col className={styles.colPequeño} style={{ width: "30%" }}>
