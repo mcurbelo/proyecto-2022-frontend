@@ -1,5 +1,5 @@
 import { MoreOutlined, SearchOutlined } from "@ant-design/icons";
-import { Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin, Row, Select, Card, Space, Divider } from "antd";
+import { Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin, Select, Card, Space, Divider } from "antd";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
 import { AdministradorService } from "shopit-shared";
@@ -8,7 +8,7 @@ import { DtUsuarioSlim } from "shopit-shared/dist/user/VendedorService";
 import { confirmAlert } from 'react-confirm-alert'; // Import
 import 'react-confirm-alert/src/react-confirm-alert.css'; // Import css
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faLock, faLockOpen, faTrash, faUserLock } from "@fortawesome/free-solid-svg-icons";
+import { faLock, faLockOpen, faTrash } from "@fortawesome/free-solid-svg-icons";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'

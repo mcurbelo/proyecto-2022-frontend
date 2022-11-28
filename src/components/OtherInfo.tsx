@@ -1,9 +1,9 @@
 import { FC, useState, useEffect, ChangeEvent } from 'react';
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input, Card } from 'antd';
+import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input } from 'antd';
 import '../main.css';
 import { UserService } from "shopit-shared";
-import { DtCambioContrasena, UpdateInfoEmpresa } from 'shopit-shared/dist/user/UserService';
+import { DtCambioContrasena } from 'shopit-shared/dist/user/UserService';
 import { createUseStyles } from 'react-jss';
 import { useMitt } from 'react-mitt';
 

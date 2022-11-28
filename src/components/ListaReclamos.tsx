@@ -157,6 +157,7 @@ export const Reclamos = (props: propReclamo) => {
         totalItems: 0
     })
     const [paginaAbuscar, setPaginaAbuscar] = useState(0)
+    const [isLoading, setLoading] = useState(false);
 
     const { Panel } = Collapse;
 
@@ -175,7 +176,7 @@ export const Reclamos = (props: propReclamo) => {
             })
         }
         else {
-            VendedorService.listarReclamosRecibidos(id!, token!,  (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
+            VendedorService.listarReclamosRecibidos(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
                 if (result.reclamos !== undefined) {
                     setReclamos(result.reclamos);
                     setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
@@ -291,10 +292,12 @@ export const Reclamos = (props: propReclamo) => {
         let token = localStorage.getItem("token");
         CompradorService.obtenerChat(idCompra, token!).then(res => {
             if (res === "") {
-                crearChat(idCompra).then(idChat => {
+                crearChat(idCompra, token).then(idChat => {
+                    setLoading(false)
                     navigate("/chat/" + idChat, { state: { receptor: nombre } });
                 })
             } else {
+                setLoading(false)
                 navigate("/chat/" + res, { state: { receptor: nombre } });
             }
         })
@@ -393,7 +396,7 @@ export const Reclamos = (props: propReclamo) => {
                                 </div>
 
                                 <div style={{ minWidth: "150px" }}>
-                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={()=> busqueda(true)} style={{ width: '150px', height: "47px" }}>Buscar</Button>
+                                    <Button type="primary" size="large" icon={<SearchOutlined />} onClick={() => busqueda(true)} style={{ width: '150px', height: "47px" }}>Buscar</Button>
                                 </div>
                             </Row>
                         </div>
@@ -485,7 +488,7 @@ export const Reclamos = (props: propReclamo) => {
                                                     <div style={{ display: "flex", alignItems: "center" }}>
                                                         <Tooltip title="Inicia el chat con el vendedor, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
                                                         <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
-                                                            type="primary" onClick={() => iniciarChat(item.datosCompra.idCompra, item.autor)}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                            type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                         </Button>
 
                                                     </div>

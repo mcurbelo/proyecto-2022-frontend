@@ -1,8 +1,7 @@
 import { CheckCircleOutlined, CloseCircleOutlined, InfoCircleFilled } from '@ant-design/icons';
-import { Card, Button, Typography, Image, Divider, Col, Row } from 'antd';
+import { Card, Button, Typography, Image, Row } from 'antd';
 import { DtProductoSlim } from 'shopit-shared/dist/user/VendedorService';
 import { useNavigate } from "react-router-dom";
-import { createUseStyles } from 'react-jss';
 
 interface Props {
   producto: DtProductoSlim

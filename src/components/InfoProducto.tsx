@@ -1,4 +1,4 @@
-import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Popover, Space, Modal, Tooltip, Comment } from "antd";
+import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Space, Modal, Tooltip } from "antd";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -9,9 +9,7 @@ import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoney
 import tarjetas from '../images/tarjetas.jpg';
 import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import { Rol } from "shopit-shared/dist/user/UserService";
 import { UserOutlined } from "@ant-design/icons";
-import { useMitt } from "react-mitt";
 
 interface AppState {
   producto: DtProducto
@@ -68,11 +66,14 @@ const useStyles = createUseStyles({
 const { Text, Paragraph } = Typography;
 
 
-export const InfoProducto = () => {
-  const { emitter } = useMitt()
+type propInfo = {
+  esAdm: boolean
+}
+
+export const InfoProducto = (props: propInfo) => {
   const navigate = useNavigate();
   let { id } = useParams();
-  const [rol, setRol] = useState("");
+  const {esAdm} = props;
   const styles = useStyles();
   const [producto, setProducto] = useState<AppState["producto"]>();
   const [imangeSeleccionada, setImagen] = useState<AppState["imagen"]>();
@@ -249,8 +250,10 @@ export const InfoProducto = () => {
             <Divider />
             <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
               <div>
+                <Space>
                 <Text>Cantidad:</Text>
                 <InputNumber id="cantidad" min={1} defaultValue={1} onChange={onChange} />
+                </Space>
               </div>
               <Image
                 width={170}
@@ -267,9 +270,9 @@ export const InfoProducto = () => {
                   </div>
                 ) : null
               }
-              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || rol === "ADM"} onClick={realizarCompra}>
+              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || esAdm} onClick={realizarCompra}>
                 Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-              <Button block disabled={producto?.stock == 0 || !usuarioLogueado || rol === "ADM"}>
+              <Button block disabled={producto?.stock == 0 || !usuarioLogueado || esAdm}>
                 Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
             </div>
           </Card>

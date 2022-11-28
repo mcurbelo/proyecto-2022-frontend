@@ -1,4 +1,4 @@
-import { useEffect, useLayoutEffect, useState } from "react";
+import { useLayoutEffect, useState } from "react";
 import { Navigate, Outlet } from "react-router-dom";
 import { UserService } from "shopit-shared";
 import { EstadoSolicitud } from "shopit-shared/dist/user/UserService";

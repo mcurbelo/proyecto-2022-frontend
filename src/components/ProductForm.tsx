@@ -101,6 +101,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         bloquearOtraSolicitud();
       }).catch((error) => {
         errorModal(error.response.data.message)
+        setLoading(false);
       })
     } else {
       VendedorService.altaProducto(datosProducto, selectedImages, token!).then((response) => {
@@ -111,6 +112,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
         }, 2000)
       }).catch((error) => {
         errorModal(error.response.data.message)
+        setLoading(false);
       })
     }
   }
@@ -126,7 +128,9 @@ const AddProductForm = ({ esSolicitud = false }) => {
           </div>
         </Row>
       }
-      <h2>Imagenes</h2>
+      {(idDireccion.length != 0 || !esSolicitud) &&
+        <h2>Imagenes</h2>
+      }
       {(selectedImages.length > 0) && (
         <Image.PreviewGroup>
           <>
@@ -206,7 +210,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
             name="stockProducto"
             label="Stock inicial"
           >
-            <InputNumber placeholder="100" style={{ width: "100%" }} />
+            <InputNumber min={1} placeholder="100" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
@@ -230,7 +234,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
             name="precioProducto"
             initialValue={1000}
           >
-            <InputNumber formatter={(value) => `$${value}`} style={{ width: "100%" }} />
+            <InputNumber min={1} formatter={(value) => `$${value}`} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
@@ -241,7 +245,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
               message: "La garantía no puede quedar vacía",
             }]}
           >
-            <InputNumber placeholder="180" style={{ width: "100%" }} />
+            <InputNumber min={1} placeholder="180" style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item
@@ -260,7 +264,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
           <div style={{ height: 15 }} />
 
           <Form.Item name="permiteEnvio">
-            <Checkbox checked={permiteEnvios} onChange={() => setPermiteEnvios(!permiteEnvios)}>Permite envio</Checkbox>
+            <Checkbox checked={permiteEnvios} onChange={() => setPermiteEnvios(!permiteEnvios)}>Permite envío</Checkbox>
           </Form.Item>
           {
             esSolicitud ?

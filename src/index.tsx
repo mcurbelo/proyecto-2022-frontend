@@ -4,6 +4,7 @@ import reportWebVitals from './reportWebVitals';
 
 import "./main.css"
 import 'antd/dist/antd.css';
+import "antd/dist/antd.min.css";
 import { Auth } from "shopit-shared";
 import App from './App'
 

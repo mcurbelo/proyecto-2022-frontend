@@ -1,10 +1,8 @@
-import { Alert, Button, Form, Input, Spin, Row, Card, message, Statistic  } from "antd";
+import { Button, Form, Input, Spin, Row, Card, message, Statistic  } from "antd";
 import { useState } from "react";
 import { RuleObject } from "antd/lib/form";
-import { createUseStyles } from "react-jss";
-import { CardService, CompradorService, UserService } from "shopit-shared";
+import { UserService } from "shopit-shared";
 import { useNavigate } from "react-router";
-import type { countdownValueType } from 'antd/es/statistic/utils';
 
 type Props  = {
     

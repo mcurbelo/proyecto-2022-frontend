@@ -7,13 +7,11 @@ const AddDirection: React.FC<{ esVendedor: boolean, callBack: any, editar: boole
   const token: string = localStorage.getItem("token") as string;
   const doc: any = document;
   const { datosActuales } = props;
-  let [esEnvio, setEsEnvio] = useState(false);
-  let [local, setEsLocal] = useState(false);
   const { Option } = Select;
   const { TextArea } = Input;
   let { callBack } = props;
   const [form] = Form.useForm();
-  const [cheked, setCheked] = useState("");
+  const [esLocal, setEsLocal] = useState(false);
 
   const onFinish = (values: any) => {
     let requestBody = {
@@ -22,7 +20,7 @@ const AddDirection: React.FC<{ esVendedor: boolean, callBack: any, editar: boole
       departamento: values.departamento,
       localidad: values.localidad,
       notas: values.aclaracion,
-      esLocal: local,
+      esLocal: esLocal,
       id: ""
     }
 
@@ -40,7 +38,6 @@ const AddDirection: React.FC<{ esVendedor: boolean, callBack: any, editar: boole
         doc.getElementById("aclaracion").value = "";
         doc.getElementById("calle").value = "";
         doc.getElementById("numero").value = "";
-        setEsEnvio(false);
         setEsLocal(false);
         if (res.success) {
           message.success('Dirección agregada con éxito');
@@ -63,14 +60,7 @@ const AddDirection: React.FC<{ esVendedor: boolean, callBack: any, editar: boole
   };
 
   const onChange = (e: RadioChangeEvent) => {
-    setCheked(e.target.value);
-    if (e.target.value == "envio") {
-      setEsEnvio(true);
-      setEsLocal(false);
-    } else {
-      setEsEnvio(false);
-      setEsLocal(true);
-    }
+    setEsLocal(e.target.value)
   };
 
 
@@ -137,34 +127,33 @@ const AddDirection: React.FC<{ esVendedor: boolean, callBack: any, editar: boole
               <Option value="Flores">Flores</Option>
               <Option value="Durazno">Durazno</Option>
               <Option value="Colonia">Colonia</Option>
-              <Option value="CerroLargo">Cerro Largo</Option>
+              <Option value="Cerro Largo">Cerro Largo</Option>
               <Option value="Canelones">Canelones</Option>
               <Option value="Artigas">Artigas</Option>
               <Option value="Salto">Salto</Option>
               <Option value="Rocha">Rocha</Option>
               <Option value="Rivera">Rivera</Option>
-              <Option value="RioNegro">Río Negro</Option>
-              <Option value="Paysandu">Paysandú</Option>
+              <Option value="Río Negro">Río Negro</Option>
+              <Option value="Paysandú">Paysandú</Option>
               <Option value="Montevideo">Montevideo</Option>
               <Option value="Maldonado">Maldonado</Option>
-              <Option value="TreintayTres">Treinta y Tres	</Option>
-              <Option value="Tacuarembo">Tacuarembó</Option>
+              <Option value="Treinta y Tres">Treinta y Tres</Option>
+              <Option value="Tacuarembó">Tacuarembó</Option>
               <Option value="Soriano">Soriano</Option>
-              <Option value="SanJose">San José</Option>
+              <Option value="San José">San José</Option>
             </Select>
           </Form.Item>
 
           <Form.Item label="Aclaración (opcional)" name="aclaracion">
             <TextArea rows={2} id="aclaracion" />
           </Form.Item>
-          {!props.editar &&
-            <Form.Item style={props.esVendedor ? { display: "block" } : { display: "none" }} name="tipoDireccion" label="Tipo"
-              rules={[props.esVendedor ? { required: true, message: 'Debe elegir un tipo' } : {}]}
+          {!props.editar && props.esVendedor &&
+            <Form.Item name="tipoDireccion" label="Tipo"
+              rules={[{ required: true, message: 'Debe elegir un tipo' }]}
             >
-
-              <Radio.Group onChange={onChange} value={cheked}>
-                <Radio value="envio" checked={esEnvio}>Envío</Radio>
-                <Radio value="local" checked={local}>Local</Radio>
+              <Radio.Group onChange={onChange} value={esLocal}>
+                <Radio value={false}>Envío</Radio>
+                <Radio value={true}>Local</Radio>
               </Radio.Group>
             </Form.Item>
           }

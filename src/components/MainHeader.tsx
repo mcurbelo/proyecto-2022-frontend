@@ -93,6 +93,7 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
   })
   const [notificaciones, setNotificacion] = useState(0)
   const [notificacionesList, setNotiList] = useState<Note[]>([])
+  const [textBusqueda, setTextBusqueda] = useState("");
   const navigate = useNavigate();
 
   const { Text } = Typography;
@@ -106,12 +107,16 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
       label: (<Link type="text" to="/compras" className="ant-btn ant-btn-text">Mis compras<FontAwesomeIcon icon={faBagShopping} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-1'
     },
-    {
-      label: (<Link type="text" to={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "/nuevaSolicitud" : "#"}
-        className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
-        Solicitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} onClick={validarHacerSolicitud} /></Link>),
-      key: 'item-2'
-    },
+
+    (infoUsuario.rol !== "Vendedor") ?
+      {
+        label: (<Link type="text" to={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "/nuevaSolicitud" : "#"}
+          className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
+          Solicitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} onClick={validarHacerSolicitud} /></Link>),
+        key: 'item-2'
+      }
+      : null
+    ,
     {
       label: (<Link type="text" to="/tarjetas" className="ant-btn ant-btn-text">Mis tarjetas<FontAwesomeIcon icon={faCreditCard} style={{ display: "inline-block", marginLeft: "10px" }} /></Link>),
       key: 'item-3'
@@ -245,6 +250,12 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
       localStorage.setItem("notificaciones", JSON.stringify(notificacionesList))
   }, [notificacionesList])
 
+  useEffect(() => {
+    if (location.pathname !== "/" && textBusqueda !== "") {
+      setTextBusqueda("");
+    }
+  }, [location])
+
 
 
   const buscarProducto = (value: string) => {
@@ -357,15 +368,16 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
         </div>
 
         <Search
-
           placeholder="Buscar productos..."
           onSearch={buscarProducto}
+          value={textBusqueda}
+          onChange={(e) => setTextBusqueda(e.target.value)}
         />
 
         {sesionIniciada ?
           <div style={{ gridColumn: 3, justifySelf: "end" }}>
             <Space size={"middle"}>
-              <Badge count={notificaciones} offset={[0, 0]}>
+              <div style={{ padding: 10, marginLeft: 26 }}>
                 <Popover
                   trigger="hover"
                   overlayStyle={{ width: "25%" }}
@@ -400,12 +412,12 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
                     </div>
                   }
                 >
-                  <div style={{padding:10, marginLeft:26}}>
+                  <Badge count={notificaciones} offset={[0, 0]}>
                     <FontAwesomeIcon size="xl" icon={faBell} />
-                  </div>
+                  </Badge>
                 </Popover>
-              </Badge>
 
+              </div>
               <Dropdown overlay={(infoUsuario.rol !== "ADM") ? menuComprador : menuAdministrador} placement="bottomLeft" >
                 <Button type="text" >Hola, {infoUsuario.nombre} <FontAwesomeIcon icon={faCircleChevronDown} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
               </Dropdown>
@@ -423,22 +435,18 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
           :
 
           <>
-            <Button
-              href="/iniciarSesion"
-              with="link"
-              type="dark"
+            <Link to="/iniciarSesion"
+              className="ant-btn ant-btn-text"
               style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar sesión<FontAwesomeIcon icon={faRightToBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
-            </Button>
+            </Link>
 
-            <Button
+            <Link to="/registrarse"
+              className="ant-btn ant-btn-text"
               onClick={(_) => {
                 _.currentTarget.blur()
               }}
-              href="/registrarse"
-              with="link"
-              type="dark"
               style={{ justifySelf: "end", gridColumn: 4, marginRight: 24 }}>Registrarse<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} />
-            </Button>
+            </Link>
 
           </>
         }

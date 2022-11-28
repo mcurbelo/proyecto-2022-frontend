@@ -2,7 +2,7 @@ import { getMessaging, getToken, onMessage } from "firebase/messaging"
 // Import the functions you need from the SDKs you need
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getFirestore, collection, doc, getDoc, getDocs, orderBy, limit, query, setDoc, Timestamp, addDoc, deleteDoc } from 'firebase/firestore';
+import { getFirestore, collection, addDoc } from 'firebase/firestore';
 import { CompradorService } from "shopit-shared";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -31,7 +31,6 @@ export const fetchToken = (setTokenFound) => {
     }).then((currentToken) => {
         if (currentToken) {
             setTokenFound(true);
-            console.log('Token actual del cliente: ', currentToken);
             // Trackeaa el token
             // Muestra en la UI que esta permitido recibir notificaciones.
         } else {
@@ -40,7 +39,6 @@ export const fetchToken = (setTokenFound) => {
         }
         localStorage.setItem("tokenNotificacion", (currentToken) ? currentToken : "");
     }).catch((err) => {
-        console.log('Error al crear el token. ', err);
         // Agarra el error cuando se esta creando el token del cliente.
     });
 }
@@ -65,6 +63,7 @@ export const iniciarChat = (idCompra, token) => {
 }
 
 export const crearChat = async (idcompra, token) => {
+    console.log(token)
     let collectionRef = collection(db, "mensajes");
     return addDoc(collectionRef, {}).then(referece => {
         let id = referece.id;

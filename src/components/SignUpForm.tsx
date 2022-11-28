@@ -20,7 +20,6 @@ type Error = {
 const SignUpForm = () => {
   const [state, setState] = useState({} as PasswordState)
   const [error, setError] = useState({} as Error)
-  const navigate = useNavigate()
 
   const passwordValidator = (_: RuleObject, __: any) => {
     if ((state.password?.length === 0 || state.repeatPassword?.length === 0) || state.password === state.repeatPassword) {

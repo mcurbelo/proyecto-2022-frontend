@@ -165,6 +165,7 @@ export const MisCompras: React.FC<{}> = () => {
         id: "",
         nombreUsuario: "",
     })
+    const [isLoading, setLoading] = useState(false);
 
     useEffect(() => {
         busqueda()
@@ -185,9 +186,11 @@ export const MisCompras: React.FC<{}> = () => {
         CompradorService.obtenerChat(idCompra, token!).then(res => {
             if (res === "") {
                 crearChat(idCompra).then(idChat => {
+                    setLoading(false);
                     navigate("/chat/" + idChat, { state: { receptor: nombreVendedor } });
                 })
             } else {
+                setLoading(false);
                 navigate("/chat/" + res, { state: { receptor: nombreVendedor } });
             }
         })
@@ -393,14 +396,14 @@ export const MisCompras: React.FC<{}> = () => {
                                         </div>
 
                                         <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            <p style={{ textJustify: "inter-word" }}>{item.nombreProducto}</p>
                                         </div>
 
                                         <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                             <div>
                                                 <p style={{ textAlign: "center" }}>{item.nombreVendedor}</p>
 
-                                                <Button type="link" onClick={e => iniciarChat(item.idCompra, item.nombreVendedor)}
+                                                <Button type="link" onClick={e => { iniciarChat(item.idCompra, item.nombreVendedor); setLoading(true) }} loading={isLoading}
                                                     disabled={(item.estadoCompra !== EstadoCompra.Confirmada && item.estadoCompra !== EstadoCompra.Completada) || (item.estadoCompra !== EstadoCompra.Confirmada && !item.garantiaActiva)}
                                                 >{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</Button>
                                                 <Tooltip title="Solo se puede iniciar o acceder al chat cuando la compra haya sido confirmada y se esté dentro de la garantía del producto"> <FontAwesomeIcon type="regular" icon={faQuestionCircle} /></Tooltip>

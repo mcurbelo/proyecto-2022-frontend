@@ -1,7 +1,7 @@
 import { FC, useEffect, useState, useRef } from "react";
 import { useLocation, useParams } from "react-router-dom";
 import { ChatFeed, Message } from "react-chat-ui";
-import { Input, Button, Spin } from "antd";
+import { Input, Button, Spin, Row } from "antd";
 import { SendOutlined } from "@ant-design/icons";
 import "react-chat-widget/lib/styles.css";
 
@@ -10,6 +10,7 @@ import { getFirestore, collection, orderBy, query, Timestamp, addDoc } from 'fir
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import '../main.css';
 import { CompradorService } from "shopit-shared";
+import { createUseStyles } from "react-jss";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBpBoAHC1LdQijNpCLt9UfNGKHkjbKs3Bs",
@@ -29,6 +30,15 @@ const createFirebaseApp = (config = {}) => {
   }
 };
 
+const useStyles = createUseStyles({
+  "@global": {
+    "#chat-panel": {
+      minHeight: "80px",
+      maxHeight: "400px"
+    }
+  },
+
+})
 
 
 
@@ -40,6 +50,7 @@ const db = getFirestore(firebaseApp);
 
 interface Props { }
 const Chat: FC<Props> = () => {
+  const styles = useStyles();
   const { state } = useLocation();
   const { receptor } = state;
   const messagesEndRef = useRef(null);
@@ -91,7 +102,7 @@ const Chat: FC<Props> = () => {
       return new Message({
         id: userUuid === m.uuid ? 0 : 1,
         message: m.mensaje,
-        senderName: "",
+        senderName: receptor,
       })
     })
     loading = false;
@@ -103,8 +114,9 @@ const Chat: FC<Props> = () => {
       <h1 style={{ textAlign: "center" }}>Chat con {receptor}</h1>
       <div style={{ width: "30%", margin: "auto" }}>
         <div className="loading">
-          <Spin spinning={loading}></Spin>
-
+          <Row justify="center">
+            <Spin spinning={loading} ></Spin>
+          </Row>
           <ChatFeed
             messages={messages} // Boolean: list of message objects
             hasInputField={false} // Boolean: use our input, or use your own
@@ -114,35 +126,24 @@ const Chat: FC<Props> = () => {
             bubbleStyles={{
               text: {
                 fontSize: 15,
+                fontColor:"black"
+              },
+              userBubble: {
+               
               },
               chatbubble: {
-                borderRadius: 20,
-                padding: 5,
+                borderRadius: 30,
+                padding: 7,
+                
               },
             }}
           />
           <div className="sender" style={{ display: "flex", justifyContent: "center" }}>
-            <Input style={{ width: "100%" }} id="inputChat" onPressEnter={sendMessage} onChange={e => setNewMessage(e.target.value)} value={newMessage} ></Input>
-            <Button onClick={sendMessage} disabled={newMessage === ""}>
+            <Input style={{ width: "100%" }} id="inputChat" onPressEnter={(e) => (newMessage.trim() === "") ? sendMessage : e.preventDefault()} onChange={e => setNewMessage(e.target.value)} value={newMessage} ></Input>
+            <Button onClick={sendMessage} disabled={newMessage.trim() === ""}>
               {" "}
               <SendOutlined />
             </Button>
-            {/* <Form layout="inline" onSubmitCapture={sendMessage}>
-              <Form.Item>
-              <Input style={{width:"100%"}}
-                  value={newMessage}
-                  id="inputChat"
-                  onChange={loadNewMessage}
-                  placeholder="Nuevo mensaje..."
-              />
-              </Form.Item>
-              <Form.Item>
-              <Button onClick={sendMessage}>
-                  {" "}
-                  <SendOutlined />
-              </Button>
-              </Form.Item>
-          </Form> */}
           </div>
         </div>
       </div>

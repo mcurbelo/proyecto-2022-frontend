@@ -40,6 +40,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
       <Form
         className={styles.form}
         disabled={state.loading}
+        layout="vertical"
         onFinish={(values) => {
           // TODO Esto capaz debería pasarse a la librería compartida cuando se inicia sesión/carga la web
           let token = localStorage.getItem("token");
@@ -60,7 +61,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
           })
         }}
       >
-        <Form.Item name="cardNumber"
+        <Form.Item name="cardNumber" label="Número de tarjeta:"
           rules={[{
             required: true,
             pattern: new RegExp("(^[0-9]{16})$"),
@@ -72,6 +73,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
 
         <Form.Item
           name="cardCvv"
+          label="CCV:"
           rules={[{
             required: true,
             pattern: new RegExp("(^[0-9]{3,4})"),
@@ -82,6 +84,7 @@ const AddCardForm = ({ onCardAdd = undefined }: AddCardProp) => {
         </Form.Item>
 
         <Form.Item name="cardExpiration"
+          label="Fecha de expiración:"
           rules={[{
             required: true,
             pattern: new RegExp("(^[0-9]{2}\/[0-9]{2})"),

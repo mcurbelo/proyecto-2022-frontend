@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { createUseStyles } from "react-jss";
-import { Alert, Card, message, Row, Typography } from "antd";
+import { Card, message, Row, Typography } from "antd";
 import { faCirclePlus, faLeftLong } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import AddCard from "../components/AddCard";

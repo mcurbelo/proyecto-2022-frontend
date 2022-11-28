@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../main.css'
-import { Button, Card, Col, List, Pagination, PaginationProps, Row, Select, Space } from 'antd';
+import { Button, Card, Col, Pagination, PaginationProps, Row, Select, Space } from 'antd';
 import { ItemPublication } from './ItemPublication';
 import { DtFiltros } from 'shopit-shared/dist/user/ProductoService';
 import { CategoriaService, ProductoService } from 'shopit-shared';
@@ -9,9 +9,6 @@ import { useMitt } from 'react-mitt';
 import { DtCategoria } from 'shopit-shared/dist/user/CategoriaService';
 import CheckableTag from 'antd/lib/tag/CheckableTag';
 import { createUseStyles } from 'react-jss';
-import { table } from 'console';
-import { SettingOutlined, EditOutlined, EllipsisOutlined } from '@ant-design/icons';
-import Meta from 'antd/lib/card/Meta';
 import { useLocation } from 'react-router';
 
 

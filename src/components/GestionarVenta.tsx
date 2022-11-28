@@ -61,6 +61,7 @@ export const GestionarVenta = (props: acciones) => {
 
     const cambiarEstadoVenta = () => {
         setLoading(true);
+        disableButton();
         VendedorService.cambiarEstadoVenta(id!, token!, idVenta, (aceptar) ? EstadoCompra.Confirmada : EstadoCompra.Cancelada, datosGestion).then((result) => {
             if (result == "200") {
                 Modal.success({
@@ -100,12 +101,16 @@ export const GestionarVenta = (props: acciones) => {
         disabledHours: () => range(0, 24).splice(0, 7),
     });
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
 
     const formRef = React.createRef<FormInstance>();
 
     return (
         <>
-            {aceptar && <Modal title={titulo} open={open} onCancel={() => { showModal() }} footer={null} afterClose={() => { showModal() }}>
+            {aceptar && <Modal title={titulo} open={open} onCancel={() => { showModal() }} closable={false} footer={null} afterClose={() => { showModal() }}>
                 {contenido()}
                 <Divider></Divider>
                 <h3 style={{ textAlign: "center", marginBottom: "8%" }}>{(esEnvio)?"Selecciona la fecha y hora de entrega":"Selecciona la fecha y hora de retiro:"}</h3>
@@ -117,7 +122,7 @@ export const GestionarVenta = (props: acciones) => {
                     </Row>
                     <Form.Item style={{ display: "flex", justifyContent: "center", marginTop: "10%" }}>
                         <Space size={"large"}>
-                            <Button htmlType="button" onClick={hideModal} style={{ width: "150px" }}>
+                            <Button htmlType="button"  id="cancelButton"  onClick={hideModal} style={{ width: "150px" }}>
                                 Cancelar
                             </Button>
                             <Button type="success" htmlType="submit" loading={isLoading} style={{ width: "150px" }}>
@@ -129,7 +134,7 @@ export const GestionarVenta = (props: acciones) => {
             </Modal>
             }
 
-            {!aceptar && <Modal title={titulo} open={open} onCancel={() => { showModal() }} footer={null} afterClose={() => { showModal() }}>
+            {!aceptar && <Modal title={titulo} open={open} onCancel={() => { showModal() }} closable={false} footer={null} afterClose={() => { showModal() }}>
                 {contenido()}
                 <Divider></Divider>
                 <h3 style={{ textAlign: "center", marginBottom: "8%" }}>Ingrese el motivo por el cual rechaza la compra:</h3>
@@ -139,7 +144,7 @@ export const GestionarVenta = (props: acciones) => {
                     </Form.Item>
                     <Form.Item style={{ display: "flex", justifyContent: "center", marginTop: "10%" }}>
                         <Space size={"large"}>
-                            <Button htmlType="button" onClick={hideModal} style={{ width: "150px" }}>
+                            <Button htmlType="button" id="cancelButton" onClick={hideModal} style={{ width: "150px" }}>
                                 Cancelar
                             </Button>
                             <Button type="success" htmlType="submit" loading={isLoading} style={{ width: "150px" }}>

@@ -1,4 +1,4 @@
-import { Descriptions, Row, Typography } from "antd"
+import { Descriptions, Row } from "antd"
 import { createUseStyles } from "react-jss"
 import { DtCompra } from "shopit-shared/dist/user/CompradorService"
 import { DtProducto } from "shopit-shared/dist/user/ProductoService"
@@ -32,7 +32,7 @@ export const CompraFinal = (prop: InfoProp) => {
     const { direccion } = prop
 
     return (
-        <div>
+        <div style={{marginBottom:"20px"}}>
             <h1>A punto de terminar...</h1>
             <Row style={{ justifyContent: "center" }}>
                 <Descriptions className={styles.container} title="Resumen de la compra:" bordered column={{ xxl: 1, xl: 1, lg: 1, md: 1, sm: 1, xs: 1 }}>

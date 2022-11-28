@@ -18,6 +18,7 @@ import { RcFile } from "antd/lib/upload";
 import { CheckboxChangeEvent } from "antd/lib/checkbox";
 
 
+
 const useStyles = createUseStyles({
     "@global": {
         ".ant-upload-list ant-upload-list-text": {
@@ -101,10 +102,6 @@ export const ModificarProducto = () => {
         let imagenesMax = ["", "", "", "", ""];
         producto.imagenes.map((value, index) => {
             imagenesMax[index] = producto.imagenes[index];
-        })
-        let p = [] as (number | string)[]
-        producto.imagenes.map((value, index) => {
-            p[index] = index
         })
         setImangenesMax(imagenesMax)
         form.resetFields()
@@ -220,6 +217,18 @@ export const ModificarProducto = () => {
         })
     }
 
+    const hayModificacionDeImagen = () => {
+        const imagenes = Array.from(Object.values(fileList)).slice()
+        let retorno = false;
+        imagenes.forEach((value, index) => {
+            if (imagenes[index] !== null) {
+                retorno = true;
+                return;
+            }
+        })
+        return retorno;
+    }
+
     const igualesFuncion = () => {
         if ((datosModificar.descripcion != undefined && datosModificar.descripcion !== producto.descripcion) ||
             (datosModificar.stock != undefined && datosModificar.stock !== producto.stock) ||
@@ -228,7 +237,8 @@ export const ModificarProducto = () => {
             (datosModificar.imagenesQuitar!.length > 0) ||
             (Object.keys(fileList).length !== imagenesAux.length) ||
             (Array.from(Object.values(fileList)).indexOf(null) == -1) ||
-            (datosModificar.permiteEnvio != undefined && datosModificar.permiteEnvio !== producto.permiteEnvio))
+            (datosModificar.permiteEnvio != undefined && datosModificar.permiteEnvio !== producto.permiteEnvio) ||
+            hayModificacionDeImagen())
             return false;
         return true
     }

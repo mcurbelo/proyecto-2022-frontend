@@ -38,7 +38,7 @@ function App() {
 
     useEffect(() => {
         emitter.on('estadoSesion', event => {
-            if (event.login = true) {
+            if (event.login === true) {
                 setRol(event.rol);
                 setExiste(true)
             }
@@ -63,12 +63,12 @@ function App() {
                     <Route path="/recuperarContrasena" element={rol === null ? <RecuperarContrasena /> : <Navigate to="/" replace />} />
 
                     {/* Todos */}
-                    <Route path="/productos/:id" element={<InfoProducto />} />
+                    <Route path="/productos/:id" element={<InfoProducto esAdm={(rol === "ADM") ? true : false} />} />
                     <Route path='/' index element={<HomePage />} />
 
                     {/* Comprador/Vendedor */}
                     <Route element={<ProtectedRoute rol={rol} rolPermitido={["Comprador", "Vendedor"]} existeToken={existeToken} />}>
-                        <Route path="/direcciones" element={<DireccionesPage />} />
+                        <Route path="/direcciones" element={<DireccionesPage esVendedor={("Comprador") ? false : true} />} />
                         <Route path="/compras" element={<MisCompras />} />
                         <Route path="/perfil" element={<Perfil />} />
                         <Route path="/tarjetas" element={<TarjetasPage />} />
@@ -103,7 +103,6 @@ function App() {
 
                     {/* Ruta equivocada */}
                     <Route path="*" element={<Navigate to="/" replace />} />
-                 
                 </Route>
             </Routes>
         </BrowserRouter>

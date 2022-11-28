@@ -30,6 +30,7 @@ export const RealizarReclamo = (props: reclamoProps) => {
 
     const hacerReclamo = () => {
         setLoading(true);
+        disableButton();
         CompradorService.nuevoReclamo(id!, token!, idCompra, datosReclamos).then((result) => {
             if (result == "200") {
                 realizoReclamo();
@@ -50,11 +51,16 @@ export const RealizarReclamo = (props: reclamoProps) => {
 
     }
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
+
 
     const formRef = React.createRef<FormInstance>();
 
     return (
-        <Modal title={"Iniciar reclamo a vendedor - " + nombreUsuario} open={open} onCancel={() => { showModal() }} footer={null} afterClose={() => { showModal() }}>
+        <Modal title={"Iniciar reclamo a vendedor - " + nombreUsuario} open={open} closable={false} onCancel={() => { showModal() }} footer={null} afterClose={() => { showModal() }}>
             <Form ref={formRef} name="control-ref" layout="vertical" onFinish={hacerReclamo}>
                 <Form.Item name="tipo" label="Tipo:" rules={[{ required: true, message: "El tipo es obligatorio." }]} >
                     <Select placeholder="Seleccione el tipo de reclamo" value={TipoReclamo.DesperfectoProducto} onChange={(value) => setDatosReclamos({ ...datosReclamos, "tipo": value })}>
@@ -70,7 +76,7 @@ export const RealizarReclamo = (props: reclamoProps) => {
 
                 <Form.Item style={{ display: "flex", justifyContent: "center", marginTop: "10%" }}>
                     <Space size={50}>
-                        <Button htmlType="button" onClick={hideModal} style={{ width: "150px" }}>
+                        <Button htmlType="button" id="cancelButton" onClick={hideModal} style={{ width: "150px" }}>
                             Cancelar
                         </Button>
                         <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: "150px" }}>

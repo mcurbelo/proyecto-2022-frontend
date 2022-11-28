@@ -1,4 +1,4 @@
-import { message, Modal, Space, Steps } from 'antd';
+import { Modal, Space, Steps } from 'antd';
 import { useEffect, useState } from 'react';
 import { createUseStyles } from 'react-jss';
 import { useLocation, useNavigate } from 'react-router';
@@ -6,14 +6,13 @@ import { CompradorService } from 'shopit-shared';
 import { DtCompra } from 'shopit-shared/dist/user/CompradorService';
 import CompraDireccion from './CompraDireccion';
 import CompraTarjeta from './CompraTarjetas';
-import { DtDireccion } from "shopit-shared/dist/user/CompradorService";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { faCircleLeft, faCircleRight, faSackDollar } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import CompraFinal from './CompraFin';
-import { DtProducto } from 'shopit-shared/dist/user/ProductoService';
+import { Direccion, DtProducto } from 'shopit-shared/dist/user/ProductoService';
 import { CreditCardData } from './CardList';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 
@@ -33,7 +32,8 @@ const useStyles = createUseStyles({
     stepsAction: {
         marginTop: "24px",
         display: "flex",
-        justifyContent: "center"
+        justifyContent: "center",
+        paddingBottom: "40px"
     },
 
     container: {
@@ -49,6 +49,11 @@ const useStyles = createUseStyles({
             marginLeft: "30px",
             background: "#28a745",
             borderColor: "#28a745"
+        },
+
+        "[class^='stepsContent']": {
+            minHeight: "400px",
+            paddingTop: "40px"
         }
     },
 
@@ -67,13 +72,27 @@ interface AppState {
 
 
 export const RealizarCompra = () => {
-    const { state } = useLocation();
-    const { producto } = state;
-    const [productoInfo] = useState(producto as DtProducto)
     const navigate = useNavigate();
+    const { state } = useLocation();
+    const [productoInfo, setProductoInfo] = useState<DtProducto>({
+        calificacion: 0,
+        comentarios: [],
+        descripcion: "",
+        garantia: 0,
+        idProducto: "",
+        idVendedor: "",
+        imagenDePerfil: "",
+        imagenes: [],
+        localesParaRetiro: [],
+        nombre: "",
+        nombreVendedor: "",
+        permiteEnvio: false,
+        precio: 0,
+        stock: 0,
+    })
     const [current, setCurrent] = useState(0);
     const [infoTarjeta, setInfoTarjeta] = useState<AppState["datosTarjeta"]>();
-    const [direccionesVendedor] = useState(productoInfo.localesParaRetiro)
+    const [direccionesVendedor, setDireccionesVendedor] = useState<Direccion[]>([])
     const [datosDireccion, setDatosDireccion] = useState("");
     const [datosCompra, setDatosCompra] = useState<AppState["datosCompra"]>({
         idVendedor: "",
@@ -93,11 +112,19 @@ export const RealizarCompra = () => {
     };
 
     useEffect(() => {
+        if (state == null) {
+            console.log("entro")
+            navigate("/");
+        } else {
+            setProductoInfo(state.producto as DtProducto);
+            setDireccionesVendedor(state.producto.localesParaRetiro)
+        }
         if (localStorage.getItem("infoCompra") === null)
             navigate("/");
-        let value = JSON.parse(localStorage.getItem("infoCompra") || "")
-        setDatosCompra(value)
-
+        else {
+            let value = JSON.parse(localStorage.getItem("infoCompra") || "")
+            setDatosCompra(value)
+        }
     }, [])
 
     const onChangeDatos = (id: string, campo: string) => {
@@ -116,7 +143,7 @@ export const RealizarCompra = () => {
             setDatosCompra({ ...datosCompra, "idDireccionEnvio": -1 })
     }
 
-    const titulo = (productoInfo.permiteEnvio) ? "Elegir ubicación de retiro o entrega" : "Elegir ubicacion de retiro"
+    const titulo = (productoInfo.permiteEnvio) ? "Elegir ubicación de retiro o entrega" : "Elegir ubicación de retiro"
 
     const steps = [
         {
@@ -156,27 +183,28 @@ export const RealizarCompra = () => {
             cancelButtonProps: { id: "cancelButton" },
             cancelText: "Cancelar",
             onOk() {
+                disableButton();
                 return CompradorService.nuevaCompra(idUsuarios!, token!, datosCompra).then((result) => {
                     if (result === "200") {
                         Modal.success({
-                            title:"Compra realizada!!!",
-                            content: 'Compra finalizada con éxito!!! Recuerde que tiene que esperar la confirmación del vendedor. Puede ser hasta 48 hrs.',
+                            title: "Compra realizada!!!",
+                            content: 'Compra finalizada con éxito!!! Recuerde que tiene que esperar la confirmación del vendedor. Esta puede demorar hasta 48 hrs.',
                         });
                         localStorage.removeItem("infoCompra");
+                        navigate("/");
                     } else {
                         Modal.error({
                             title: 'Error en el pago',
                             content: 'Ha sucedido un problema al realizar el pago, intentelo de nuevo más tarde.',
                         });
                     }
-                    navigate("/");
                 })
             },
             onCancel() { },
         });
     };
 
-
+    document.body.style.backgroundColor = "#F0F0F0"
     return (
         <div style={{ justifyContent: "center", display: "flex" }}>
             <div className={styles.container}>

@@ -12,7 +12,7 @@ const { confirm } = Modal;
 
 interface DirectionsProps {
   permiteSeleccion?: boolean;
-  esVendedor?: boolean;
+  esVendedor: boolean;
   onSelectDirection?: (id: string) => void;
 }
 
@@ -182,7 +182,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
         }
 
         <div style={{ margin: "20px" }}>
-          {addDirection && <AddDirection editar={false} esVendedor={true} callBack={updateDirecciones}></AddDirection>}
+          {addDirection && <AddDirection editar={false} esVendedor={props.esVendedor} callBack={updateDirecciones}></AddDirection>}
         </div>
       </div>
 
