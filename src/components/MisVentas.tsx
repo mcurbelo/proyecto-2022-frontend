@@ -1,18 +1,19 @@
 import React, { useEffect, useState } from "react";
 import { Card, List, Input, Space, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Divider, Modal, Dropdown, Menu, Rate } from 'antd';
 import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
-import { CompartidoUsuario, VendedorService } from "shopit-shared";
+import { CompartidoUsuario, CompradorService, VendedorService } from "shopit-shared";
 import { DtCompraSlimVendedor, DtFiltrosVentas, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
 import { createUseStyles } from "react-jss";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars, faSquareCheck, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
-import { faCircleXmark, faHandshake, faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
+import { faBars, faComments, faSquareCheck, faStarHalfStroke } from "@fortawesome/free-solid-svg-icons";
+import { faCircleQuestion, faCircleXmark, faHandshake, faQuestionCircle } from "@fortawesome/free-regular-svg-icons";
 import RealizarCalificacion from "./RealizarCalificacion";
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { MenuInfo } from "rc-menu/lib/interface";
 import GestionarVenta from "./GestionarVenta";
+import { useNavigate } from "react-router";
 
 interface AppState {
     ventas: DtCompraSlimVendedor[],
@@ -88,6 +89,7 @@ const useStyles = createUseStyles({
 })
 
 export const MisVentas: React.FC<{}> = () => {
+    const navigate = useNavigate();
     const styles = useStyles();
     const id = localStorage.getItem("uuid");
     const token = localStorage.getItem("token");
@@ -122,7 +124,7 @@ export const MisVentas: React.FC<{}> = () => {
         aceptar: false,
         direccion: ""
     })
-
+    const [isLoading, setLoading] = useState(false);
 
 
     useEffect(() => {
@@ -279,6 +281,13 @@ export const MisVentas: React.FC<{}> = () => {
         })
     }
 
+    const iniciarChat = (idCompra: string, nombre: string) => {
+        let token = localStorage.getItem("token");
+        CompradorService.obtenerChat(idCompra, token!).then(res => {
+            setLoading(false)
+            navigate("/chat/" + res, { state: { receptor: nombre } });
+        })
+    }
 
 
     document.body.style.backgroundColor = "#F0F0F0"
@@ -339,7 +348,16 @@ export const MisVentas: React.FC<{}> = () => {
                     dataSource={ventas}
                     renderItem={item => (
                         <List.Item>
-                            <Card title={"Iniciada el " + item.fecha.toString()}>
+                            <Card title={"Iniciada el " + item.fecha.toString()} extra={
+                                <>
+                                    <Button type="primary"
+                                        style={{ width: "195px", textShadow: (item.tieneChat) ? "0 0 2px black" : "" }}
+                                        disabled={!item.tieneChat}
+                                        loading={isLoading}
+                                        onClick={() => iniciarChat(item.idVenta, item.nombreComprador)}><b>Ir al chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                    <Tooltip title="Solo se puede ir al chat si ya existe una instancia de este creada por usted o por el comprador."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                </>
+                            }>
                                 <Row className={styles.comprasContainer} >
                                     {
                                         item.estadoCompra !== EstadoCompra.Devolucion &&
@@ -439,6 +457,6 @@ export const MisVentas: React.FC<{}> = () => {
                     (mostrarCalificar.mostrar) ? <RealizarCalificacion califico={() => { cambiarEstadoCalificar(mostrarCalificar.id) }} nombreUsuario={mostrarCalificar.nombreUsuario} idCompra={mostrarCalificar.id} showModal={() => { setMostrarCalificar({ mostrar: false, id: "", nombreUsuario: "" }) }}></RealizarCalificacion> : null
                 }
             </div >
-        </div>
+        </div >
     );
 }

@@ -486,9 +486,9 @@ export const Reclamos = (props: propReclamo) => {
                                                 <Space direction="vertical" size={15}>
 
                                                     <div style={{ display: "flex", alignItems: "center" }}>
-                                                        <Tooltip title="Inicia el chat con el vendedor, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                                        <Tooltip title="Inicia el chat con el comprador, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
                                                         <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
-                                                            type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                            loading={isLoading} type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                         </Button>
 
                                                     </div>

@@ -1,4 +1,4 @@
-import { faAddressCard, faBagShopping, faBell, faBullhorn, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpenText, faIdCardClip, faMapLocationDot, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
+import { faAddressCard, faBagShopping, faBell, faBullhorn, faChartLine, faChartPie, faCircleChevronDown, faCirclePlus, faCircleXmark, faClipboardList, faCreditCard, faEnvelopeOpenText, faHome, faIdCardClip, faMapLocationDot, faMoneyBillTrendUp, faRightFromBracket, faRightToBracket, faRotateLeft, faSquarePlus, faUserPlus, faUsers, faWarehouse } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Image, Dropdown, Avatar, Menu, notification, Badge, Space, Popover, Card, Typography, List, Empty, Row } from "antd";
 import Search from "antd/lib/input/Search";
@@ -18,6 +18,7 @@ import { UserOutlined } from "@ant-design/icons";
 import { getMessaging, onMessage } from "firebase/messaging";
 import moment from "moment";
 import Meta from "antd/lib/card/Meta";
+import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
 
 type MainHeaderProps = {}
 
@@ -357,14 +358,24 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
     <div className={styles.wrapper}>
       <div className={styles.firstRow}>
         <div style={{ gridRow: 1, marginLeft: 24 }}>
-          <Link to="/">
-            <Image
-              preview={false}
-              className={styles.profileImage}
-              src={logo}
-            />
+          <Space>
+            <Link to="/" >
+              <Image
+                preview={false}
+                className={styles.profileImage}
+                src={logo}
+              />
+            </Link>
 
-          </Link>
+            <Link to="/" className="ant-btn ant-btn-link" style={{ color: "black" }}>
+              ShopNow <FontAwesomeIcon icon={faHome} style={{ display: "inline-block", marginLeft: "5px" }} />
+            </Link>
+            |
+            <Link to="/FAQ" className="ant-btn ant-btn-link" style={{ color: "black" }}>
+              Preguntas frecuentes
+              <FontAwesomeIcon icon={faCircleQuestion} style={{ display: "inline-block", marginLeft: "5px" }} />
+            </Link>
+          </Space>
         </div>
 
         <Search

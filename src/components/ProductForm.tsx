@@ -234,7 +234,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
             name="precioProducto"
             initialValue={1000}
           >
-            <InputNumber min={1} formatter={(value) => `$${value}`} style={{ width: "100%" }} />
+            <InputNumber min={1} decimalSeparator={","} precision={2} formatter={(value) => `$${value}`} style={{ width: "100%" }} />
           </Form.Item>
 
           <Form.Item

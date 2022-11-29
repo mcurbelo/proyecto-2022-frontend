@@ -113,7 +113,6 @@ export const RealizarCompra = () => {
 
     useEffect(() => {
         if (state == null) {
-            console.log("entro")
             navigate("/");
         } else {
             setProductoInfo(state.producto as DtProducto);

@@ -51,7 +51,7 @@ const SignUpForm = () => {
           if (response.success && response.token && response.uuid) {
             localStorage.setItem("token", response.token!)
             localStorage.setItem("uuid", response.uuid)
-            window.location.href = "/"
+            window.location.href = "/FAQ"
           } else {
             setError({ error: true, message: response.error! })
           }

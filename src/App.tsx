@@ -29,6 +29,7 @@ import EstadisticasVendedor from './pages/EstadisiticasVendedorPage';
 import EstadisticasAdm from './pages/EstadisiticasAdminPage';
 import { useMitt } from "react-mitt";
 import { ProtectedRoute } from "./ProtectedRoute";
+import FAQPage from "./pages/FAQPage";
 
 
 function App() {
@@ -65,6 +66,7 @@ function App() {
                     {/* Todos */}
                     <Route path="/productos/:id" element={<InfoProducto esAdm={(rol === "ADM") ? true : false} />} />
                     <Route path='/' index element={<HomePage />} />
+                    <Route path="/FAQ" element={<FAQPage />} />
 
                     {/* Comprador/Vendedor */}
                     <Route element={<ProtectedRoute rol={rol} rolPermitido={["Comprador", "Vendedor"]} existeToken={existeToken} />}>
