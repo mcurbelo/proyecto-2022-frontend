@@ -102,12 +102,6 @@ p.inputData{
   margin-left: 1rem;
 }
 
-.ant-input {
-  outline: 0;
-  border-width: 0 0 1px;
-  border-color: gainsboro;
-  background-color: transparent;
-}
 
 .otherinfocolumn{
   display: flex;
