@@ -201,6 +201,11 @@ export const MisVentas: React.FC<{}> = () => {
         setVentas(ventasActualizadas);
     }
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
+
     const completarVenta = (idVenta: string, esEnvio: boolean) => {
 
         confirm({
@@ -208,7 +213,9 @@ export const MisVentas: React.FC<{}> = () => {
             icon: <ExclamationCircleOutlined />,
             content: 'Al confirmar se completará la venta y podrá calificar al comprador.',
             cancelText: "Cancelar",
+            cancelButtonProps:{id:"cancelButton"},
             onOk() {
+                disableButton();
                 if (esEnvio) {
                     return CompartidoUsuario.completarEnvio(idVenta, token!).then((result) => {
                         if (result == "200") {

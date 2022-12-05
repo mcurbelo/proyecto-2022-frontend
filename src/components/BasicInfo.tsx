@@ -36,6 +36,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [selectedFile, setSelectedFile] = useState<File>();
   const [imagenPerfilMostrar, setImagenPerfilMostrar] = useState("");
+  const [key, setKey]=useState(0);
 
 
   const actualizarInformacion = () => {
@@ -43,6 +44,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
   };
 
   const cambiarImagen = () => {
+    setLoading(true);
     UserService.updateImagen(token, uuid, selectedFile!).then((response) => {
       if (response.success) {
         Modal.success({
@@ -51,12 +53,16 @@ export const BasicInfo: FC<basicinfo> = (props) => {
         });
         setImagenPerfilMostrar(URL.createObjectURL(selectedFile!))
         actualizarInformacion();
+        setSelectedFile(undefined)
+        setLoading(false);
+        setKey((previo) => previo + 1)
       }
       else {
         Modal.error({
           title: 'Error',
           content: response.message,
         });
+        setLoading(false);
       }
     })
   }
@@ -123,7 +129,7 @@ export const BasicInfo: FC<basicinfo> = (props) => {
             name="imagen"
             rules={[{ required: true, message: 'Debe selecciona una imagen' }]}
           >
-            <Upload {...propsUpload} maxCount={1} accept="image/png, image/jpeg" >
+            <Upload {...propsUpload} maxCount={1} key={key} accept="image/png, image/jpeg" >
               <Button icon={<UploadOutlined />}>Seleccione una imagen</Button>
             </Upload>
           </Form.Item>

@@ -221,7 +221,7 @@ export const InfoProducto = (props: propInfo) => {
             <hr />
             <Text><Avatar size="large" icon={<UserOutlined />} src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
             <hr />
-            <Text>Calificación: </Text><Rate disabled defaultValue={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
+            <Text>Calificación: </Text><Rate disabled value={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
             <hr />
             <Space>
               <Text>Garantía: {producto?.garantia} días</Text><Tooltip title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">

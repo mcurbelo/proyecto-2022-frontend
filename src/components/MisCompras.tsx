@@ -253,14 +253,21 @@ export const MisCompras: React.FC<{}> = () => {
         setCompras(comprasActualizadas);
     }
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
+
     const completarCompra = (id: string) => {
 
         confirm({
             title: 'Estás seguro que desea completar esta compra?',
             icon: <ExclamationCircleOutlined />,
-            content: 'Al confirmar ',
+            content: 'Al confirmar la compra se completará y podra calificar al vendedor.',
             cancelText: "Cancelar",
+            cancelButtonProps: {id:"cancelButton"},
             onOk() {
+                disableButton();
                 return CompartidoUsuario.completarEnvio(id, token!).then((result) => {
                     if (result == "200") {
                         Modal.success({

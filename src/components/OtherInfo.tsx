@@ -1,13 +1,13 @@
 import { FC, useState, useEffect, ChangeEvent } from 'react';
 import { EditOutlined } from '@ant-design/icons';
-import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input } from 'antd';
+import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input, Typography, Space } from 'antd';
 import '../main.css';
 import { UserService } from "shopit-shared";
 import { DtCambioContrasena } from 'shopit-shared/dist/user/UserService';
 import { createUseStyles } from 'react-jss';
 import { useMitt } from 'react-mitt';
 
-const { Option } = Select;
+const { Text } = Typography;
 type otherInfoProp = {
   imagenGet: (src: string) => void
 }
@@ -74,6 +74,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   const [isLoading, setLoading] = useState(false);
   const [form] = Form.useForm();
   const [form2] = Form.useForm();
+  const [form3] = Form.useForm();
 
   const onEdit = function (): void {
     setEditando(!editando);
@@ -179,6 +180,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   }
 
   const cambiarContrasena = () => {
+    setLoading(true);
     UserService.updateContrasena(token, uuid, datosCambioContrasena).then((response) => {
       if (response.success) {
         Modal.success({
@@ -186,12 +188,15 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
           content: 'Sus datos se han actualizado exitosamente',
         });
         setEditando(!editando);
+        setLoading(false);
+        form3.resetFields();
       }
       else {
         Modal.error({
           title: 'Error',
           content: response.message,
         });
+        setLoading(false);
       }
     })
 
@@ -262,12 +267,16 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                 </div>
 
                 <div>
-                  <Tooltip title="Calificación obtenida de los vendedores ">
+                  <Tooltip title="Calificación obtenida de los vendedores">
                     <div>
                       <label>Calificación:</label>
                       <Form.Item>
-                        <Rate allowHalf disabled value={infoUsuario.calificacion} />
+                        <Space>
+                        <Rate allowHalf disabled value={infoUsuario.calificacion} />  
+                        <Text strong={true}> {infoUsuario?.calificacion}/5</Text>
+                        </Space>
                       </Form.Item>
+                     
                     </div>
                   </Tooltip>
                 </div>
@@ -345,7 +354,9 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                         <div>
                           <label>Calificación:</label>
                           <Form.Item>
-                            <Rate allowHalf disabled value={datosVendedor.calificacion} />
+                            <Space>
+                            <Rate allowHalf disabled value={datosVendedor.calificacion} />  <Text strong={true}> {datosVendedor.calificacion}/5</Text>
+                            </Space>
                           </Form.Item>
                         </div>
                       </Tooltip>
@@ -383,6 +394,16 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             <>
               <Divider></Divider>
               <h3>Eres un vendedor independiente.</h3>
+              <Row>
+                <Tooltip title="Calificación obtenida de los compradores">
+                  <label>Calificación:</label>
+                  <Form.Item>
+                    <Space>
+                    <Rate allowHalf disabled value={datosVendedor.calificacion} />  <Text strong={true}> {datosVendedor.calificacion}/5</Text>
+                    </Space>
+                  </Form.Item>
+                </Tooltip>
+              </Row>
             </>
             : null
 
@@ -395,6 +416,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
           name="cambiarContrasena"
           layout='vertical'
           scrollToFirstError
+          form={form3}
           onFinish={cambiarContrasena}
         >
           <div style={{ display: "flex", justifyContent: 'space-between', marginBottom: 10 }}>
@@ -404,7 +426,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             name="contrasena"
             label="Contraseña antigua:"
             rules={[{ required: true, message: 'Porfavor ingrese su contraseña actual' }]}>
-            <Input.Password style={{ minWidth: "235px" }} />
+            <Input.Password style={{ minWidth: "235px" }} onChange={e=> {setCambioContrasena({...datosCambioContrasena, contrasenaVieja: e.target.value})} }/>
           </Form.Item>
 
           <Form.Item
@@ -418,7 +440,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             ]}
             hasFeedback
           >
-            <Input.Password style={{ minWidth: "235px" }} />
+            <Input.Password style={{ minWidth: "235px" }} onChange={e=> {setCambioContrasena({...datosCambioContrasena, contrasenaNueva: e.target.value})} } />
           </Form.Item>
 
           <Form.Item
@@ -426,6 +448,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             label="Nueva contraseña:"
             dependencies={['password']}
             hasFeedback
+
             rules={[
               {
                 required: true,
@@ -444,7 +467,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             <Input.Password style={{ minWidth: "235px" }} />
           </Form.Item>
           <Form.Item style={{ display: "flex", justifyContent: "center", marginTop: "10%" }}>
-            <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: "150px" }}>
+            <Button type="primary" htmlType="submit" loading={isLoading} style={{ width: "180px" }}>
               Cambiar contraseña
             </Button>
           </Form.Item>

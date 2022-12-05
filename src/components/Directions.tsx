@@ -163,7 +163,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
-              <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, true, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id, true)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} />]}>
+              <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, true, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id, true)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} /> ]}>
                 {props.permiteSeleccion && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{ margin: '20px' }}></Checkbox>}
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined />}
