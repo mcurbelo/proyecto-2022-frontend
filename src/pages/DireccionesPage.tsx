@@ -12,7 +12,7 @@ const DireccionesPage = (props: propsDirecciones) => {
       <h1 style={{ textAlign: "center" }}>Mis direcciones</h1>
       <div style={{ width: "50%", alignSelf: "center" }}>
         <Card>
-          <Directions esVendedor={false} />
+          <Directions esVendedor={props.esVendedor} />
         </Card>
       </div>
     </div>

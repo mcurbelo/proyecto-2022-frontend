@@ -36,7 +36,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
     let direccion = { id: "", calle: "", numero: "", departamento: "", localidad: "", aclaracion: "", esLocal: "" };
     if (local) {
       direccionesLocales.forEach(e => {
-        debugger; if (e.id === key) {
+        if (e.id === key) {
           setDireccionEditar({ id: e.id, calle: e.calle, numero: e.numero, departamento: e.departamento, localidad: e.localidad, aclaracion: e.notas, esLocal: e.esLocal });
         }
       })
@@ -163,7 +163,7 @@ export const Directions: React.FC<DirectionsProps> = (props) => {
             itemLayout="horizontal"
             dataSource={direccionesLocales}
             renderItem={(item) => (
-              <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, true, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id, true)} key={item.id} style={{ fontSize: "20px", color: "#ff4d4f" }} /> ]}>
+              <List.Item actions={[<EditOutlined style={{ fontSize: "20px", color: "black" }} onClick={event => editarDireccion(event, true, item.id)} key={item.id}></EditOutlined>, <DeleteOutlined onClick={event => borrarDireccion(event, false, item.id, true)} key={item.id} style={{ fontSize: "20px", color: (direccionesLocales.length>1)?"#ff4d4f": "#cccccc", pointerEvents:(direccionesLocales.length>1)?"auto": "none" }} />]}>
                 {props.permiteSeleccion && <Checkbox checked={item.id == idDireccion} onChange={e => onChangeDireccion(e, item.id)} style={{ margin: '20px' }}></Checkbox>}
                 <List.Item.Meta
                   avatar={<EnvironmentOutlined />}

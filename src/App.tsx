@@ -70,7 +70,7 @@ function App() {
 
                     {/* Comprador/Vendedor */}
                     <Route element={<ProtectedRoute rol={rol} rolPermitido={["Comprador", "Vendedor"]} existeToken={existeToken} />}>
-                        <Route path="/direcciones" element={<DireccionesPage esVendedor={("Comprador") ? false : true} />} />
+                        <Route path="/direcciones" element={<DireccionesPage esVendedor={(rol==="Comprador") ? false : true} />} />
                         <Route path="/compras" element={<MisCompras />} />
                         <Route path="/perfil" element={<Perfil />} />
                         <Route path="/tarjetas" element={<TarjetasPage />} />
