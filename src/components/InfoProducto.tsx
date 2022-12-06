@@ -241,10 +241,8 @@ export const InfoProducto = (props: propInfo) => {
         <Col className={styles.compra}>
           <Card>
             <div>
-              <h4>$ {producto?.precio}  (Pesos uruguayos)</h4>
+              <h4>Precio: $ {producto?.precio}  (Pesos uruguayos)</h4>
               <Divider />
-              <Text> <FontAwesomeIcon icon={faCirclePlus} color='#52c41a' /> <b>Agrega productos</b> al carrito para pagar varios productos en una sola transacción.</Text>
-              <Divider>O</Divider>
               <Text> <FontAwesomeIcon icon={faMoneyBill1} color='#459E19' /> <b>Compra directamente</b> el producto con ingresando la cantidad deseada.</Text>
             </div>
             <Divider />
@@ -272,8 +270,7 @@ export const InfoProducto = (props: propInfo) => {
               }
               <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || esAdm} onClick={realizarCompra}>
                 Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-              <Button block disabled={producto?.stock == 0 || !usuarioLogueado || esAdm}>
-                Agregar al carrito<FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faCartPlus} /></Button>
+      
             </div>
           </Card>
         </Col>

@@ -1,10 +1,11 @@
-import { Col, Collapse, Divider, Row } from "antd"
+import { Col, Collapse, Divider, Image, Row } from "antd"
 import Button from 'antd-button-color';
 import 'antd/dist/antd.css'; // or 'antd/dist/antd.less'
 import 'antd-button-color/dist/css/style.css'; // or 'antd-button-color/dist/css/style.less'
 import { faCircleRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useNavigate } from "react-router";
+import logo from "../images/logo192.png";
 
 const { Panel } = Collapse;
 
@@ -14,6 +15,11 @@ const FAQPage = () => {
     return (
         <>
             <h1 style={{ textAlign: "center" }}>Preguntas frecuentes</h1>
+            <div style={{ justifyContent: "center", display: "flex" }}>
+                <Row justify="center" style={{ width: "85%", backgroundColor: "white" }}>
+                    <Image preview={false} src={logo} />
+                </Row>
+            </div>
             <div style={{ justifyContent: "center", display: "flex" }}>
                 <Row style={{ width: "85%", backgroundColor: "white", padding: "20px" }}>
                     <Row justify="center" style={{ columnGap: "5%" }}>
