@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
-import { Card, List, Input, Space, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Divider, Modal } from 'antd';
-import { ExclamationCircleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Card, List, Input, Space, Image, Steps, Select, DatePicker, DatePickerProps, Empty, Pagination, Tooltip, Row, Divider, Modal, Spin } from 'antd';
+import { ExclamationCircleOutlined, LoadingOutlined, SearchOutlined } from '@ant-design/icons';
 import { CompartidoUsuario, CompradorService } from "shopit-shared";
 import { DtCompraSlimComprador, EstadoCompra } from "shopit-shared/dist/user/VendedorService";
 import { DtFiltrosCompras } from "shopit-shared/dist/user/CompradorService";
@@ -166,17 +166,21 @@ export const MisCompras: React.FC<{}> = () => {
         nombreUsuario: "",
     })
     const [isLoading, setLoading] = useState(false);
+    const [loadingItems, setLoadingItems] = useState(true);
+    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
     useEffect(() => {
         busqueda()
     }, [paginaAbuscar])
 
     const busqueda = (inicio?: boolean) => {
+        setLoadingItems(true)
         CompradorService.listarCompras(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
             if (result.compras !== undefined) {
                 setCompras(result.compras);
                 setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
             }
+            setLoadingItems(false)
         })
     }
 
@@ -265,7 +269,7 @@ export const MisCompras: React.FC<{}> = () => {
             icon: <ExclamationCircleOutlined />,
             content: 'Al confirmar la compra se completará y podra calificar al vendedor.',
             cancelText: "Cancelar",
-            cancelButtonProps: {id:"cancelButton"},
+            cancelButtonProps: { id: "cancelButton" },
             onOk() {
                 disableButton();
                 return CompartidoUsuario.completarEnvio(id, token!).then((result) => {
@@ -367,107 +371,108 @@ export const MisCompras: React.FC<{}> = () => {
                         </Row>
                     </Card>
                 </div>
+                <Spin indicator={antIcon} spinning={loadingItems}>
+                    <List locale={loadingItems ? undefined : locale}
+                        grid={{
+                            gutter: 16,
+                            xs: 1,
+                            sm: 1,
+                            md: 1,
+                            lg: 1,
+                            xl: 1,
+                            xxl: 1,
+                        }}
+                        dataSource={compras}
+                        renderItem={item => (
+                            <List.Item>
+                                <Card title={"Realizada el " + item.fecha.toString()} >
+                                    <Row className={styles.comprasContainer} >
+                                        {
+                                            item.estadoCompra !== EstadoCompra.Devolucion &&
+                                            <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
+                                                <Step title="Esperando confirmación" />
+                                                <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
+                                                <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
+                                            </Steps>
+                                        }
+                                        {
+                                            item.estadoCompra === EstadoCompra.Devolucion && <h2 style={{ color: "#ff4d4f" }}>Reembolsada</h2>
 
-                <List locale={locale}
-                    grid={{
-                        gutter: 16,
-                        xs: 1,
-                        sm: 1,
-                        md: 1,
-                        lg: 1,
-                        xl: 1,
-                        xxl: 1,
-                    }}
-                    dataSource={compras}
-                    renderItem={item => (
-                        <List.Item>
-                            <Card title={"Realizada el " + item.fecha.toString()} >
-                                <Row className={styles.comprasContainer} >
-                                    {
-                                        item.estadoCompra !== EstadoCompra.Devolucion &&
-                                        <Steps style={{ marginTop: "10px", width: "84%" }} size="small" current={stepCompra(item.estadoCompra)}>
-                                            <Step title="Esperando confirmación" />
-                                            <Step title={item.estadoCompra === "Cancelada" ? "Cancelada" : "Confirmada"} {... (item.estadoCompra === EstadoCompra.Cancelada) ? { status: "error" } : {}} />
-                                            <Step title="Completada" status={(item.estadoCompra === EstadoCompra.Completada) ? "finish" : "wait"} />
-                                        </Steps>
-                                    }
-                                    {
-                                        item.estadoCompra === EstadoCompra.Devolucion && <h2 style={{ color: "#ff4d4f" }}>Reembolsada</h2>
+                                        }
 
-                                    }
-
-                                    <Divider></Divider>
-                                    <Row gutter={[0, 20]} className={styles.comprasContainer} >
-                                        <div style={{ display: "flex", alignItems: "center" }}>
-                                            <Image width={150} src={item.imagenURL} />
-                                        </div>
-
-                                        <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ textJustify: "inter-word" }}>{item.nombreProducto}</p>
-                                        </div>
-
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                                            <div>
-                                                <p style={{ textAlign: "center" }}>{item.nombreVendedor}</p>
-
-                                                <Button type="link" onClick={e => { iniciarChat(item.idCompra, item.nombreVendedor); setLoading(true) }} loading={isLoading}
-                                                    disabled={(item.estadoCompra !== EstadoCompra.Confirmada && item.estadoCompra !== EstadoCompra.Completada) || (item.estadoCompra !== EstadoCompra.Confirmada && !item.garantiaActiva)}
-                                                >{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</Button>
-                                                <Tooltip title="Solo se puede iniciar o acceder al chat cuando la compra haya sido confirmada y se esté dentro de la garantía del producto"> <FontAwesomeIcon type="regular" icon={faQuestionCircle} /></Tooltip>
+                                        <Divider></Divider>
+                                        <Row gutter={[0, 20]} className={styles.comprasContainer} >
+                                            <div style={{ display: "flex", alignItems: "center" }}>
+                                                <Image width={150} src={item.imagenURL} />
                                             </div>
-                                        </div>
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>
-                                            <Space direction="vertical">
-                                                <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
-                                                    <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
-                                                </Tooltip></span>
+
+                                            <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                <p style={{ textJustify: "inter-word" }}>{item.nombreProducto}</p>
+                                            </div>
+
+                                            <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
                                                 <div>
-                                                    <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.fechaEntrega) ? item.fechaEntrega?.toString() : "-"}</span>
+                                                    <p style={{ textAlign: "center" }}>{item.nombreVendedor}</p>
+
+                                                    <Button type="link" onClick={e => { iniciarChat(item.idCompra, item.nombreVendedor); setLoading(true) }} loading={isLoading}
+                                                        disabled={(item.estadoCompra !== EstadoCompra.Confirmada && item.estadoCompra !== EstadoCompra.Completada) || (item.estadoCompra !== EstadoCompra.Confirmada && !item.garantiaActiva)}
+                                                    >{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</Button>
+                                                    <Tooltip title="Solo se puede iniciar o acceder al chat cuando la compra haya sido confirmada y se esté dentro de la garantía del producto"> <FontAwesomeIcon type="regular" icon={faQuestionCircle} /></Tooltip>
                                                 </div>
-                                                <div>
-                                                    <span style={{ whiteSpace: "nowrap" }} id="garantia">Estado de garantía: {garantiaEstado(item.garantiaActiva, item.estadoCompra)}</span>
-                                                </div>
-                                                <div>
-                                                    <span style={{ whiteSpace: "nowrap" }} id="tipoEntrega">Tipo de entrega: {(item.esEnvio) ? "Envío" : "Retiro"}</span>
-                                                </div>
-                                            </Space>
-                                        </div>
+                                            </div>
+                                            <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "13%" }}>
+                                                <Space direction="vertical">
+                                                    <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.cantidad, item.montoUnitario)}>
+                                                        <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
+                                                    </Tooltip></span>
+                                                    <div>
+                                                        <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.fechaEntrega) ? item.fechaEntrega?.toString() : "-"}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span style={{ whiteSpace: "nowrap" }} id="garantia">Estado de garantía: {garantiaEstado(item.garantiaActiva, item.estadoCompra)}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span style={{ whiteSpace: "nowrap" }} id="tipoEntrega">Tipo de entrega: {(item.esEnvio) ? "Envío" : "Retiro"}</span>
+                                                    </div>
+                                                </Space>
+                                            </div>
 
 
-                                        <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center" }}>
-                                            <Space direction="vertical" size={15}>
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía. Solo se puede tener un reclamo activo por compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button style={{ width: "170px", textShadow: (item.puedeReclamar) ? "0 0 2px black" : "" }}
-                                                        disabled={!item.puedeReclamar} type="primary"
-                                                        onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Realizar reclamo</b> <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
-                                                </div>
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
-                                                        disabled={!item.puedeCalificar} type="warning"
-                                                        onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Calificar</b>
-                                                        <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
-                                                    </Button>
-                                                </div>
-                                                <div style={{ display: "flex", alignItems: "center" }}>
-                                                    <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
-                                                    <Button disabled={!item.puedeCompletar} style={{ width: "170px", textShadow: (item.puedeCompletar) ? "0 0 2px black" : "" }}
-                                                        type="success" onClick={() => completarCompra(item.idCompra)}> <b>Completar compra</b>
-                                                        <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
-                                                    </Button>
-                                                </div>
-                                            </Space>
-                                        </div>
+                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center" }}>
+                                                <Space direction="vertical" size={15}>
+                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                        <Tooltip title="Solo se puede reclamar cuando la compra haya sido confirmada y se esté dentro de la garantía. Solo se puede tener un reclamo activo por compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                        <Button style={{ width: "170px", textShadow: (item.puedeReclamar) ? "0 0 2px black" : "" }}
+                                                            disabled={!item.puedeReclamar} type="primary"
+                                                            onClick={() => { setMostrarReclamo({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Realizar reclamo</b> <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                    </div>
+                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                        <Tooltip title="Solo se puede calificar una vez y cuando se haya completado la compra."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                        <Button style={{ width: "170px", textShadow: (item.puedeCalificar) ? "0 0 2px black" : "" }}
+                                                            disabled={!item.puedeCalificar} type="warning"
+                                                            onClick={() => { setMostrarCalificar({ mostrar: true, id: item.idCompra, nombreUsuario: item.nombreVendedor }) }}><b>Calificar</b>
+                                                            <FontAwesomeIcon icon={faStarHalfStroke} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                        </Button>
+                                                    </div>
+                                                    <div style={{ display: "flex", alignItems: "center" }}>
+                                                        <Tooltip title="Solo se puede completar compras de tipo envío, una vez superada la fecha estimada de entrega."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faQuestionCircle} /> </Tooltip>
+                                                        <Button disabled={!item.puedeCompletar} style={{ width: "170px", textShadow: (item.puedeCompletar) ? "0 0 2px black" : "" }}
+                                                            type="success" onClick={() => completarCompra(item.idCompra)}> <b>Completar compra</b>
+                                                            <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                        </Button>
+                                                    </div>
+                                                </Space>
+                                            </div>
+                                        </Row>
+                                        <Divider></Divider>
+                                        <Row><span style={{ textAlign: "center" }}>Dirección de entrega elegida: {item.direccionEntrega}</span></Row>
                                     </Row>
-                                    <Divider></Divider>
-                                    <Row><span style={{ textAlign: "center" }}>Dirección de entrega elegida: {item.direccionEntrega}</span></Row>
-                                </Row>
 
-                            </Card>
-                        </List.Item>
-                    )}
-                />
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                </Spin>
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
                 {
                     (mostrarReclamo.mostrar) ? <RealizarReclamo realizoReclamo={() => { cambiarPuedeReclamar(mostrarReclamo.id) }} nombreUsuario={mostrarReclamo.nombreUsuario} showModal={() => { setMostrarReclamo({ mostrar: false, id: "", nombreUsuario: "" }) }} idCompra={mostrarReclamo.id} /> : null

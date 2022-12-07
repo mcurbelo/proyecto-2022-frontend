@@ -1,7 +1,7 @@
-import { SearchOutlined, ExclamationCircleOutlined, UserOutlined } from "@ant-design/icons";
+import { SearchOutlined, ExclamationCircleOutlined, UserOutlined, LoadingOutlined } from "@ant-design/icons";
 import { faMoneyBillTransfer, faSquareCheck } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Avatar, Card, Collapse, DatePicker, DatePickerProps, Divider, Empty, Image, Input, List, Modal, Pagination, Row, Select, Space, Tooltip } from "antd";
+import { Avatar, Card, Collapse, DatePicker, DatePickerProps, Divider, Empty, Image, Input, List, Modal, Pagination, Row, Select, Space, Spin, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { CompradorService, VendedorService } from "shopit-shared";
@@ -158,6 +158,8 @@ export const Reclamos = (props: propReclamo) => {
     })
     const [paginaAbuscar, setPaginaAbuscar] = useState(0)
     const [isLoading, setLoading] = useState(false);
+    const [loadingItems, setLoadingItems] = useState(true);
+    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
     const { Panel } = Collapse;
 
@@ -167,12 +169,14 @@ export const Reclamos = (props: propReclamo) => {
     }, [paginaAbuscar])
 
     const busqueda = (inicio?: boolean) => {
+        setLoadingItems(true);
         if (listarRealizados) {
             CompradorService.reclamosHechos(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
                 if (result.reclamos !== undefined) {
                     setReclamos(result.reclamos);
                     setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
                 }
+                setLoadingItems(false);
             })
         }
         else {
@@ -181,6 +185,7 @@ export const Reclamos = (props: propReclamo) => {
                     setReclamos(result.reclamos);
                     setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
                 }
+                setLoadingItems(false);
             })
         }
     }
@@ -402,121 +407,122 @@ export const Reclamos = (props: propReclamo) => {
                         </div>
                     </Card>
                 </div>
+                <Spin indicator={antIcon} spinning={loadingItems}>
+                    <List locale={loadingItems ? undefined : locale}
+                        grid={{
+                            gutter: 16,
+                            xs: 1,
+                            sm: 1,
+                            md: 1,
+                            lg: 1,
+                            xl: 1,
+                            xxl: 1,
+                        }}
+                        dataSource={reclamos}
+                        renderItem={item => (
+                            <List.Item>
+                                <Card title={titulo(item)} extra={
+                                    listarRealizados &&
+                                    <div style={{ display: "flex", alignItems: "center", justifyContent: "space-around" }} >
+                                        <Space>
+                                            <Tooltip title="Solo se pueden marcar como resueltos reclamos que aún no hayan sidos resueltos."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                            <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }} type="success"
+                                                onClick={() => resolverReclamo(item.idReclamo, item.datosCompra.idCompra)}> <b>Marcar como resuelto</b>
+                                                <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                            </Button>
 
-                <List locale={locale}
-                    grid={{
-                        gutter: 16,
-                        xs: 1,
-                        sm: 1,
-                        md: 1,
-                        lg: 1,
-                        xl: 1,
-                        xxl: 1,
-                    }}
-                    dataSource={reclamos}
-                    renderItem={item => (
-                        <List.Item>
-                            <Card title={titulo(item)} extra={
-                                listarRealizados &&
-                                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-around" }} >
-                                    <Space>
-                                        <Tooltip title="Solo se pueden marcar como resueltos reclamos que aún no hayan sidos resueltos."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
-                                        <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }} type="success"
-                                            onClick={() => resolverReclamo(item.idReclamo, item.datosCompra.idCompra)}> <b>Marcar como resuelto</b>
-                                            <FontAwesomeIcon icon={faSquareCheck} style={{ display: "inline-block", marginLeft: "10px" }} />
-                                        </Button>
+                                            <Button type="primary"
+                                                style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto && item.tieneChat) ? "0 0 2px black" : "" }}
+                                                disabled={!item.tieneChat || item.estado !== TipoResolucion.NoResuelto}
+                                                onClick={() => iniciarChat(item.datosCompra.idCompra, item.datosCompra.nombreVendedor)}><b>Ir al chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                            <Tooltip title="Solo se puede ir al chat si ya existe una instancia de este creada por usted o por el vendedor."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                        </Space>
+                                    </div>
+                                }>
+                                    <Row className={styles.reclamosContainer} >
+                                        <Row gutter={[0, 20]} className={styles.reclamosContainer} >
+                                            <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                <Image width={150} src={item.datosCompra.imagenProducto} />
+                                            </div>
 
-                                        <Button type="primary"
-                                            style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto && item.tieneChat) ? "0 0 2px black" : "" }}
-                                            disabled={!item.tieneChat || item.estado !== TipoResolucion.NoResuelto}
-                                            onClick={() => iniciarChat(item.datosCompra.idCompra, item.datosCompra.nombreVendedor)}><b>Ir al chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
-                                        <Tooltip title="Solo se puede ir al chat si ya existe una instancia de este creada por usted o por el vendedor."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
-                                    </Space>
-                                </div>
-                            }>
-                                <Row className={styles.reclamosContainer} >
-                                    <Row gutter={[0, 20]} className={styles.reclamosContainer} >
-                                        <div style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <Image width={150} src={item.datosCompra.imagenProducto} />
-                                        </div>
+                                            <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+                                                <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.datosCompra.nombreProducto}</p>
+                                            </div>
 
-                                        <div className={styles.divTitulo} style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-                                            <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{item.datosCompra.nombreProducto}</p>
-                                        </div>
+                                            <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
+                                                <Space direction="vertical">
+                                                    <div>
+                                                        <p>{(listarRealizados) ? "Reclamando a: " + item.datosCompra.nombreVendedor : "Reclamo de: " + item.autor}</p>
+                                                        <div style={{ display: "flex", justifyContent: "center" }}>
+                                                            {
+                                                                listarRealizados && <Avatar size="large" {... (item.datosCompra.avatarVendedor !== "") ? { src: item.datosCompra.avatarVendedor } : { icon: <UserOutlined /> }} />
 
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center" }}>
-                                            <Space direction="vertical">
-                                                <div>
-                                                    <p>{(listarRealizados) ? "Reclamando a: " + item.datosCompra.nombreVendedor : "Reclamo de: " + item.autor}</p>
-                                                    <div style={{ display: "flex", justifyContent: "center" }}>
-                                                        {
-                                                            listarRealizados && <Avatar size="large" {... (item.datosCompra.avatarVendedor !== "") ? { src: item.datosCompra.avatarVendedor } : { icon: <UserOutlined /> }} />
+                                                            }
 
-                                                        }
+                                                            {
+                                                                !listarRealizados && <Avatar size="large" {... (item.datosCompra.avatarComprador !== "") ? { src: item.datosCompra.avatarComprador } : { icon: <UserOutlined /> }} />
 
-                                                        {
-                                                            !listarRealizados && <Avatar size="large" {... (item.datosCompra.avatarComprador !== "") ? { src: item.datosCompra.avatarComprador } : { icon: <UserOutlined /> }} />
-
-                                                        }
-                                                    </div>
-                                                </div>
-                                            </Space>
-                                        </div>
-
-                                        <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "286px" }}>
-                                            <Space direction="vertical">
-                                                <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.datosCompra.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.datosCompra.cantidad, item.datosCompra.montoUnitario)}>
-                                                    <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
-                                                </Tooltip></span>
-                                                <div>
-                                                    <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.datosCompra.fechaEntrega) ? item.datosCompra.fechaEntrega?.toString() : "-"}</span>
-                                                </div>
-                                                <div>
-                                                    <span style={{ whiteSpace: "nowrap" }} id="tipoEntrega">Tipo de entrega: {(item.datosCompra.esEnvio) ? "Envío" : "Retiro"}</span>
-                                                </div>
-                                                <div>
-                                                    <span id="direccion">Dirección: {item.datosCompra.direccionEntrega}</span>
-                                                </div>
-                                            </Space>
-                                        </div>
-
-                                        {
-                                            !listarRealizados &&
-                                            <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center" }}>
-                                                <Space direction="vertical" size={15}>
-
-                                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                                        <Tooltip title="Inicia el chat con el comprador, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
-                                                        <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
-                                                            loading={isLoading} type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
-                                                        </Button>
-
-                                                    </div>
-                                                    <div style={{ display: "flex", alignItems: "center" }}>
-                                                        <Tooltip title="Devuelve el total del dinero al comprador, esta acción no se puede deshacer."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
-                                                        <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
-                                                            type="warning" onClick={() => devolverDinero(item.idReclamo, item.datosCompra.idCompra)}> <b>Devolver dinero</b> <FontAwesomeIcon icon={faMoneyBillTransfer} style={{ display: "inline-block", marginLeft: "10px" }} />
-                                                        </Button>
-
+                                                            }
+                                                        </div>
                                                     </div>
                                                 </Space>
                                             </div>
-                                        }
+
+                                            <div className={styles.divPequeño} style={{ display: "flex", flexDirection: "column", alignItems: "baseline", justifyContent: "center", minWidth: "286px" }}>
+                                                <Space direction="vertical">
+                                                    <span style={{ whiteSpace: "nowrap" }} id="Total">{"Total: $" + item.datosCompra.montoTotal}<Tooltip overlayStyle={{ whiteSpace: 'pre-line' }} title={tootlipRender(item.datosCompra.cantidad, item.datosCompra.montoUnitario)}>
+                                                        <ExclamationCircleOutlined style={{ marginLeft: "3%" }} />
+                                                    </Tooltip></span>
+                                                    <div>
+                                                        <span style={{ whiteSpace: "nowrap" }} id="fecha">Fecha de entrega: {(item.datosCompra.fechaEntrega) ? item.datosCompra.fechaEntrega?.toString() : "-"}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span style={{ whiteSpace: "nowrap" }} id="tipoEntrega">Tipo de entrega: {(item.datosCompra.esEnvio) ? "Envío" : "Retiro"}</span>
+                                                    </div>
+                                                    <div>
+                                                        <span id="direccion">Dirección: {item.datosCompra.direccionEntrega}</span>
+                                                    </div>
+                                                </Space>
+                                            </div>
+
+                                            {
+                                                !listarRealizados &&
+                                                <div style={{ display: "flex", flexDirection: "column", alignItems: "flex-end", justifyContent: "center" }}>
+                                                    <Space direction="vertical" size={15}>
+
+                                                        <div style={{ display: "flex", alignItems: "center" }}>
+                                                            <Tooltip title="Inicia el chat con el comprador, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                                            <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
+                                                                loading={isLoading} type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                            </Button>
+
+                                                        </div>
+                                                        <div style={{ display: "flex", alignItems: "center" }}>
+                                                            <Tooltip title="Devuelve el total del dinero al comprador, esta acción no se puede deshacer."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
+                                                            <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
+                                                                type="warning" onClick={() => devolverDinero(item.idReclamo, item.datosCompra.idCompra)}> <b>Devolver dinero</b> <FontAwesomeIcon icon={faMoneyBillTransfer} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                            </Button>
+
+                                                        </div>
+                                                    </Space>
+                                                </div>
+                                            }
+                                        </Row>
                                     </Row>
-                                </Row>
-                                <Divider></Divider>
-                                <Row>
-                                    <Collapse accordion style={{ width: "100%" }}>
-                                        <Panel header="Ver descripción del reclamo" key="1">
-                                            <p><i>{"Escrito por: " + item.autor}</i></p>
-                                            <p>{item.descripcion}</p>
-                                        </Panel>
-                                    </Collapse>
-                                </Row>
-                            </Card>
-                        </List.Item>
-                    )}
-                />
+                                    <Divider></Divider>
+                                    <Row>
+                                        <Collapse accordion style={{ width: "100%" }}>
+                                            <Panel header="Ver descripción del reclamo" key="1">
+                                                <p><i>{"Escrito por: " + item.autor}</i></p>
+                                                <p>{item.descripcion}</p>
+                                            </Panel>
+                                        </Collapse>
+                                    </Row>
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                </Spin>
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }} defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual} onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
             </div >
         </div>

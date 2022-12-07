@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import '../main.css'
-import { Button, Card, Col, Pagination, PaginationProps, Row, Select, Space } from 'antd';
+import { Button, Card, Col, Pagination, PaginationProps, Row, Select, Space, Spin } from 'antd';
 import { ItemPublication } from './ItemPublication';
 import { DtFiltros } from 'shopit-shared/dist/user/ProductoService';
 import { CategoriaService, ProductoService } from 'shopit-shared';
@@ -10,6 +10,7 @@ import { DtCategoria } from 'shopit-shared/dist/user/CategoriaService';
 import CheckableTag from 'antd/lib/tag/CheckableTag';
 import { createUseStyles } from 'react-jss';
 import { useLocation } from 'react-router';
+import { LoadingOutlined } from '@ant-design/icons';
 
 
 // @ts-check
@@ -79,6 +80,7 @@ function Publicactions() {
     cantidadItems: "20"
   })
   const [categorias, setCategorias] = useState<AppState["categorias"]>([])
+  const [loadingItems, setLoadingItems] = useState(true);
 
   const { emitter } = useMitt()
   const { Option } = Select;
@@ -107,12 +109,14 @@ function Publicactions() {
 
 
   const busqueda = () => {
+    setLoadingItems(true);
     ProductoService.listarProductos(paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, valoresFiltros).then((result) => {
       if (result.productos !== undefined) {
         setProductos(result.productos);
         setPaginaActual(result.currentPage + 1)
         setpaginasTotales(result.totalPages * 10)
       }
+      setLoadingItems(false);
     })
   }
 
@@ -154,7 +158,7 @@ function Publicactions() {
 
 
   const productosRender = () => {
-    if (productos.length === 0) {
+    if (productos.length === 0 && !loadingItems) {
       return <Row justify='center' gutter={[50, { xs: 8, sm: 16, md: 24, lg: 32 }]}>
         <Card title="No se encontraron resultados :(" style={{ width: '50%' }} headStyle={{ display: 'flex', justifyContent: 'center' }}>
           <div style={{ display: 'flex', justifyContent: 'center' }} >
@@ -169,7 +173,7 @@ function Publicactions() {
           {
             productos.map((value, index) => {
               return (
-                <Col key={index} style={{ display: 'flex'}}>
+                <Col key={index} style={{ display: 'flex' }}>
                   <ItemPublication key={index} producto={value}></ItemPublication>
                 </Col>
               )
@@ -185,6 +189,7 @@ function Publicactions() {
 
   document.body.style.backgroundColor = "#F0F0F0"
 
+  const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
   return (
     <React.Fragment>
       <div className={styles.container} style={{ display: 'flex', marginTop: '30px', marginLeft: "5%", justifyContent: 'center', gap: "3%" }}>
@@ -232,7 +237,9 @@ function Publicactions() {
           </div>
         </div>
         <div id="productos" style={{ flex: 1 }}>
-          {productosRender()}
+          <Spin indicator={antIcon} spinning={loadingItems}>
+            {productosRender()}
+          </Spin>
         </div>
       </div>
     </React.Fragment>

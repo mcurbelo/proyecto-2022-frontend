@@ -1,7 +1,7 @@
-import { SearchOutlined, ExclamationCircleOutlined } from "@ant-design/icons";
+import { SearchOutlined, ExclamationCircleOutlined, LoadingOutlined } from "@ant-design/icons";
 import { faPause } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { Card, DatePicker, DatePickerProps, Divider, Empty, Input, List, Pagination, Row, Select, Image, Carousel, Modal, Typography } from "antd";
+import { Card, DatePicker, DatePickerProps, Divider, Empty, Input, List, Pagination, Row, Select, Image, Carousel, Modal, Typography, Spin } from "antd";
 import { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { CategoriaService, VendedorService } from "shopit-shared";
@@ -102,6 +102,8 @@ export const MisProductos = () => {
     })
     const [paginaAbuscar, setPaginaAbuscar] = useState(0)
     const [categorias, setCategorias] = useState<DtCategoria[]>()
+    const [loadingItems, setLoadingItems] = useState(true);
+    const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
 
 
     useEffect(() => {
@@ -110,11 +112,13 @@ export const MisProductos = () => {
     }, [paginaAbuscar])
 
     const busqueda = (inicio?: boolean) => {
+        setLoadingItems(true);
         VendedorService.listarMisProductos(id!, token!, (inicio) ? "0" : paginaAbuscar.toString(), valoresOrdenamiento.cantidadItems, valoresOrdenamiento.ordenamiento, valoresOrdenamiento.dirOrdenamiento, filtros).then((result) => {
             if (result.misProductos !== undefined) {
                 setProductos(result.misProductos);
                 setInfoPaginacion({ paginaActual: result.currentPage + 1, paginasTotales: result.totalPages * 10, totalItems: result.totalItems })
             }
+            setLoadingItems(false);
         })
     }
 
@@ -272,64 +276,65 @@ export const MisProductos = () => {
 
 
 
+                <Spin indicator={antIcon} spinning={loadingItems}>
+                    <List locale={loadingItems ? undefined : locale}
+                        grid={{
+                            gutter: 20,
+                            xs: 1,
+                            sm: 2,
+                            md: 2,
+                            lg: 3,
+                            xl: 3,
+                            xxl: 4,
+                        }}
+                        dataSource={productos}
+                        renderItem={item => (
+                            <List.Item>
+                                <Card>
+                                    <div style={{ textAlign: "center" }}>
+                                        <Carousel>
+                                            {
+                                                item.imagenes.map((option, index) => {
+                                                    return (<Image key={index} src={option} height={200} ></Image>)
+                                                })
+                                            }
 
-                <List locale={locale}
-                    grid={{
-                        gutter: 20,
-                        xs: 1,
-                        sm: 2,
-                        md: 2,
-                        lg: 3,
-                        xl: 3,
-                        xxl: 4,
-                    }}
-                    dataSource={productos}
-                    renderItem={item => (
-                        <List.Item>
-                            <Card>
-                                <div style={{ textAlign: "center" }}>
-                                    <Carousel>
-                                        {
-                                            item.imagenes.map((option, index) => {
-                                                return (<Image key={index} src={option} height={200} ></Image>)
-                                            })
-                                        }
-
-                                    </Carousel>
-                                </div>
-                                <Divider></Divider>
-                                <div >
-                                    <Paragraph style={{ textAlign: "justify", textJustify: "inter-word" }} ellipsis={true ? { tooltip: item.nombre } : false}>{item.nombre}</Paragraph>
-
-                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{"Fecha ingresado: " + item.fechaInicio}</p>
-
-                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Fecha fin: {(item.fechaFin) ? item.fechaFin : "-"}</p>
-
-                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Cantidad de stock: {(item.stock === 1) ? item.stock + " unidad" : item.stock + " unidades"}</p>
-
-                                    <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Estado publicación: {(item.estado === EstadoProducto.BloqueadoADM) ? "Bloqueado" : item.estado}</p>
-                                </div>
-                                <Divider></Divider>
-                                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                    <div style={{ width: "45%" }}>
-                                        <Button type="warning" disabled={item.estado === EstadoProducto.BloqueadoADM || item.estado === EstadoProducto.Pausado}
-                                            style={{ textShadow: (item.estado !== EstadoProducto.BloqueadoADM && item.estado !== EstadoProducto.Pausado) ? "0 0 2px black" : "" }}
-                                            block={true} onClick={() => cambiarEstadoProducto(item.idProducto, EstadoProducto.Pausado)}>Pausar <FontAwesomeIcon icon={faPause} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                        </Carousel>
                                     </div>
-                                    <div style={{ width: "45%" }}>
-                                        <Button type="success" disabled={item.estado === EstadoProducto.BloqueadoADM || item.estado === EstadoProducto.Activo}
-                                            style={{ textShadow: (item.estado !== EstadoProducto.BloqueadoADM && item.estado !== EstadoProducto.Activo) ? "0 0 2px black" : "" }}
-                                            block={true} onClick={() => cambiarEstadoProducto(item.idProducto, EstadoProducto.Activo)}>Habilitar <FontAwesomeIcon icon={faCircleCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                    <Divider></Divider>
+                                    <div >
+                                        <Paragraph style={{ textAlign: "justify", textJustify: "inter-word" }} ellipsis={true ? { tooltip: item.nombre } : false}>{item.nombre}</Paragraph>
+
+                                        <p style={{ textAlign: "justify", textJustify: "inter-word" }}>{"Fecha ingresado: " + item.fechaInicio}</p>
+
+                                        <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Fecha fin: {(item.fechaFin) ? item.fechaFin : "-"}</p>
+
+                                        <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Cantidad de stock: {(item.stock === 1) ? item.stock + " unidad" : item.stock + " unidades"}</p>
+
+                                        <p style={{ textAlign: "justify", textJustify: "inter-word" }}>Estado publicación: {(item.estado === EstadoProducto.BloqueadoADM) ? "Bloqueado" : item.estado}</p>
                                     </div>
-                                </div>
-                                <Divider></Divider>
-                                <div style={{ display: "flex", justifyContent: "space-between" }}>
-                                    <Button type="primary" block={true} style={{ textShadow: "0 0 2px black" }} onClick={() => { modificarProducto(item) }}>Ver detalles | Editar <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
-                                </div>
-                            </Card>
-                        </List.Item>
-                    )}
-                />
+                                    <Divider></Divider>
+                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                        <div style={{ width: "45%" }}>
+                                            <Button type="warning" disabled={item.estado === EstadoProducto.BloqueadoADM || item.estado === EstadoProducto.Pausado}
+                                                style={{ textShadow: (item.estado !== EstadoProducto.BloqueadoADM && item.estado !== EstadoProducto.Pausado) ? "0 0 2px black" : "" }}
+                                                block={true} onClick={() => cambiarEstadoProducto(item.idProducto, EstadoProducto.Pausado)}>Pausar <FontAwesomeIcon icon={faPause} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                        </div>
+                                        <div style={{ width: "45%" }}>
+                                            <Button type="success" disabled={item.estado === EstadoProducto.BloqueadoADM || item.estado === EstadoProducto.Activo}
+                                                style={{ textShadow: (item.estado !== EstadoProducto.BloqueadoADM && item.estado !== EstadoProducto.Activo) ? "0 0 2px black" : "" }}
+                                                block={true} onClick={() => cambiarEstadoProducto(item.idProducto, EstadoProducto.Activo)}>Habilitar <FontAwesomeIcon icon={faCircleCheck} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                        </div>
+                                    </div>
+                                    <Divider></Divider>
+                                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                                        <Button type="primary" block={true} style={{ textShadow: "0 0 2px black" }} onClick={() => { modificarProducto(item) }}>Ver detalles | Editar <FontAwesomeIcon icon={faPenToSquare} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                    </div>
+                                </Card>
+                            </List.Item>
+                        )}
+                    />
+                </Spin>
                 <Pagination hideOnSinglePage style={{ display: 'flex', justifyContent: 'center', marginTop: '3%', marginBottom: '3%' }}
                     defaultCurrent={infoPaginacion.paginaActual} total={infoPaginacion.paginasTotales} current={infoPaginacion.paginaActual}
                     onChange={(value) => { setPaginaAbuscar(value - 1); window.scrollTo({ top: 0, behavior: 'auto' }) }} />
