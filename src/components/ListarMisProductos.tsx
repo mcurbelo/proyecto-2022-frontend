@@ -155,6 +155,10 @@ export const MisProductos = () => {
         )
     }
 
+    const disableButton = () => {
+        const buttonCancel = document.getElementById("cancelButton")
+        buttonCancel?.setAttribute("disabled", "true");
+    }
 
     const cambiarEstadoProducto = (idProducto: string, nuevoEstado: EstadoProducto) => {
         confirm({
@@ -162,7 +166,9 @@ export const MisProductos = () => {
             icon: <ExclamationCircleOutlined />,
             content: 'Al confirmar se cambiará el estado del producto.',
             cancelText: "Cancelar",
+            cancelButtonProps: {id: "cancelButton"},
             onOk() {
+                disableButton();
                 return VendedorService.cambiarEstadoProducto(id!, token!, idProducto, nuevoEstado).then((result) => {
                     if (result == "200") {
                         Modal.success({
@@ -277,7 +283,7 @@ export const MisProductos = () => {
 
 
                 <Spin indicator={antIcon} spinning={loadingItems}>
-                    <List locale={loadingItems ? undefined : locale}
+                    <List locale={loadingItems ? { emptyText: " " } : locale}
                         grid={{
                             gutter: 20,
                             xs: 1,

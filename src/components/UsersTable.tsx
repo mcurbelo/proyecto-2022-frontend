@@ -1,5 +1,5 @@
 import { MoreOutlined, SearchOutlined } from "@ant-design/icons";
-import { Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin, Select, Card, Space, Divider } from "antd";
+import { Pagination, PaginationProps, Popover, Table, Modal, Input, message, Spin, Select, Card, Space, Divider, Empty } from "antd";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
 import { AdministradorService } from "shopit-shared";
@@ -19,6 +19,7 @@ type UsersTableProps = {
   onPageChange: (page: number) => void;
   onReload: () => void;
   buscar: (nombre: string, correo: string, estado: EstadoUsuario, campoOrden: string, orden: string) => void;
+  isLoading: boolean
 }
 
 const useStyles = createUseStyles({
@@ -55,6 +56,7 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
   const [estado, setEstado] = useState(EstadoUsuario.Activo);
   const [campoOrden, setCampoOrden] = useState("");
   const [orden, setOrden] = useState("desc");
+  let { isLoading } = props
 
   const onChange: PaginationProps['onChange'] = page => {
     props.onPageChange(page - 1)
@@ -68,6 +70,12 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
   const buscar = () => {
     props.buscar(nombrefiltro, correo, estado, campoOrden, orden);
   }
+
+  let locale = {
+    emptyText: (
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} style={{ color: "black" }} description="No se encontraron resultados :(" />
+    )
+}
 
   const { users } = props;
   const styles = useStyles();
@@ -123,6 +131,8 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
           dataSource={users}
           pagination={false}
           rowKey="id"
+          loading={isLoading}
+          locale={locale}
         >
           <Table.Column<DtUsuarioSlim>
             sorter={(a, b) => {
@@ -159,7 +169,7 @@ const UsersTable: React.FC<UsersTableProps> = (props) => {
               return 0
             }}
             title="Estado"
-            render={(_, data) =>  <PopOver data={data} reloadFunction={reload} />}
+            render={(_, data) => <PopOver data={data} reloadFunction={reload} />}
           />
         </Table>
 

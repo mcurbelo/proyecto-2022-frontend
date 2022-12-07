@@ -309,10 +309,10 @@ const AddProductForm = ({ esSolicitud = false }) => {
           {esEmpresa && <Form.Item
             rules={[{
               required: true,
-              message: "El numero de telefono de la empresa es obligatorio"
+              message: "El número de teléfono de la empresa es obligatorio"
             }]}
             name="telefonoEmpresa"
-            label="Numero de teléfono">
+            label="Número de teléfono">
             <Input placeholder="1234567891012162" />
           </Form.Item>}
           <Divider></Divider>

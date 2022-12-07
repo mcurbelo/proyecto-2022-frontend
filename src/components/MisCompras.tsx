@@ -372,7 +372,7 @@ export const MisCompras: React.FC<{}> = () => {
                     </Card>
                 </div>
                 <Spin indicator={antIcon} spinning={loadingItems}>
-                    <List locale={loadingItems ? undefined : locale}
+                    <List locale={loadingItems ? { emptyText: " " } : locale}
                         grid={{
                             gutter: 16,
                             xs: 1,

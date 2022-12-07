@@ -187,6 +187,7 @@ export const Solicitud = (props: solcitudProps) => {
                     quitar()
                     showModal()
                 } else {
+                    showModal()
                     const mensaje = result;
                     Modal.error({
                         title: 'Ha ocurrido un error inesperado',

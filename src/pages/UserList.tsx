@@ -10,8 +10,10 @@ const UserList = () => {
   const [currentPage, setCurrentPage] = useState("0")
   const [reload, setReload] = useState(false);
   const [totalUsers, setTotalUsers] = useState(0)
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    setIsLoading(true);
     let token = localStorage.getItem("token")!
     AdministradorService.listadoUsuarios(
       token,
@@ -22,13 +24,15 @@ const UserList = () => {
         setUsers(response.usuarios)
         setTotalUsers(response.totalItems)
       }
+      setIsLoading(false);
     }).catch((error) => {
-      console.log(error)
+      setIsLoading(false);
     })
   }, [currentPage, reload])
 
 
   const buscar = (nombre: string, correo: string, estado: EstadoUsuario, campoOrden: string, orden: string) => {
+    setIsLoading(true);
     let token = localStorage.getItem("token")!
     AdministradorService.listadoUsuarios(
       token,
@@ -38,13 +42,13 @@ const UserList = () => {
       orden,
       { nombre: nombre, correo, estado: estado }
     ).then((response) => {
-      console.log(response)
       if (response.usuarios) {
         setUsers(response.usuarios)
         setTotalUsers(response.totalItems)
       }
+      setIsLoading(false);
     }).catch((error) => {
-      console.log(error)
+      setIsLoading(false);
     })
   }
 
@@ -54,8 +58,8 @@ const UserList = () => {
         <h1>Gestión de usuarios</h1>
       </Row>
       <Row justify="center">
-          <UsersTable users={users} totalUsers={totalUsers}
-            buscar={(nombre, correo, estado, campoOrden, orden) => { buscar(nombre, correo, estado, campoOrden, orden) }} onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { setCurrentPage(page.toString()) }} />
+        <UsersTable users={users} totalUsers={totalUsers} isLoading={isLoading}
+          buscar={(nombre, correo, estado, campoOrden, orden) => { buscar(nombre, correo, estado, campoOrden, orden) }} onReload={() => { reload ? setReload(false) : setReload(true) }} onPageChange={page => { setCurrentPage(page.toString()) }} />
       </Row>
     </>
   )
