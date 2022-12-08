@@ -111,7 +111,7 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
 
     (infoUsuario.rol !== "Vendedor") ?
       {
-        label: (<Link type="text" to={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "/nuevaSolicitud" : "#"}
+        label: (<Link type="text" to={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "/nuevaSolicitud" : "#"} 
           className={(!infoUsuario.esVendedor && infoUsuario.estadoSolicitud == EstadoSolicitud.NoSolicitada) ? "ant-btn ant-btn-text" : "ant-btn ant-btn-text ant-btn-disabled"}>
           Solicitar ser vendedor<FontAwesomeIcon icon={faClipboardList} style={{ display: "inline-block", marginLeft: "10px" }} onClick={validarHacerSolicitud} /></Link>),
         key: 'item-2'

@@ -255,8 +255,6 @@ const AddProductForm = ({ esSolicitud = false }) => {
             <DatePicker placeholder="23/5/2023" style={{ width: "100%" }} format={"DD/MM/YYYY"} />
           </Form.Item>
 
-          <Typography.Text>Categorias</Typography.Text>
-
           <PickerCategoria onSelect={categorias => {
             setCategorias(categorias)
           }} />

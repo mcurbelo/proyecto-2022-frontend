@@ -3,7 +3,7 @@ import { EditOutlined } from '@ant-design/icons';
 import { Button, Select, Form, Rate, Tooltip, Modal, Divider, Row, Col, Input, Typography, Space } from 'antd';
 import '../main.css';
 import { UserService } from "shopit-shared";
-import { DtCambioContrasena } from 'shopit-shared/dist/user/UserService';
+import { DtCambioContrasena, EstadoSolicitud } from 'shopit-shared/dist/user/UserService';
 import { createUseStyles } from 'react-jss';
 import { useMitt } from 'react-mitt';
 
@@ -88,7 +88,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   const loadInfoUser = () => {
     UserService.obtenerInformacion(token, uuid)
       .then((infoUsuario) => {
-        if (infoUsuario.datosVendedor != null) {
+        if (infoUsuario.datosVendedor != null && infoUsuario.datosVendedor.estadoSolicitud===EstadoSolicitud.Aceptado) {
           setEsVendedor(true);
           setDatosVendedor({
             nombreEmpresa: infoUsuario.datosVendedor.nombreEmpresa,
