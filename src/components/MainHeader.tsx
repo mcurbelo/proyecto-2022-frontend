@@ -29,7 +29,8 @@ const useStyles = createUseStyles({
     background: "#fff159",
     height: 100,
     gridTemplateRows: "1fr 1fr 1fr ",
-    marginBottom: "1%"
+    marginBottom: "1%",
+    boxShadow: "0 2px 4px 0 rgba(0,0,0,.2)"
   },
   firstRow: {
     gridRow: "1 / span 2",
