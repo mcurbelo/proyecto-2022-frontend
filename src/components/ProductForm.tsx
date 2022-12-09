@@ -1,6 +1,6 @@
 import { UploadOutlined } from "@ant-design/icons";
 import { Checkbox, DatePicker, Divider, Form, Image, Input, InputNumber, List, Modal, Row, Spin, Typography } from "antd";
-import { format } from "date-fns";
+import { format, max } from "date-fns";
 import { useState } from "react";
 import { createUseStyles } from "react-jss";
 import { useNavigate } from "react-router";
@@ -180,7 +180,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
           type="file"
           accept="image/*"
           name="myImage"
-          onChange={(event) => { setImage(selectedImages.concat(event.target.files![0])); }}
+          onChange={(event) => {if(event.target.files![0]) 
+                                  setImage(selectedImages.concat(event.target.files![0])); }}
         />
       </Button>
         <Divider></Divider>
@@ -297,7 +298,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
           {esEmpresa && <Form.Item
             rules={[{
               required: true,
-              message: "El RUT de la empresa es obligatorio"
+              message: "El RUT de la empresa es obligatorio y un máximo de 12 carácteres",
+              max: 12
             }]}
             name="rutEmpresa"
             label="RUT">
@@ -307,7 +309,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
           {esEmpresa && <Form.Item
             rules={[{
               required: true,
-              message: "El número de teléfono de la empresa es obligatorio"
+              message: "El número de teléfono de la empresa es obligatorio y un máximo de 9 carácteres ",
+              max: 9
             }]}
             name="telefonoEmpresa"
             label="Número de teléfono">
