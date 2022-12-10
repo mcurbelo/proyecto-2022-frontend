@@ -1,4 +1,4 @@
-import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Space, Modal, Tooltip } from "antd";
+import { Col, Row, Image, List, Typography, Rate, Card, Button, InputNumber, Divider, Avatar, Space, Modal, Tooltip, Spin } from "antd";
 import React, { useEffect, useState } from "react";
 import { createUseStyles } from "react-jss";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -9,7 +9,8 @@ import { faBox, faBoxesStacked, faCartPlus, faCirclePlus, faCircleXmark, faMoney
 import tarjetas from '../images/tarjetas.jpg';
 import { DtCompra } from "shopit-shared/dist/user/CompradorService";
 import { faCircleQuestion } from "@fortawesome/free-regular-svg-icons";
-import { UserOutlined } from "@ant-design/icons";
+import { LoadingOutlined, UserOutlined } from "@ant-design/icons";
+import TextArea from "antd/lib/input/TextArea";
 
 interface AppState {
   producto: DtProducto
@@ -73,14 +74,13 @@ type propInfo = {
 export const InfoProducto = (props: propInfo) => {
   const navigate = useNavigate();
   let { id } = useParams();
-  const {esAdm} = props;
+  const { esAdm } = props;
   const styles = useStyles();
   const [producto, setProducto] = useState<AppState["producto"]>();
   const [imangeSeleccionada, setImagen] = useState<AppState["imagen"]>();
-  const [ellipsis, setEllipsis] = useState(true);
-  const [counter, setCounter] = useState(0);
   const [cantidadProducto, setCantidad] = useState(1);
   const [usuarioLogueado, setLogeado] = useState(false);
+  const [isLoading, setLoading] = useState(true);
 
   useEffect(() => {
     if (id) {
@@ -89,6 +89,7 @@ export const InfoProducto = (props: propInfo) => {
           if (typeof result !== 'string') {
             setProducto(result);
             setImagen(result.imagenes.at(0))
+            setLoading(false);
           } else {
             Modal.error({
               content: result + ".",
@@ -132,16 +133,13 @@ export const InfoProducto = (props: propInfo) => {
       setCantidad(0)
   };
 
-  const expansion = () => {
-    setEllipsis(!ellipsis);
-    setCounter(ellipsis ? counter + 0 : counter + 1)
-  };
 
   const renderDescripcion = () => {
     return (
-      <Paragraph key={counter} ellipsis={ellipsis ? { rows: 3, expandable: true, symbol: 'Ver más', onExpand: expansion } : false}>
-        {producto?.descripcion}
-      </Paragraph>
+      <>
+        <br />
+        <TextArea contentEditable={false} value={producto?.descripcion} bordered={false} autoSize={{ minRows: 1, maxRows: 7 }} style={{ padding: 0 }}></TextArea>
+      </>
     )
   }
 
@@ -171,111 +169,119 @@ export const InfoProducto = (props: propInfo) => {
     }
   }
 
-
+  const antIcon = <LoadingOutlined style={{ fontSize: 50 }} spin />;
   document.body.style.backgroundColor = "#F0F0F0"
   return (
     <Row justify="center">
       <h1> Información de producto</h1>
       <Row className={styles.container} style={{ gap: "3%", justifyContent: "center", width: "100%" }}>
-
-        <Col style={{ display: "flex", justifyContent: "center" }}>
-          <Row gutter={16} className={styles.container2} >
-            <Col className={styles.listaImagenes} style={{ display: "flex" }}>
-              <List
-                style={{ display: "flex" }}
-                className={styles.listaImagenes}
-                dataSource={producto?.imagenes}
-                grid={{
-                  xs: 5,
-                  sm: 1,
-                  md: 1,
-                  lg: 1,
-                  xl: 1,
-                  xxl: 1,
-                }}
-                renderItem={item => (
-                  <List.Item style={{ cursor: "pointer" }}>
-                    <Image
-                      width={60}
-                      id={item}
-                      preview={false}
-                      onClick={seleccionarImagen}
-                      src={item}
-                    />
-                  </List.Item>
-                )}
-              />
-            </Col>
-            <Col>
-              <Image
-                width={350}
-                height={350}
-                src={imangeSeleccionada}
-              />
-            </Col>
+        {isLoading ?
+          <Row justify="center" style={{ alignItems: "center", marginTop: "10%" }}>
+            <Spin spinning={true} indicator={antIcon} tip="Cargando producto..." />
           </Row>
-        </Col>
-        <Col className={styles.infoProducto}>
-          <Card>
-            <h2> {producto?.nombre}</h2>
-            <hr />
-            <Text><Avatar size="large" icon={<UserOutlined />} src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
-            <hr />
-            <Text>Calificación: </Text><Rate disabled value={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
-            <hr />
-            <Space>
-              <Text>Garantía: {producto?.garantia} días</Text><Tooltip title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
-                <FontAwesomeIcon icon={faCircleQuestion}></FontAwesomeIcon>
-              </Tooltip >
-            </Space>
-            <hr />
-            <Text>Diponibilidad: <b>{estadoStock()}</b></Text>
-            <hr />
-            <Text>Forma de entrega: {(producto?.permiteEnvio) ? <Text><b>Envío</b> <FontAwesomeIcon icon={faTruckFast} /> | <b>Retiro</b>  <FontAwesomeIcon icon={faShop} /></Text> : <Text><b>Solo retiro</b> <FontAwesomeIcon icon={faShop} /></Text>}</Text>
-            <hr />
-            <Text>Más información del producto: </Text>
-            {renderDescripcion()}
-            {!ellipsis && <a onClick={expansion}>Ver menos</a>}
-          </Card>
-        </Col>
-        <Col className={styles.compra}>
-          <Card>
-            <div>
-              <h4>Precio: $ {producto?.precio}  (Pesos uruguayos)</h4>
-              <Divider />
-              <Text> <FontAwesomeIcon icon={faMoneyBill1} color='#459E19' /> <b>Compra directamente</b> el producto con ingresando la cantidad deseada.</Text>
-            </div>
-            <Divider />
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-              <div>
+          :
+          <>
+            <Col style={{ display: "flex", justifyContent: "center" }}>
+              <Row gutter={16} className={styles.container2} >
+                <Col className={styles.listaImagenes} style={{ display: "flex" }}>
+                  <List
+                    style={{ display: "flex" }}
+                    className={styles.listaImagenes}
+                    dataSource={producto?.imagenes}
+                    grid={{
+                      xs: 5,
+                      sm: 1,
+                      md: 1,
+                      lg: 1,
+                      xl: 1,
+                      xxl: 1,
+                    }}
+                    renderItem={item => (
+                      <List.Item style={{ cursor: "pointer" }}>
+                        <Image
+                          width={60}
+                          id={item}
+                          preview={false}
+                          onClick={seleccionarImagen}
+                          src={item}
+                        />
+                      </List.Item>
+                    )}
+                  />
+                </Col>
+                <Col>
+                  <Image
+                    width={350}
+                    height={350}
+                    src={imangeSeleccionada}
+                  />
+                </Col>
+              </Row>
+            </Col>
+            <Col className={styles.infoProducto}>
+              <Card>
+                <h2> {producto?.nombre}</h2>
+                <hr />
+                <Text><Avatar size="large" icon={<UserOutlined />} src={producto?.imagenDePerfil} /> {producto?.nombreVendedor}</Text>
+                <hr />
+                <Text>Calificación: </Text><Rate disabled value={producto?.calificacion} /> <Text strong={true}> {producto?.calificacion}/5</Text>
+                <hr />
                 <Space>
-                <Text>Cantidad:</Text>
-                <InputNumber id="cantidad" min={1} defaultValue={1} onChange={onChange} />
+                  <Text>Garantía: {producto?.garantia} días</Text><Tooltip title="Período de tiempo disponible para hacer reclamos luego de haber recibido/retirado el producto.">
+                    <FontAwesomeIcon icon={faCircleQuestion}></FontAwesomeIcon>
+                  </Tooltip >
                 </Space>
-              </div>
-              <Image
-                width={170}
-                preview={false}
-                src={tarjetas} />
-            </div>
-            <Divider />
-            <div>
-              {
-                !usuarioLogueado ? (
-                  <div style={{ textAlign: "center" }}>
-                    <Text mark strong>Debes {<Link to={"/iniciarSesion"}>iniciar sesión</Link>} o {<Link to={"/registrarse"}>registrate</Link>} para comprar el producto.</Text>
-                    <Divider></Divider>
+                <hr />
+                <Text>Diponibilidad: <b>{estadoStock()}</b></Text>
+                <hr />
+                <Text>Forma de entrega: {(producto?.permiteEnvio) ? <Text><b>Envío</b> <FontAwesomeIcon icon={faTruckFast} /> | <b>Retiro</b>  <FontAwesomeIcon icon={faShop} /></Text> : <Text><b>Solo retiro</b> <FontAwesomeIcon icon={faShop} /></Text>}</Text>
+                <hr />
+                <Text>Más información del producto: </Text>
+                {renderDescripcion()}
+              </Card>
+            </Col>
+            <Col className={styles.compra}>
+              <Card>
+                <div>
+                  <h4>Precio: $ {producto?.precio}  (Pesos uruguayos)</h4>
+                  <Divider />
+                  <Text> <FontAwesomeIcon icon={faMoneyBill1} color='#459E19' /> <b>Compra directamente</b> el producto con ingresando la cantidad deseada.</Text>
+                </div>
+                <Divider />
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <div>
+                    <Space>
+                      <Text>Cantidad:</Text>
+                      <InputNumber id="cantidad" min={1} defaultValue={1} onChange={onChange} />
+                    </Space>
                   </div>
-                ) : null
-              }
-              <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || esAdm} onClick={realizarCompra}>
-                Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
-      
-            </div>
-          </Card>
-        </Col>
+                  <Image
+                    width={170}
+                    preview={false}
+                    src={tarjetas} />
+                </div>
+                <Divider />
+                <div>
+                  {
+                    !usuarioLogueado ? (
+                      <div style={{ textAlign: "center" }}>
+                        <Text mark strong>Debes {<Link to={"/iniciarSesion"}>iniciar sesión</Link>} o {<Link to={"/registrarse"}>registrate</Link>} para comprar el producto.</Text>
+                        <Divider></Divider>
+                      </div>
+                    ) : null
+                  }
+                  <Button type="primary" block style={{ marginBottom: "3%" }} disabled={producto?.stock == 0 || !usuarioLogueado || esAdm || producto?.idVendedor === localStorage.getItem("uuid")} onClick={realizarCompra}>
+                    Comprar ahora <FontAwesomeIcon style={{ marginLeft: "1%" }} icon={faWallet} /></Button>
+
+                </div>
+              </Card>
+            </Col>
+          </>
+        }
       </Row>
+
     </Row>
+
   )
 }
 export default InfoProducto;
