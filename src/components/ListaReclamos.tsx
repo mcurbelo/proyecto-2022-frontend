@@ -327,6 +327,8 @@ export const Reclamos = (props: propReclamo) => {
             return ("Producto erroneo")
         if (tipo === TipoReclamo.Otro)
             return ("Otro")
+        if (tipo == TipoReclamo.RepticionIncoveniente)
+            return ("Repetición de incoveniente")
     }
 
     const formatoEstado = (estado: TipoResolucion) => {
