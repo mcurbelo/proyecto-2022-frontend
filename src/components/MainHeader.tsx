@@ -446,7 +446,7 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
           </div>
           :
 
-          <>
+          <div style={{ gridColumn: 3, justifySelf: "end" }}>
             <Link to="/iniciarSesion"
               className="ant-btn ant-btn-text"
               style={{ justifySelf: "end", gridColumn: 3, marginRight: 24 }}>Iniciar sesión<FontAwesomeIcon icon={faRightToBracket} style={{ display: "inline-block", marginLeft: "10px" }} />
@@ -460,7 +460,7 @@ const MainHeader: React.FC<MainHeaderProps> = () => {
               style={{ justifySelf: "end", gridColumn: 4, marginRight: 24 }}>Registrarse<FontAwesomeIcon icon={faUserPlus} style={{ display: "inline-block", marginLeft: "10px" }} />
             </Link>
 
-          </>
+         </div>
         }
       </div>
       <div className={styles.secondRow}>
