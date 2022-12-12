@@ -180,8 +180,10 @@ const AddProductForm = ({ esSolicitud = false }) => {
           type="file"
           accept="image/*"
           name="myImage"
-          onChange={(event) => {if(event.target.files![0]) 
-                                  setImage(selectedImages.concat(event.target.files![0])); }}
+          onChange={(event) => {
+            if (event.target.files![0])
+              setImage(selectedImages.concat(event.target.files![0]));
+          }}
         />
       </Button>
         <Divider></Divider>
@@ -298,8 +300,9 @@ const AddProductForm = ({ esSolicitud = false }) => {
           {esEmpresa && <Form.Item
             rules={[{
               required: true,
-              message: "El RUT de la empresa es obligatorio y un máximo de 12 carácteres",
-              max: 12
+              message: "El RUT de la empresa es obligatorio y debe tener 12 carácteres",
+              max: 12,
+              min: 12
             }]}
             name="rutEmpresa"
             label="RUT">
@@ -309,8 +312,9 @@ const AddProductForm = ({ esSolicitud = false }) => {
           {esEmpresa && <Form.Item
             rules={[{
               required: true,
-              message: "El número de teléfono de la empresa es obligatorio y un máximo de 9 carácteres ",
-              max: 9
+              message: "El número de teléfono de la empresa es obligatorio y tener entre 8 o 9 carácteres ",
+              max: 9,
+              min: 8
             }]}
             name="telefonoEmpresa"
             label="Número de teléfono">
