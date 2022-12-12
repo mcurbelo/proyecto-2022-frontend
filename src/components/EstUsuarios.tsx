@@ -160,7 +160,7 @@ export const EstUsuarios = () => {
                    
                    <Divider/>
                     <Row gutter={16} justify="center" style={{marginTop:"10px"}}>
-                                <h1 style={{ textAlign: "center" }}>Distribución en la aplicacion por tipo de usuario</h1>
+                                <h1 style={{ textAlign: "center" }}>Distribución en la aplicación por tipo de usuario</h1>
                                 <ResponsiveContainer width={'95%'} height={400}>
                                     <PieChart>
                                         <Pie

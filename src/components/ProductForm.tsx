@@ -50,7 +50,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
 
   const successModalSolicitud = () => {
     Modal.success({
-      title: "Solicitud enviada exitosamente!"
+      title: "Solicitud enviada exitosamente!",
+      content:"Será revisada por algún administrador a la brevedad. Mantente atento a tu correo!!!"
     })
   }
 
@@ -199,7 +200,7 @@ const AddProductForm = ({ esSolicitud = false }) => {
               message: "El nombre del producto es obligatorio"
             }]}
             name="nombreProducto"
-            label="Nombre:"
+            label="Nombre"
           >
             <Input placeholder="Bicicleta" />
           </Form.Item>
@@ -312,7 +313,8 @@ const AddProductForm = ({ esSolicitud = false }) => {
           {esEmpresa && <Form.Item
             rules={[{
               required: true,
-              message: "El número de teléfono de la empresa es obligatorio y tener entre 8 o 9 carácteres ",
+              message: "El número de teléfono de la empresa es obligatorio y debe tener entre 8 y 9 carácteres ",
+              pattern: new RegExp("^[0-9]{8,9}$"),
               max: 9,
               min: 8
             }]}

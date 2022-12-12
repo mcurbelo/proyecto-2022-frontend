@@ -1,4 +1,4 @@
-import { Alert, DatePicker, Form, Input } from "antd"
+import { Alert, DatePicker, Form, Input, InputNumber } from "antd"
 import { RuleObject } from "antd/lib/form";
 import { useState } from "react";
 import { differenceInYears, format } from "date-fns";
@@ -113,9 +113,8 @@ const SignUpForm = () => {
         label="Teléfono"
         rules={[{
           required: true,
-          max: 9,
-          message: "Solo números, con un máximo de 9 caracteres",
-          pattern: new RegExp("^[0-9]{0,9}$")
+          pattern: new RegExp("^[0-9]{8,9}$"),
+          message: "Solo números, entre 8 y 9 caracteres",
         }
         ]}
       >

@@ -160,6 +160,7 @@ export const Reclamos = (props: propReclamo) => {
     const [isLoading, setLoading] = useState(false);
     const [loadingItems, setLoadingItems] = useState(true);
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+    const [loader, setloader] = useState<boolean[]>([]);
 
     const { Panel } = Collapse;
 
@@ -293,16 +294,23 @@ export const Reclamos = (props: propReclamo) => {
 
     }
 
-    const iniciarChat = (idCompra: string, nombre: string) => {
+    const iniciarChat = (idCompra: string, nombre: string,  index: number) => {
         let token = localStorage.getItem("token");
+        const loaderNuevo = [...loader];
+        loaderNuevo[index] = true;
+        setloader(loaderNuevo);
         CompradorService.obtenerChat(idCompra, token!).then(res => {
             if (res === "") {
                 crearChat(idCompra, token).then(idChat => {
-                    setLoading(false)
+                    loaderNuevo[index] = false;
+                    setloader(loaderNuevo);
+                    setLoading(false);
                     navigate("/chat/" + idChat, { state: { receptor: nombre } });
                 })
             } else {
-                setLoading(false)
+                loaderNuevo[index] = false;
+                setloader(loaderNuevo);
+                setLoading(false);
                 navigate("/chat/" + res, { state: { receptor: nombre } });
             }
         })
@@ -422,7 +430,7 @@ export const Reclamos = (props: propReclamo) => {
                             xxl: 1,
                         }}
                         dataSource={reclamos}
-                        renderItem={item => (
+                        renderItem={(item, index) => (
                             <List.Item>
                                 <Card title={titulo(item)} extra={
                                     listarRealizados &&
@@ -437,7 +445,7 @@ export const Reclamos = (props: propReclamo) => {
                                             <Button type="primary"
                                                 style={{ width: "195px", textShadow: (item.estado === TipoResolucion.NoResuelto && item.tieneChat) ? "0 0 2px black" : "" }}
                                                 disabled={!item.tieneChat || item.estado !== TipoResolucion.NoResuelto}
-                                                onClick={() => iniciarChat(item.datosCompra.idCompra, item.datosCompra.nombreVendedor)}><b>Ir al chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
+                                                onClick={() => iniciarChat(item.datosCompra.idCompra, item.datosCompra.nombreVendedor, index)}><b>Ir al chat</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} /></Button>
                                             <Tooltip title="Solo se puede ir al chat si ya existe una instancia de este creada por usted o por el vendedor."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
                                         </Space>
                                     </div>
@@ -495,8 +503,8 @@ export const Reclamos = (props: propReclamo) => {
 
                                                         <div style={{ display: "flex", alignItems: "center" }}>
                                                             <Tooltip title="Inicia el chat con el comprador, para resolver el reclamo."> <FontAwesomeIcon type="regular" style={{ marginRight: "5px" }} icon={faCircleQuestion} /> </Tooltip>
-                                                            <Button disabled={item.estado !== TipoResolucion.NoResuelto} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto) ? "0 0 2px black" : "" }}
-                                                                loading={isLoading} type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
+                                                            <Button disabled={item.estado !== TipoResolucion.NoResuelto || isLoading} style={{ width: "170px", textShadow: (item.estado === TipoResolucion.NoResuelto && !isLoading) ? "0 0 2px black" : "" }}
+                                                                loading={loader[index]} type="primary" onClick={() => { iniciarChat(item.datosCompra.idCompra, item.autor, index); setLoading(true) }}><b>{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</b> <FontAwesomeIcon icon={faComments} style={{ display: "inline-block", marginLeft: "10px" }} />
                                                             </Button>
 
                                                         </div>

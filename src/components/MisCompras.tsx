@@ -168,6 +168,7 @@ export const MisCompras: React.FC<{}> = () => {
     const [isLoading, setLoading] = useState(false);
     const [loadingItems, setLoadingItems] = useState(true);
     const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
+    const [loader, setloader] = useState<boolean[]>([]);
 
     useEffect(() => {
         busqueda()
@@ -185,16 +186,23 @@ export const MisCompras: React.FC<{}> = () => {
     }
 
 
-    const iniciarChat = (idCompra: string, nombreVendedor: string) => {
+    const iniciarChat = (idCompra: string, nombreVendedor: string, index: number) => {
         let token = localStorage.getItem("token");
+        const loaderNuevo = [...loader];
+        loaderNuevo[index] = true;
+        setloader(loaderNuevo);
         CompradorService.obtenerChat(idCompra, token!).then(res => {
             if (res === "") {
                 crearChat(idCompra).then(idChat => {
+                    loaderNuevo[index] = false;
+                    setloader(loaderNuevo);
                     setLoading(false);
                     navigate("/chat/" + idChat, { state: { receptor: nombreVendedor } });
                 })
             } else {
                 setLoading(false);
+                loaderNuevo[index] = false;
+                setloader(loaderNuevo);
                 navigate("/chat/" + res, { state: { receptor: nombreVendedor } });
             }
         })
@@ -383,7 +391,7 @@ export const MisCompras: React.FC<{}> = () => {
                             xxl: 1,
                         }}
                         dataSource={compras}
-                        renderItem={item => (
+                        renderItem={(item, index) => (
                             <List.Item>
                                 <Card title={"Realizada el " + item.fecha.toString()} >
                                     <Row className={styles.comprasContainer} >
@@ -414,8 +422,8 @@ export const MisCompras: React.FC<{}> = () => {
                                                 <div>
                                                     <p style={{ textAlign: "center" }}>{item.nombreVendedor}</p>
 
-                                                    <Button type="link" onClick={e => { iniciarChat(item.idCompra, item.nombreVendedor); setLoading(true) }} loading={isLoading}
-                                                        disabled={(item.estadoCompra !== EstadoCompra.Confirmada && item.estadoCompra !== EstadoCompra.Completada) || (item.estadoCompra !== EstadoCompra.Confirmada && !item.garantiaActiva)}
+                                                    <Button type="link" onClick={e => { iniciarChat(item.idCompra, item.nombreVendedor, index); setLoading(true) }} loading={loader[index]}
+                                                        disabled={(item.estadoCompra !== EstadoCompra.Confirmada && item.estadoCompra !== EstadoCompra.Completada) || (item.estadoCompra !== EstadoCompra.Confirmada && !item.garantiaActiva) || isLoading}
                                                     >{(item.tieneChat) ? "Ir al chat" : "Iniciar chat"}</Button>
                                                     <Tooltip title="Solo se puede iniciar o acceder al chat cuando la compra haya sido confirmada y se esté dentro de la garantía del producto"> <FontAwesomeIcon type="regular" icon={faQuestionCircle} /></Tooltip>
                                                 </div>
