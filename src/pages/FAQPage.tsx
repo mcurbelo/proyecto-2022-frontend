@@ -38,7 +38,7 @@ const FAQPage = () => {
                             <Collapse accordion >
                                 <Panel header="¿Cómo funciona el proceso de compra?" key="1">
                                     <p>Primero se debe elegir un producto de los listados en la pagina de inicio, seleccionar “Ver detalle”,
-                                        el cual lo enviara a una página con la información extra del producto en cuestión. Donde en la parte derecha
+                                        el cual lo enviará a una página con la información extra del producto en cuestión. Donde en la parte derecha
                                         de la pantalla podrá ingresar la cantidad de producto a comprar. Una vez asegurado que es el producto que busca
                                         y ingresando la cantidad a elegir, haga click en el botón de “Compra ahora”. </p>
 

@@ -170,8 +170,8 @@ export const Solicitudes = () => {
                                                     <p>{item.nombreApellido}</p>
                                                 </Row>
                                                 <Row>
-                                                    <Tooltip title={"Calificación: " + item.calificacion + "/5"} placement="bottom">
-                                                        <Rate allowHalf disabled defaultValue={item.calificacion} />
+                                                    <Tooltip title={"Calificación: " + item.calificacion.toFixed(2) + "/5"} placement="bottom">
+                                                        <Rate allowHalf disabled defaultValue={parseFloat(item.calificacion.toFixed(2))} />
                                                     </Tooltip>
                                                 </Row>
 

@@ -63,7 +63,6 @@ export const iniciarChat = (idCompra, token) => {
 }
 
 export const crearChat = async (idcompra, token) => {
-    console.log(token)
     let collectionRef = collection(db, "mensajes");
     return addDoc(collectionRef, {}).then(referece => {
         let id = referece.id;

@@ -88,7 +88,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
   const loadInfoUser = () => {
     UserService.obtenerInformacion(token, uuid)
       .then((infoUsuario) => {
-        if (infoUsuario.datosVendedor != null && infoUsuario.datosVendedor.estadoSolicitud===EstadoSolicitud.Aceptado) {
+        if (infoUsuario.datosVendedor != null && infoUsuario.datosVendedor.estadoSolicitud === EstadoSolicitud.Aceptado) {
           setEsVendedor(true);
           setDatosVendedor({
             nombreEmpresa: infoUsuario.datosVendedor.nombreEmpresa,
@@ -271,12 +271,12 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                     <div>
                       <label>Calificación:</label>
                       <Form.Item>
-                        <Space>
-                        <Rate allowHalf disabled value={infoUsuario.calificacion} />  
-                        <Text strong={true}> {infoUsuario?.calificacion}/5</Text>
-                        </Space>
+
+                        <Rate allowHalf disabled value={parseFloat(infoUsuario.calificacion.toFixed(2))} />
+                        <Text strong={true}> {infoUsuario?.calificacion.toFixed(2)}/5</Text>
+
                       </Form.Item>
-                     
+
                     </div>
                   </Tooltip>
                 </div>
@@ -354,9 +354,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                         <div>
                           <label>Calificación:</label>
                           <Form.Item>
-                            <Space>
-                            <Rate allowHalf disabled value={datosVendedor.calificacion} />  <Text strong={true}> {datosVendedor.calificacion}/5</Text>
-                            </Space>
+                            <Rate allowHalf disabled value={parseFloat(datosVendedor.calificacion.toFixed(2))} />  <Text strong={true}> {datosVendedor.calificacion.toFixed(2)}/5</Text>
                           </Form.Item>
                         </div>
                       </Tooltip>
@@ -398,9 +396,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
                 <Tooltip title="Calificación obtenida de los compradores">
                   <label>Calificación:</label>
                   <Form.Item>
-                    <Space>
-                    <Rate allowHalf disabled value={datosVendedor.calificacion} />  <Text strong={true}> {datosVendedor.calificacion}/5</Text>
-                    </Space>
+                      <Rate allowHalf disabled value={parseFloat(datosVendedor.calificacion.toFixed(2))} />  <Text strong={true}> {datosVendedor.calificacion.toFixed(2)}/5</Text>
                   </Form.Item>
                 </Tooltip>
               </Row>
@@ -426,7 +422,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             name="contrasena"
             label="Contraseña antigua:"
             rules={[{ required: true, message: 'Porfavor ingrese su contraseña actual' }]}>
-            <Input.Password style={{ minWidth: "235px" }} onChange={e=> {setCambioContrasena({...datosCambioContrasena, contrasenaVieja: e.target.value})} }/>
+            <Input.Password style={{ minWidth: "235px" }} onChange={e => { setCambioContrasena({ ...datosCambioContrasena, contrasenaVieja: e.target.value }) }} />
           </Form.Item>
 
           <Form.Item
@@ -440,7 +436,7 @@ export const OtherInfo: FC<otherInfoProp> = (props) => {
             ]}
             hasFeedback
           >
-            <Input.Password style={{ minWidth: "235px" }} onChange={e=> {setCambioContrasena({...datosCambioContrasena, contrasenaNueva: e.target.value})} } />
+            <Input.Password style={{ minWidth: "235px" }} onChange={e => { setCambioContrasena({ ...datosCambioContrasena, contrasenaNueva: e.target.value }) }} />
           </Form.Item>
 
           <Form.Item

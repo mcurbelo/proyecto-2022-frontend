@@ -160,7 +160,6 @@ export const MisVentas: React.FC<{}> = () => {
     };
 
     const onChangeEstado = (value: EstadoCompra | boolean) => {
-        console.log(value)
         if (typeof value === "boolean") {
             setFiltros({ ...filtros, estado: undefined })
         } else {
@@ -397,9 +396,9 @@ export const MisVentas: React.FC<{}> = () => {
                                                     <div>
                                                         <p>{item.nombreComprador}</p>
                                                     </div>
-                                                    <Tooltip title={"Calificación: " + item.calificacionComprador + "/5"} placement="bottom">
+                                                    <Tooltip title={"Calificación: " + item.calificacionComprador.toFixed(2) + "/5"} placement="bottom">
                                                         <div>
-                                                            <Rate allowHalf disabled defaultValue={item.calificacionComprador} />
+                                                            <Rate allowHalf disabled defaultValue={parseFloat(item.calificacionComprador.toFixed(2))} />
                                                         </div>
                                                     </Tooltip>
                                                 </Space>

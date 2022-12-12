@@ -72,7 +72,6 @@ const RecuperarContrasenaForm: React.FC<Props> = () => {
 
   const crearSolicitud = () => {
       setLoading(true);
-      console.log(correo);
       UserService.recuperarContrasena(correo).then(res => {
         message.success("Se a enviado un codigo a su correo");
         setMostrarCorreo(false);

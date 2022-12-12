@@ -67,6 +67,7 @@ export const RealizarReclamo = (props: reclamoProps) => {
                         <Option value={TipoReclamo.DesperfectoProducto}>Desperfecto en el producto</Option>
                         <Option value={TipoReclamo.ProductoNoRecibido}>Producto no recibido</Option>
                         <Option value={TipoReclamo.ProducoErroneo}>Producto erroneo</Option>
+                        <Option value={TipoReclamo.RepticionIncoveniente}>Repetición de incoveniente</Option>
                         <Option value={TipoReclamo.Otro}>Otro</Option>
                     </Select>
                 </Form.Item >

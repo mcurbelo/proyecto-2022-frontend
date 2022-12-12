@@ -381,6 +381,7 @@ export const Reclamos = (props: propReclamo) => {
                                         <Option value={TipoReclamo.DesperfectoProducto}>Producto con desperfecto</Option>
                                         <Option value={TipoReclamo.ProductoNoRecibido}>Producto no recibido</Option>
                                         <Option value={TipoReclamo.ProducoErroneo}>Producto erroneo</Option>
+                                        <Option value={TipoReclamo.RepticionIncoveniente}>Repetición de incoveniente</Option>
                                         <Option value={TipoReclamo.Otro}>Otro</Option>
                                     </Select>
                                 </div>
